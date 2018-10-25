@@ -36,6 +36,14 @@ TODO:
 
 ////
 
+== Project status
+
+Project is in pre-release phase.
+
+It is suitable only for experimental usage.
+
+WARNING: Do not use on Production until stable release is published.
+
 == Purpose
 {description}
 
