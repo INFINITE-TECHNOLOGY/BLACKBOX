@@ -1254,15 +1254,87 @@ NOTE: org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace method is 
 == Risks
 === Performance
 ==== ThreadLocal usage
+
+BlackBox currently is using its own custom (very simple) implementation of ThreadLocal.
+
+The reason being is that Java Application Servers interfere with normal java.lang.ThreadLocal and re-initialize its static fields.
+
+However there is a performance downside - all logging calls are initiated using:
+
+[source, groovy]
+BlackBoxEngine.getInstance()
+
+- which in its turn is using HashMap to get the actual instance of the logger.
+
+This definitely is not the fastest approach and this should be considered.
+
 ==== Closure usage
+
+All methods and expressions are enclosed into Groovy Closures and executed using "call()" method.
+
+Therefore BlackBox performance is dependent on Closure execution performance in Groovy.
+
 === Security
 ==== Automatic logging of sensitive data
+
+Sensitive data such as Cardholder data, passwords and personal data can be accidently automatically logged when such data is in variable scope of methods annotated with BlackBox annotation.
+
 === Test coverage and code disruption
+
+BlackBox is traversing and transforming whole AST of <<User code>>.
+
+Any violation of <<Code equivalency>> principle due to bug in BlackBox can cause catastrophic damage.
+
+This is especially actual since the BlackBox annotation addition is subtle in terms of regression impact analysis.
+
 == Usage
 === Preparation
 ==== Checkout
+
+Checkout the default branch of the project:
+
+* https://github.com/INFINITE-TECHNOLOGY/BLACKBOX
+
 ==== Building
-=== In the code
+
+<1> Run jaxb Gradle task
+<2> Run build Gradle task
+<3> Run uploadArchives Gradle task (Maven Local repository should be configured)
+
+=== In the <<User code>>
 ==== Import using Gradle
+
+Add BlackBox dependency from Local repository:
+
+[source, gradle]
+----
+...
+mavenLocal()
+...
+compile 'io.infinite:blackbox:2.0.0'
+...
+----
+
 ==== Using annotation
+
+Add <<BlackBox Annotation>> to <<User code>> Methods and constructors as shown below:
+
+[source,groovy]
+----
+@BlackBox
+String foo() {
+    return "bar"
+}
+----
+
 === During the runtime
+
+To control <<Operating modes>> of BlackBox during runtime, use Java System property:
+
+----
+blackbox.mode=SEQUENTAL
+----
+or
+----
+blackbox.mode=EMERGENCY
+----
