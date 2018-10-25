@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="ASTNode.xsd"/>
+    <xs:complexType name="Statement">
+        <xs:annotation>
+            <xs:documentation>
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#statement-1
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ASTNode">
+                <xs:attribute name="statementClassName" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>
