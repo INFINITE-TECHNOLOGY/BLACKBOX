@@ -3,7 +3,7 @@ package io.infinite.blackbox
 /**
  * This enumeration contains BlackBox levels.
  *
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#4-blackbox-levels">BlackBox Blueprint - BlackBox Levels</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#4-blackbox-levels">BlackBox Blueprint - BlackBox Levels</a>
  */
 enum BlackBoxLevel {
 

@@ -8,8 +8,8 @@ import javax.xml.bind.Marshaller
 
 /**
  * This class implements BlackBox Runtime API - Emergency Mode functionality
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#emergency">BlackBox Blueprint - Emergency Operating Mode</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#emergency">BlackBox Blueprint - Emergency Operating Mode</a>
  * <br>
  * This class removes successful AST Nodes from BlackBox runtime stack.
  * <br>
@@ -21,7 +21,7 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
 
     /**
      * In addition to base behavior of BlackBoxEngine, removes the successful AST Node from log to save memory.
-     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#memory-leakage-prevention">BlackBox Blueprint - Memory Leakage Prevention</a>
+     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#memory-leakage-prevention">BlackBox Blueprint - Memory Leakage Prevention</a>
      */
     @Override
     void executionClose() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified"
-           targetNamespace="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
-           xmlns="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
+           targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="Argument.xsd"/>
     <xs:include schemaLocation="Object.xsd"/>
@@ -10,7 +10,7 @@
     <xs:complexType name="MethodNode">
         <xs:annotation>
             <xs:documentation>
-                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#methodnode
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#methodnode
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>

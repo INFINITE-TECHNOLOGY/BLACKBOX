@@ -20,7 +20,7 @@ import org.codehaus.groovy.transform.sc.ListOfExpressionsExpression
 /**
  * This class implements BlackBox Transformation Rules for @BlackBox annotation.
  *
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#transformation-rules">BlackBox Blueprint - Transformation Rules</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#transformation-rules">BlackBox Blueprint - Transformation Rules</a>
  *
  */
 @ToString(includeNames = true, includeFields = true, includePackage = false)

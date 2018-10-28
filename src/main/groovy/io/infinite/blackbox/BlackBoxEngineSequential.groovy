@@ -9,8 +9,8 @@ import io.infinite.blackbox.generated.XMLStatement
 
 /**
  * This class implements BlackBox Runtime API - Sequential Mode functionality
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#real-time-sequential">BlackBox Blueprint - Sequential Operating Mode</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#real-time-sequential">BlackBox Blueprint - Sequential Operating Mode</a>
  *
  * <br/>
  * This class prints runtime AST Node execution in realitime.

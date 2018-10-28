@@ -9,7 +9,7 @@ import javax.xml.bind.Marshaller
 /**
  * This class implements BlackBox Runtime API - Hierarchical Mode functionality.
  * This class/mode should be used only for BlackBox testing purposes as it consumes RAM indefinitely.
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#runtime-engine-api">BlackBox Blueprint - Runtime Engine API</a>
  */
 @Slf4j
 class BlackBoxEngineHierarchical extends BlackBoxEngine{

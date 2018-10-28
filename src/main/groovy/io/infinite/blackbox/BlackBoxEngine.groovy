@@ -16,7 +16,7 @@ class BlackBoxEngine {
     /**
      * Placeholder for Thread-specific instance of BlackBoxEngine
      *
-     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#thread-safety">BlackBox Blueprint - Thread Safety</a>
+     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#thread-safety">BlackBox Blueprint - Thread Safety</a>
      *
      */
     public static ThreadLocal blackBoxEngineThreadLocal = new ThreadLocal()
@@ -49,8 +49,8 @@ class BlackBoxEngine {
      * <br/>
      * Default implementation (operation mode) is: Emergency.
      *
-     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#operating-modes">BlackBox Blueprint - Operating Modes</a>
-     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#thread-safety">BlackBox Blueprint - Thread Safety</a>
+     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#operating-modes">BlackBox Blueprint - Operating Modes</a>
+     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#thread-safety">BlackBox Blueprint - Thread Safety</a>
      *
      * @return BlackBoxEngine instance implementation as per "blackbox.mode" System property.
      */
@@ -244,7 +244,7 @@ class BlackBoxEngine {
     }
 
     /**
-     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#control-statement-transformation">BlackBox Blueprint - Control Statement Transformation</a>
+     * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#control-statement-transformation">BlackBox Blueprint - Control Statement Transformation</a>
      * Used only for Control Statement logging (return, continue, break, throw).
      * Precedes Control Statement.<br/>
      * Logs the bypassing (closing) of AST Nodes until first AST Node of type applicable to Control Statement scope is encountered.<br/>

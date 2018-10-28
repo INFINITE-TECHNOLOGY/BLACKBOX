@@ -3,7 +3,7 @@ package io.infinite.blackbox
 /**
  * This enumeration contains BlackBox Operating Modes.
  *
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#operating-modes">BlackBox Blueprint - Operating Modes</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#operating-modes">BlackBox Blueprint - Operating Modes</a>
  */
 enum BlackBoxMode {
 

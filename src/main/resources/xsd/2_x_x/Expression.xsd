@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified"
-           targetNamespace="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
-           xmlns="https://i-t.io/blackbox/groovy/2_x_x/BlackBox.xsd"
+           targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="ASTNode.xsd"/>
     <xs:include schemaLocation="Argument.xsd"/>
@@ -9,7 +9,7 @@
     <xs:complexType name="Expression">
         <xs:annotation>
             <xs:documentation>
-                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#expression-1
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#expression-1
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>

@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Application servers interfere with normal Java ThreadLocal
  * Thus we have to use custom class.
  *
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#thread-safety">BlackBox Blueprint - Thread Safety</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#thread-safety">BlackBox Blueprint - Thread Safety</a>
  *
  * */
 class ThreadLocal {

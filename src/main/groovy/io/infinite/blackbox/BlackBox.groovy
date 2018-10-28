@@ -9,7 +9,7 @@ import java.lang.annotation.Target
 
 /**
  * Main @BlackBox annotation interface
- * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki/Blueprint#blackbox-annotation">BlackBox Blueprint - @BlackBox Annotation</a>
+ * @see <a href="https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#blackbox-annotation">BlackBox Blueprint - @BlackBox Annotation</a>
  *
  * Applies to methods and contstuctors.
  *
