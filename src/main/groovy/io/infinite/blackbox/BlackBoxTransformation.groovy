@@ -88,8 +88,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
      * @return
      */
     private static MethodCallExpression wrapExpressionIntoMethodCallExpression(Expression iExpression, iSourceNodeName) {
-        //ClosureExpression closureExpression = GeneralUtils.closureX(GeneralUtils.params(GeneralUtils.param(ClassHelper.make(Object.class), "uniqueParam" + uniqueClosureParamCounter)), GeneralUtils.returnS(iExpression))
-        ClosureExpression closureExpression = GeneralUtils.closureX(GeneralUtils.returnS(iExpression))
+        //Fix for https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/issues/1
+        ClosureExpression closureExpression = GeneralUtils.closureX(GeneralUtils.params(GeneralUtils.param(ClassHelper.make(Object.class), "uniqueParam" + uniqueClosureParamCounter)), GeneralUtils.returnS(iExpression))
         uniqueClosureParamCounter++
         closureExpression.setVariableScope(new VariableScope())
         MethodCallExpression methodCallExpression = GeneralUtils.callX(
