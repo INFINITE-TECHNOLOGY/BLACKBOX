@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-
+import io.infinite.blackbox.issues.Issue001
 import io.infinite.blackbox.tests.VisitArgumentlistExpression
 import io.infinite.blackbox.tests.VisitArrayExpression
 import io.infinite.blackbox.tests.VisitAssertStatement
@@ -324,6 +324,8 @@ class AllTests {
         new VisitClosureListExpression().visitClosureListExpressionMethodLevel()
         new VisitClosureListExpression().visitClosureListExpressionStatementLevel()
         new VisitClosureListExpression().visitClosureListExpressionExpressionLevel()
+        //
+        new Issue001().test()
     }
 
 }
