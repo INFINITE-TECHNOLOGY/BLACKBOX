@@ -157,7 +157,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
     @Override
     void initRootAstNode() {
         super.initRootAstNode()
-        log("""<rootAstNode startDateTime="${astNode.startDateTime.toXMLFormat()}" xmlns="https://i-t.io/logging/groovy/2_x_x/BlackBox.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">""")
+        log("""<rootAstNode startDateTime="${astNode.startDateTime.toXMLFormat()}" xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">""")
         depth++
         log("""<astNodeList>""")
         depth++
