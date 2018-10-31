@@ -137,7 +137,16 @@ class BlackBoxEngine {
      * Format of this field is "Class name:field name" of the source variable where this AST Node is referenced.
      * @return Actual Expression value after evaluation.
      */
-    Object expressionEvaluation(String iExpressionName, String iRestoredScriptCode, Integer iColumnNumber, Integer iLastColumnNumber, Integer iLineNumber, Integer iLastLineNumber, Closure iClosure, String iNodeSourceName) {
+    Object expressionEvaluation(
+            String iExpressionName,
+            String iRestoredScriptCode,
+            Integer iColumnNumber,
+            Integer iLastColumnNumber,
+            Integer iLineNumber,
+            Integer iLastLineNumber,
+            Closure iClosure,
+            String iNodeSourceName
+    ) {
         expressionExecutionOpen(iExpressionName, iRestoredScriptCode, iColumnNumber, iLastColumnNumber, iLineNumber, iLastLineNumber, iNodeSourceName)
         try {
             Object evaluationResult = iClosure.call()
