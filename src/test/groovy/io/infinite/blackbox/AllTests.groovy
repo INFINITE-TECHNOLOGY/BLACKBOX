@@ -63,8 +63,8 @@ class AllTests {
     }
 
     void run() {
-        System.setProperty("blackbox.mode", BlackBoxMode.EMERGENCY.value())
-        //System.setProperty("blackbox.mode", BlackBoxMode.SEQUENTIAL.value())
+        //System.setProperty("blackbox.mode", BlackBoxMode.EMERGENCY.value())
+        System.setProperty("blackbox.mode", BlackBoxMode.SEQUENTIAL.value())
         //System.setProperty("blackbox.mode", BlackBoxMode.HIERARCHICAL.value())
         new VisitBlockStatement().visitBlockStatementNoneLevel()
         new VisitBlockStatement().visitBlockStatementMethodErrorLevel()
@@ -329,6 +329,8 @@ class AllTests {
         //
         new Issue001().test()
         new Bar()
+        new ThreadSafety().start()
+        new ThreadSafety().start()
     }
 
 }

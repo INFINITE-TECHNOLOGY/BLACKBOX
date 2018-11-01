@@ -46,7 +46,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
-            ClassNode.getMetaClass().isBlackBoxDeclared = null
             init(iAstNodeArray, iSourceUnit)
             MethodNode methodNode = iAstNodeArray[1] as MethodNode
             String methodName = methodNode.getName()
@@ -119,17 +118,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         return methodCallExpression
     }
 
-    /**
-     * Creates "automaticBlackBox" class field declaration (once per class).
-     * @param iMethodNode
-     */
-    static void declareBlackBox(ClassNode iClassNode) {
-        if (!iClassNode.isBlackBoxDeclared) {
-            iClassNode.addField(new FieldNode("automaticBlackBox", Opcodes.ACC_PUBLIC, ClassHelper.make(BlackBoxEngine.class), iClassNode, GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")))
-            iClassNode.isBlackBoxDeclared = true
-        }
-    }
-
     static Statement checkSuperConstructorCall(MethodNode iMethodNode) {
         Statement firstStatement = new EmptyStatement()
         if (iMethodNode instanceof ConstructorNode) {
@@ -158,7 +146,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.getName()), GeneralUtils.varX(parameter.getName())))
             }
         }
-        declareBlackBox(iMethodNode.getDeclaringClass())
+        Statement blackBoxDeclaration = GeneralUtils.declS(
+                GeneralUtils.varX("automaticBlackBox", ClassHelper.make(BlackBoxEngine.class)),
+                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")
+        )
         Statement firstStatement = checkSuperConstructorCall(iMethodNode)
         Statement methodExecutionOpen = new ExpressionStatement(
                 GeneralUtils.callX(
@@ -184,6 +175,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             iMethodNode.setCode(
                     GeneralUtils.block(
                             firstStatement,
+                            blackBoxDeclaration,
                             methodExecutionOpen,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(
@@ -211,6 +203,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             iMethodNode.setCode(
                     GeneralUtils.block(
                             firstStatement,
+                            blackBoxDeclaration,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
                                 tryCatchStatement.addCatch(
