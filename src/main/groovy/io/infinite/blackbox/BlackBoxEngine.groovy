@@ -3,6 +3,7 @@ package io.infinite.blackbox
 
 import io.infinite.blackbox.generated.*
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.codehaus.groovy.runtime.StackTraceUtils
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
