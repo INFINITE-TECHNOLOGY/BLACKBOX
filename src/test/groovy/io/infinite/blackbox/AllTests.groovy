@@ -331,6 +331,8 @@ class AllTests {
         new Bar()
         new ThreadSafety().start()
         new ThreadSafety().start()
+        RoundRobin roundRobin = new RoundRobin()
+        roundRobin.add("Test")
     }
 
 }

@@ -1,9 +1,9 @@
-package io.infinite
+package io.infinite.blackbox
 
 import io.infinite.blackbox.BlackBox
 import io.infinite.blackbox.BlackBoxLevel
 
-class AnonymousClass<Type> extends ArrayList<Type> {
+class RoundRobin<Type> extends ArrayList<Type> {
 
     private Integer index = 0
 
@@ -12,13 +12,13 @@ class AnonymousClass<Type> extends ArrayList<Type> {
     Iterator<Type> iterator() {
         return new Iterator<Type>() {
 
-            //@BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
+            @BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
             @Override
             boolean hasNext() {
                 return true
             }
 
-            //@BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
+            @BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
             @Override
             Type next() {
                 Type result = get(index)
@@ -26,7 +26,7 @@ class AnonymousClass<Type> extends ArrayList<Type> {
                 return result
             }
 
-            //@BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
+            @BlackBox(blackBoxLevel = io.infinite.blackbox.BlackBoxLevel.EXPRESSION)
             @Override
             void remove() {
                 throw new Exception("Unable to remove from RoundRobin")
