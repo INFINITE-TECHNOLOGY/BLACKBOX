@@ -3,6 +3,7 @@ package io.infinite.blackbox
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
+import jdk.internal.org.objectweb.asm.Opcodes
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
@@ -45,6 +46,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
+            ClassNode.getMetaClass().isBlackBoxDeclared = null
             init(iAstNodeArray, iSourceUnit)
             MethodNode methodNode = iAstNodeArray[1] as MethodNode
             String methodName = methodNode.getName()
@@ -118,6 +120,33 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     }
 
     /**
+     * Creates "automaticBlackBox" class field declaration (once per class).
+     * @param iMethodNode
+     */
+    static void declareBlackBox(ClassNode iClassNode) {
+        if (!iClassNode.isBlackBoxDeclared) {
+            iClassNode.addField(new FieldNode("automaticBlackBox", Opcodes.ACC_PUBLIC, ClassHelper.make(BlackBoxEngine.class), iClassNode, GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")))
+            iClassNode.isBlackBoxDeclared = true
+        }
+    }
+
+    static Statement checkSuperConstructorCall(MethodNode iMethodNode) {
+        Statement firstStatement = new EmptyStatement()
+        if (iMethodNode instanceof ConstructorNode) {
+            def initialFirstStatement = ((BlockStatement)iMethodNode.getCode()).getStatements().get(0)
+            if (initialFirstStatement instanceof ExpressionStatement) {
+                if (initialFirstStatement.getExpression() instanceof ConstructorCallExpression) {
+                    if (((ConstructorCallExpression)initialFirstStatement.getExpression()).isSuperCall()) {
+                        firstStatement = initialFirstStatement
+                        ((BlockStatement) iMethodNode.getCode()).getStatements().remove(initialFirstStatement)
+                    }
+                }
+            }
+        }
+        return firstStatement
+    }
+
+    /**
      * Transforms method or constructor according to BlackBox Transformation rules.
      *
      * @param iMethodNode
@@ -129,10 +158,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.getName()), GeneralUtils.varX(parameter.getName())))
             }
         }
-        Statement blackBoxDeclaration = GeneralUtils.declS(
-                GeneralUtils.varX("automaticBlackBox", ClassHelper.make(BlackBoxEngine.class)),
-                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")
-        )
+        declareBlackBox(iMethodNode.getDeclaringClass())
+        Statement firstStatement = checkSuperConstructorCall(iMethodNode)
         Statement methodExecutionOpen = new ExpressionStatement(
                 GeneralUtils.callX(
                         GeneralUtils.varX("automaticBlackBox"),
@@ -153,11 +180,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         )
         Statement logException = new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exception", GeneralUtils.args(GeneralUtils.varX("automaticThrowable"))))
         if (blackBoxLevel.value() >= BlackBoxLevel.METHOD.value()) {
-            //todo: serialize parameters before method execution
             iMethodNode.getCode().visit(new BlackBoxVisitor(this, blackBoxLevel))//<<<<<<<<<<<<<<VISIT<<<<<
             iMethodNode.setCode(
                     GeneralUtils.block(
-                            blackBoxDeclaration,
+                            firstStatement,
                             methodExecutionOpen,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(
@@ -184,13 +210,13 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         } else if (blackBoxLevel == BlackBoxLevel.METHOD_ERROR) {
             iMethodNode.setCode(
                     GeneralUtils.block(
+                            firstStatement,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
                                 tryCatchStatement.addCatch(
                                         GeneralUtils.catchS(
                                                 GeneralUtils.param(ClassHelper.make(Throwable.class), "automaticThrowable"),
                                                 GeneralUtils.block(
-                                                        blackBoxDeclaration,
                                                         methodExecutionOpen,
                                                         logException,
                                                         new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "executionClose")),
@@ -316,6 +342,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 iExpression instanceof EmptyExpression ||
                 iExpression instanceof MapEntryExpression ||
                 iExpression instanceof ArgumentListExpression ||
+                (iExpression instanceof ConstructorCallExpression && iExpression.isSpecialCall()) ||
                 iExpression.isTransformed == true
         ) {
             return iExpression
