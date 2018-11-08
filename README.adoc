@@ -56,9 +56,31 @@ Granularity of injected code can be defined by the user (programmer) up to:
 * Statement transformation, Statement-level logging
 * Expression transformation, Expression-level logging
 
-== Documentation
+== References
 
 * https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki[BlackBox Documentation]
 * https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/[BlackBox Repository]
 * https://i-t.io/BlackBox/groovydoc/2_0_x/[Groovydoc]
 * https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd[XSD]
+
+== Try it now!
+
+Run the below code in Groovy Console:
+
+[source,groovy]
+----
+@GrabResolver(name='infinite.io', root='https://i-t.io/m2') 
+@Grab(group='io.infinite', module='blackbox', version='2.0.0')
+
+import io.infinite.blackbox.*
+
+@BlackBox(blackBoxLevel=BlackBoxLevel.EXPRESSION)
+String foobar(String foo) {
+    String bar = "bar"
+    String foobar = foo + bar
+    return foobar
+}
+System.setProperty("blackbox.mode", BlackBoxMode.SEQUENTIAL.value())
+
+foobar("foo")
+----
