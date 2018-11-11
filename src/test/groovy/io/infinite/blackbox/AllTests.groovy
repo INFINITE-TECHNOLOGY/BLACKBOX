@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
 import io.infinite.blackbox.issues.Issue001
+import io.infinite.blackbox.others.DefaultBlackBoxLevel
 import io.infinite.blackbox.superconstructor.Bar
 import io.infinite.blackbox.supermethod.SubClass
 import io.infinite.blackbox.tests.VisitArgumentlistExpression
@@ -334,6 +335,7 @@ class AllTests {
         //RoundRobin roundRobin = new RoundRobin()
         //roundRobin.add("Test")
         new SubClass().bar("foo")
+        new DefaultBlackBoxLevel().foo()
     }
 
 }
