@@ -1,9 +1,11 @@
 package io.infinite.blackbox
 
-import io.infinite.blackbox.issues.Issue001
+import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
-import io.infinite.blackbox.superconstructor.Bar
-import io.infinite.blackbox.supermethod.SubClass
+import io.infinite.blackbox.others.RoundRobin
+import io.infinite.blackbox.others.ThreadSafety
+import io.infinite.blackbox.others.superconstructor.Bar
+import io.infinite.blackbox.others.supermethod.SubClass
 import io.infinite.blackbox.tests.VisitArgumentlistExpression
 import io.infinite.blackbox.tests.VisitArrayExpression
 import io.infinite.blackbox.tests.VisitAssertStatement
@@ -328,12 +330,13 @@ class AllTests {
         new VisitClosureListExpression().visitClosureListExpressionStatementLevel()
         new VisitClosureListExpression().visitClosureListExpressionExpressionLevel()
         //
-        new Issue001().test()
+        new ItVariable().test()
         new Bar()
         new ThreadSafety().start()
         new ThreadSafety().start()
-        //RoundRobin roundRobin = new RoundRobin()
-        //roundRobin.add("Test")
+        RoundRobin roundRobin = new RoundRobin()
+        roundRobin.add("Test")
+        ++roundRobin.iterator()
         new SubClass().bar("foo")
         new DefaultBlackBoxLevel().foo()
     }

@@ -155,7 +155,11 @@ class BlackBoxEngine {
             if (evaluationResult != null) {
                 XMLObject xmlObject = new XMLObject()
                 xmlObject.setClassName(evaluationResult.getClass().getCanonicalName())
-                xmlObject.setValue(evaluationResult.toString())
+                if (evaluationResult instanceof List) {//workaround possible infinite loops with RoundRobin
+                    xmlObject.setValue(evaluationResult.toArray().toString())
+                } else {
+                    xmlObject.setValue(evaluationResult.toString())
+                }
                 astNode.setExpressionValue(xmlObject)
             }
             return evaluationResult

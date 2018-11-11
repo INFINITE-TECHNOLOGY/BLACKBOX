@@ -48,13 +48,18 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             ASTNode.getMetaClass().isTransformed = null
             init(iAstNodeArray, iSourceUnit)
             MethodNode methodNode = iAstNodeArray[1] as MethodNode
+            if (methodNode.getDeclaringClass().getOuterClass() != null) {
+                throw new Exception("BlackBox currently does not support annotations in Inner Classes.")
+            }
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             Thread.currentThread().setName("Compilation_$className.$methodName")
             annotationNode = iAstNodeArray[0] as AnnotationNode
             blackBoxLevel = getBlackBoxLevel(annotationNode, methodName)
             transformMethod(methodNode)
-            new VariableScopeVisitor(sourceUnit, true).visitClass(methodNode.getDeclaringClass())//<<<<<<<<<
+            sourceUnit.AST.classes.each {
+                new VariableScopeVisitor(sourceUnit, true).visitClass(it)
+            }
             log.debug(codeString(methodNode.getCode()))
         } catch (Throwable throwable) {
             log.error(ExceptionUtils.getStackTrace(throwable))
@@ -240,7 +245,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     static String codeString(ASTNode iAstNode) {
         StringWriter stringWriter = new StringWriter()
         iAstNode.visit(new AstNodeToScriptVisitor(stringWriter))
-        return stringWriter.getBuffer().toString().replace("\$", "")
+        return stringWriter.getBuffer().toString()
     }
 
     static final Boolean methodArgumentsPresent(Object iArgs) {
@@ -332,6 +337,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     Expression transformExpression(Expression iExpression, String iSourceNodeName) {
         //see also: https://issues.apache.org/jira/browse/GROOVY-8834
         Expression transformedExpression = iExpression
+        if (iExpression instanceof ConstantExpression && iExpression.getValue()=="this") {
+            throw new Exception("!123")
+        }
         if (iExpression == null ||
                 blackBoxLevel.value() < BlackBoxLevel.EXPRESSION.value() ||
                 iExpression instanceof EmptyExpression ||
@@ -370,8 +378,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             transformedExpression = new AttributeExpression(transformExpression(iExpression.getObjectExpression() as Expression, "AttributeExpression:objectExpression"),
                     transformExpression(iExpression.getProperty() as Expression, "PropertyExpression:property"))
         } else if (iExpression.getClass() == PropertyExpression.class) {
-            transformedExpression = new PropertyExpression(transformExpression(iExpression.getObjectExpression() as Expression, "PropertyExpression:objectExpression"),
-                    transformExpression(iExpression.getProperty() as Expression, "PropertyExpression:property"))
+            if (!(iExpression.getObjectExpression() instanceof ClassExpression && iExpression.getProperty() instanceof ConstantExpression && iExpression.getProperty().getValue().toString() == "this")) {
+                transformedExpression = new PropertyExpression(transformExpression(iExpression.getObjectExpression() as Expression, "PropertyExpression:objectExpression"),
+                        transformExpression(iExpression.getProperty() as Expression, "PropertyExpression:property"))
+            }
         } else if (iExpression.getClass() == RangeExpression.class) {
             transformedExpression = new RangeExpression(transformExpression(iExpression.getFrom() as Expression, "RangeExpression:from"),
                     transformExpression(iExpression.getTo() as Expression, "RangeExpression:to"), iExpression.isInclusive() as Boolean)
