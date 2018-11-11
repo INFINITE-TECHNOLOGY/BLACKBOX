@@ -3,7 +3,6 @@ package io.infinite.blackbox
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
-import jdk.internal.org.objectweb.asm.Opcodes
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
@@ -13,6 +12,7 @@ import org.codehaus.groovy.ast.tools.GeneralUtils
 import org.codehaus.groovy.classgen.VariableScopeVisitor
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
+import org.codehaus.groovy.runtime.NullObject
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
@@ -75,6 +75,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         if (memberExpression instanceof PropertyExpression) {
             ConstantExpression constantExpression = memberExpression.getProperty() as ConstantExpression
             return constantExpression.getValue() as BlackBoxLevel
+        } else if (memberExpression == null) {
+            return BlackBoxLevel.METHOD
         } else {
             throw new Exception("Unsupported annotation member expression class: " + memberExpression.getClass().getCanonicalName() + " for method " + iMethodName)
         }
@@ -121,10 +123,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     static Statement checkSuperConstructorCall(MethodNode iMethodNode) {
         Statement firstStatement = new EmptyStatement()
         if (iMethodNode instanceof ConstructorNode) {
-            def initialFirstStatement = ((BlockStatement)iMethodNode.getCode()).getStatements().get(0)
+            def initialFirstStatement = ((BlockStatement) iMethodNode.getCode()).getStatements().get(0)
             if (initialFirstStatement instanceof ExpressionStatement) {
                 if (initialFirstStatement.getExpression() instanceof ConstructorCallExpression) {
-                    if (((ConstructorCallExpression)initialFirstStatement.getExpression()).isSuperCall()) {
+                    if (((ConstructorCallExpression) initialFirstStatement.getExpression()).isSuperCall()) {
                         firstStatement = initialFirstStatement
                         ((BlockStatement) iMethodNode.getCode()).getStatements().remove(initialFirstStatement)
                     }
