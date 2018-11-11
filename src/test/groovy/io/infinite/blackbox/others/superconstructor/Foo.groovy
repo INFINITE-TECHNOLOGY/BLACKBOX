@@ -1,4 +1,4 @@
-package io.infinite.blackbox.superconstructor
+package io.infinite.blackbox.others.superconstructor
 
 class Foo {
 

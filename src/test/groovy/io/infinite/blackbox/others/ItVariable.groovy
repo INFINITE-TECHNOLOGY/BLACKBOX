@@ -1,9 +1,9 @@
-package io.infinite.blackbox.issues
+package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
 import io.infinite.blackbox.BlackBoxLevel
 
-class Issue001 {
+class ItVariable {
 
     @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
     void test() {

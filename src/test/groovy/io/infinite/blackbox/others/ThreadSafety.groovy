@@ -1,4 +1,7 @@
-package io.infinite.blackbox
+package io.infinite.blackbox.others
+
+import io.infinite.blackbox.BlackBox
+import io.infinite.blackbox.BlackBoxLevel
 
 class ThreadSafety extends Thread{
 

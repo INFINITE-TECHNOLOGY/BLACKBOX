@@ -1,4 +1,4 @@
-package io.infinite.blackbox.supermethod
+package io.infinite.blackbox.others.supermethod
 
 class SuperClass  {
 
