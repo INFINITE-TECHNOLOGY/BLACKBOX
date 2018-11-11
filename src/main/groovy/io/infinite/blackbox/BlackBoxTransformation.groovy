@@ -336,6 +336,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 iExpression instanceof MapEntryExpression ||
                 iExpression instanceof ArgumentListExpression ||
                 (iExpression instanceof ConstructorCallExpression && iExpression.isSpecialCall()) ||
+                (iExpression instanceof VariableExpression && iExpression.isSuperExpression()) ||
                 iExpression.isTransformed == true
         ) {
             return iExpression
