@@ -2,7 +2,7 @@ package io.infinite.blackbox
 
 import io.infinite.blackbox.issues.Issue001
 import io.infinite.blackbox.superconstructor.Bar
-import io.infinite.blackbox.superconstructor.Foo
+import io.infinite.blackbox.supermethod.SubClass
 import io.infinite.blackbox.tests.VisitArgumentlistExpression
 import io.infinite.blackbox.tests.VisitArrayExpression
 import io.infinite.blackbox.tests.VisitAssertStatement
@@ -331,8 +331,9 @@ class AllTests {
         new Bar()
         new ThreadSafety().start()
         new ThreadSafety().start()
-        RoundRobin roundRobin = new RoundRobin()
-        roundRobin.add("Test")
+        //RoundRobin roundRobin = new RoundRobin()
+        //roundRobin.add("Test")
+        new SubClass().bar("foo")
     }
 
 }
