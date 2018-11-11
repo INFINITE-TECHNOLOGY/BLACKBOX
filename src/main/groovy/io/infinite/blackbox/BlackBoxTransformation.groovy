@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
 import groovy.inspect.swingui.AstNodeToScriptVisitor
+import groovy.json.StringEscapeUtils
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -238,7 +239,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     }
 
     static Statement text2statement(String iCodeText) {
-        List<ASTNode> resultingStatements = new AstBuilder().buildFromString(CompilePhase.SEMANTIC_ANALYSIS, true, iCodeText)
+        List<ASTNode> resultingStatements = new AstBuilder().buildFromString(CompilePhase.SEMANTIC_ANALYSIS, true, iCodeText.replace("\$", "\\\$"))
         return resultingStatements.first() as Statement
     }
 
