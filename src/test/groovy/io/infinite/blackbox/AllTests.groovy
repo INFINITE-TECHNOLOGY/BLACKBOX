@@ -336,7 +336,8 @@ class AllTests {
         new ThreadSafety().start()
         RoundRobin roundRobin = new RoundRobin()
         roundRobin.add("Test")
-        ++roundRobin.iterator()
+        String test = ++roundRobin.iterator()
+        assert test == "Test"
         new SubClass().bar("foo")
         new DefaultBlackBoxLevel().foo()
     }

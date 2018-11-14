@@ -38,6 +38,14 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
     }
 
     /**
+     * Logback call to perform actual log printing.
+     */
+    private void logError(String iText) {
+        //todo: break multiline text into separate log calls
+        log.error(getPad() + iText)
+    }
+
+    /**
      * In addition to base BlackBoxEngine behavior, <br/>
      * - prints opening tags of Expression.
      */
@@ -131,11 +139,11 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                     log("""</methodResult>""")
                 }
                 if (astNode.getException() != null) {
-                    log("""<exception exceptionDateTime="${astNode.getException().getExceptionDateTime().toXMLFormat()}">""")
+                    logError("""<exception exceptionDateTime="${astNode.getException().getExceptionDateTime().toXMLFormat()}">""")
                     depth++
-                    log("""<exceptionStackTrace>${XmlUtil.escapeXml(astNode.getException().getExceptionStackTrace())}</exceptionStackTrace>""")
+                    logError("""<exceptionStackTrace>${XmlUtil.escapeXml(astNode.getException().getExceptionStackTrace())}</exceptionStackTrace>""")
                     depth--
-                    log("""</exception>""")
+                    logError("""</exception>""")
                 }
                 depth--
                 log("""</astNode>""")

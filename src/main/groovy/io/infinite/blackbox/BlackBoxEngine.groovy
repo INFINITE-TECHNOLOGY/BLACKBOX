@@ -340,7 +340,7 @@ class BlackBoxEngine {
         //todo: log only 1 time
         //todo: log.error for exceptions
         XMLException xmlException = new XMLException()
-        xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(throwable))
+        xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
         xmlException.setExceptionDateTime(getXMLGregorianCalendar())
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()

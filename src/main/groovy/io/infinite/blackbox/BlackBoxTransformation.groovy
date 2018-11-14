@@ -14,6 +14,7 @@ import org.codehaus.groovy.classgen.VariableScopeVisitor
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.NullObject
+import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
@@ -63,7 +64,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             }
             log.debug(codeString(methodNode.getCode()))
         } catch (Throwable throwable) {
-            log.error(ExceptionUtils.getStackTrace(throwable))
+            log.error(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
             throw throwable
         }
     }
@@ -391,6 +392,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         } else if (iExpression.getClass() == SpreadMapExpression.class) {
             transformedExpression = new SpreadMapExpression(transformExpression(iExpression.getExpression() as Expression, "SpreadExpression:expression"))
         } else if (iExpression.getClass() == StaticMethodCallExpression.class) {
+            //todo: StaticMethodCall transformation (wrap into "executeStaticMethod"; same applies to methodCallExpression when objectExpression is ClassExpression)
             transformedExpression = new StaticMethodCallExpression(iExpression.getOwnerType() as ClassNode, iExpression.getMethod() as String,
                     transformExpression(iExpression.getArguments() as Expression, "StaticMethodCallExpression:arguments"))
         } else if (iExpression.getClass() == ElvisOperatorExpression.class) {
