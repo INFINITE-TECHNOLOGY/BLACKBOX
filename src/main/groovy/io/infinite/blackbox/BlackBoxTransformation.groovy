@@ -35,6 +35,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     AnnotationNode annotationNode
     BlackBoxLevel blackBoxLevel
+    boolean suppressExceptions
     static Integer uniqueClosureParamCounter = 0
 
     /**
@@ -57,7 +58,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             Thread.currentThread().setName("Compilation_$className.$methodName")
             annotationNode = iAstNodeArray[0] as AnnotationNode
-            blackBoxLevel = getBlackBoxLevel(annotationNode, methodName)
+            blackBoxLevel = getAnnotationValue("blackBoxLevel", annotationNode, methodName, BlackBoxLevel.METHOD) as BlackBoxLevel
+            suppressExceptions = getAnnotationValue("suppressExceptions", annotationNode, methodName, false)
             transformMethod(methodNode)
             sourceUnit.AST.classes.each {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
@@ -76,14 +78,16 @@ class BlackBoxTransformation extends AbstractASTTransformation {
      * @param iMethodName
      * @return
      */
-    static BlackBoxLevel getBlackBoxLevel(ASTNode iAnnotationNode, String iMethodName) {
+    static Object getAnnotationValue(String iAnnotationName, ASTNode iAnnotationNode, String iMethodName, Object iDefaultValue) {
         AnnotationNode annotationNode = iAnnotationNode as AnnotationNode
-        Expression memberExpression = annotationNode.getMember("blackBoxLevel")
+        Expression memberExpression = annotationNode.getMember(iAnnotationName)
         if (memberExpression instanceof PropertyExpression) {
             ConstantExpression constantExpression = memberExpression.getProperty() as ConstantExpression
-            return constantExpression.getValue() as BlackBoxLevel
+            return constantExpression.getValue()
+        } else if (memberExpression instanceof ConstantExpression) {
+            return memberExpression.getValue()
         } else if (memberExpression == null) {
-            return BlackBoxLevel.METHOD
+            return iDefaultValue
         } else {
             throw new Exception("Unsupported annotation member expression class: " + memberExpression.getClass().getCanonicalName() + " for method " + iMethodName)
         }
@@ -234,9 +238,13 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     }
 
     private Statement createThrowStatement() {
-        ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticThrowable"))
-        throwStatement.setSourcePosition(annotationNode)
-        return throwStatement
+        if (!suppressExceptions) {
+            ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticThrowable"))
+            throwStatement.setSourcePosition(annotationNode)
+            return throwStatement
+        } else {
+            return new EmptyStatement()
+        }
     }
 
     static Statement text2statement(String iCodeText) {

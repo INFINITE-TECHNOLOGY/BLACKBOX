@@ -25,4 +25,11 @@ import java.lang.annotation.Target
      */
     BlackBoxLevel blackBoxLevel() default BlackBoxLevel.METHOD
 
+    /**
+     * When enabled, this will cause BlackBox with levels METHOD_ERROR and above to suppress exceptions
+     * (not to rethrow them after logging)
+     * @return
+     */
+    boolean suppressExceptions() default false
+
 }
