@@ -337,15 +337,17 @@ class BlackBoxEngine {
      * @param throwable
      */
     void exception(Throwable throwable) {
-        //todo: log only 1 time
-        //todo: log.error for exceptions
-        XMLException xmlException = new XMLException()
-        xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
-        xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+        //todo: when duplicate exception - print reference to previous logging
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()
         }
-        ((XMLMethodNode) astNode).setException(xmlException)
+        if (throwable.isLoggedByBlackBox != true) {
+            XMLException xmlException = new XMLException()
+            xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
+            xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+            ((XMLMethodNode) astNode).setException(xmlException)
+            throwable.isLoggedByBlackBox = true
+        }
     }
 
 }
