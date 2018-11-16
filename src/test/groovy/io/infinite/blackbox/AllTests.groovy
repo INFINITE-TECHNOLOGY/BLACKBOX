@@ -1,8 +1,10 @@
 package io.infinite.blackbox
 
+import io.infinite.blackbox.others.DuplicateException
 import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
 import io.infinite.blackbox.others.RoundRobin
+import io.infinite.blackbox.others.Suppress
 import io.infinite.blackbox.others.ThreadSafety
 import io.infinite.blackbox.others.superconstructor.Bar
 import io.infinite.blackbox.others.supermethod.SubClass
@@ -58,6 +60,10 @@ import io.infinite.blackbox.tests.VisitUnaryMinusExpression
 import io.infinite.blackbox.tests.VisitUnaryPlusExpression
 import io.infinite.blackbox.tests.VisitVariableExpression
 import io.infinite.blackbox.tests.VisitWhileLoop
+
+import java.lang.reflect.Field
+import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 
 class AllTests {
 
@@ -339,8 +345,10 @@ class AllTests {
         String test = ++roundRobin.iterator()
         assert test == "Test"
         new SubClass().bar("foo")
-        new DefaultBlackBoxLevel().foo()
+        new Suppress().test()
+        new DuplicateException().test()
     }
+
 
 }
 
