@@ -158,7 +158,7 @@ class BlackBoxEngine {
                 if (evaluationResult instanceof List) {//workaround possible infinite loops with RoundRobin
                     xmlObject.setValue(evaluationResult.toArray().toString())
                 } else {
-                    xmlObject.setValue(evaluationResult.toString())
+                    xmlObject.setValue(TraceSerializer.toString(evaluationResult))
                 }
                 astNode.setExpressionValue(xmlObject)
             }
