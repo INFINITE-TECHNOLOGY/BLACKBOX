@@ -4,6 +4,7 @@ import io.infinite.blackbox.others.DuplicateException
 import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
 import io.infinite.blackbox.others.RoundRobin
+import io.infinite.blackbox.others.StaticToString
 import io.infinite.blackbox.others.Suppress
 import io.infinite.blackbox.others.ThreadSafety
 import io.infinite.blackbox.others.superconstructor.Bar
@@ -347,6 +348,7 @@ class AllTests {
         new SubClass().bar("foo")
         new Suppress().test()
         new DuplicateException().test()
+        BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "")
     }
 
 
