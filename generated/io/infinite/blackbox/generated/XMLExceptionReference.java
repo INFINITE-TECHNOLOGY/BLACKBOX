@@ -11,27 +11,24 @@ package io.infinite.blackbox.generated;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * 
- *                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#object
+ *                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#exceptionreference
  *             
  * 
- * <p>Java class for Object complex type.
+ * <p>Java class for ExceptionReference complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Object">
+ * &lt;complexType name="ExceptionReference">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *       &lt;attribute name="className" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="exceptionUid" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="isAlreadyLogged" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,62 +37,60 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Object", propOrder = {
-    "value"
-})
-public class XMLObject {
+@XmlType(name = "ExceptionReference")
+public class XMLExceptionReference {
 
-    @XmlElement(required = true)
-    protected String value;
-    @XmlAttribute(name = "className", required = true)
-    protected String className;
+    @XmlAttribute(name = "exceptionUid")
+    protected String exceptionUid;
+    @XmlAttribute(name = "isAlreadyLogged")
+    protected Boolean isAlreadyLogged;
 
     /**
-     * Gets the value of the value property.
+     * Gets the value of the exceptionUid property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValue() {
-        return value;
+    public String getExceptionUid() {
+        return exceptionUid;
     }
 
     /**
-     * Sets the value of the value property.
+     * Sets the value of the exceptionUid property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setExceptionUid(String value) {
+        this.exceptionUid = value;
     }
 
     /**
-     * Gets the value of the className property.
+     * Gets the value of the isAlreadyLogged property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public String getClassName() {
-        return className;
+    public Boolean isIsAlreadyLogged() {
+        return isAlreadyLogged;
     }
 
     /**
-     * Sets the value of the className property.
+     * Sets the value of the isAlreadyLogged property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public void setClassName(String value) {
-        this.className = value;
+    public void setIsAlreadyLogged(Boolean value) {
+        this.isAlreadyLogged = value;
     }
 
 }
