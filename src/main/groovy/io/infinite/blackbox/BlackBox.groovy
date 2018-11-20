@@ -20,7 +20,7 @@ import java.lang.annotation.Target
 @interface BlackBox {
 
     /**
-     * BlackBox level, default BlackBoxLevel.METHOD
+     * BlackBox level, default BlackBoxLevel.METHOD (can be overriden by System property "blackbox.level.default")
      * @return BlackBox level for transforming method/constructor.
      */
     BlackBoxLevel blackBoxLevel() default BlackBoxLevel.METHOD

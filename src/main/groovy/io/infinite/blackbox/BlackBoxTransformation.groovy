@@ -1,7 +1,7 @@
 package io.infinite.blackbox
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.inspect.swingui.AstNodeToScriptVisitor
-import groovy.json.StringEscapeUtils
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -13,9 +13,7 @@ import org.codehaus.groovy.ast.tools.GeneralUtils
 import org.codehaus.groovy.classgen.VariableScopeVisitor
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
-import org.codehaus.groovy.runtime.NullObject
 import org.codehaus.groovy.runtime.StackTraceUtils
-import org.codehaus.groovy.syntax.Token
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.sc.ListOfExpressionsExpression
@@ -37,6 +35,13 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     BlackBoxLevel blackBoxLevel
     boolean suppressExceptions
     static Integer uniqueClosureParamCounter = 0
+    static BlackBoxConfig blackBoxConfig = new BlackBoxConfig()
+
+    static {
+        if (new File("./BlackBox.json").exists()) {
+            blackBoxConfig = new ObjectMapper().readValue(new File("./BlackBox.json").getText(), BlackBoxConfig.class)
+        }
+    }
 
     /**
      * Visits method or constructor<br/>
@@ -58,7 +63,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             Thread.currentThread().setName("Compilation_$className.$methodName")
             annotationNode = iAstNodeArray[0] as AnnotationNode
-            blackBoxLevel = getAnnotationValue("blackBoxLevel", annotationNode, methodName, BlackBoxLevel.METHOD) as BlackBoxLevel
+            blackBoxLevel = getAnnotationValue("blackBoxLevel", annotationNode, methodName, BlackBoxLevel.valueOf(blackBoxConfig.compile.defaultLevel)) as BlackBoxLevel
             suppressExceptions = getAnnotationValue("suppressExceptions", annotationNode, methodName, false)
             transformMethod(methodNode)
             sourceUnit.AST.classes.each {

@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
+
     // Use the latest Groovy version for building this library
     compile 'org.codehaus.groovy:groovy-all:2.5.2'
 

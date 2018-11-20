@@ -6,7 +6,7 @@ class DefaultBlackBoxLevel {
 
     @BlackBox
     void foo() {
-
+        System.out.println("Expression")
     }
 
 }

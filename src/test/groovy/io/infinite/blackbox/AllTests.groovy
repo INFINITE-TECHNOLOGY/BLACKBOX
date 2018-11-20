@@ -351,6 +351,7 @@ class AllTests {
         new DuplicateException().test()
         BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "")
         new ExceptionPlaintext().test()
+        new DefaultBlackBoxLevel().foo()
     }
 
 
