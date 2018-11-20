@@ -6,6 +6,7 @@ import org.codehaus.groovy.ast.VariableScope
 import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.*
 import org.codehaus.groovy.ast.tools.GeneralUtils
+import org.codehaus.groovy.syntax.Token
 
 
 /**
@@ -197,7 +198,12 @@ class BlackBoxVisitor extends CodeVisitorSupport {
     @Override
     void visitBinaryExpression(BinaryExpression iBinaryExpression) {
         iBinaryExpression.origCodeString = blackBoxTransformation.codeString(iBinaryExpression)
-        super.visitBinaryExpression(iBinaryExpression)
+        iBinaryExpression.getRightExpression().visit(this)
+        if (iBinaryExpression.operation.text != "=") {
+            iBinaryExpression.getLeftExpression().visit(this)
+            iBinaryExpression.setLeftExpression(blackBoxTransformation.transformExpression(iBinaryExpression.getLeftExpression() as Expression, iBinaryExpression.getClass().getSimpleName() + ":leftExpression"))
+        }
+        iBinaryExpression.setRightExpression(blackBoxTransformation.transformExpression(iBinaryExpression.getRightExpression() as Expression, "BinaryExpression:rightExpression"))
     }
 
     @Override
@@ -353,6 +359,7 @@ class BlackBoxVisitor extends CodeVisitorSupport {
     void visitDeclarationExpression(DeclarationExpression iDeclarationExpression) {
         iDeclarationExpression.origCodeString = blackBoxTransformation.codeString(iDeclarationExpression)
         iDeclarationExpression.getRightExpression().visit(this)
+        iDeclarationExpression.setRightExpression(blackBoxTransformation.transformExpression(iDeclarationExpression.getRightExpression(), iDeclarationExpression.getClass().getSimpleName() + ":rightExpression"))
     }
 
     @Override

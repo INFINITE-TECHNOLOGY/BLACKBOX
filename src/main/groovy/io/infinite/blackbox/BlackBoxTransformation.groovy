@@ -314,10 +314,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         return blockStatement
     }
 
-    private ListOfExpressionsExpression transformDeclarationExpression(DeclarationExpression iExpression, String iSourceNodeName) {
+    private static ListOfExpressionsExpression transformDeclarationExpression(DeclarationExpression iExpression, String iSourceNodeName) {
         ListOfExpressionsExpression listOfExpressionsExpression = new ListOfExpressionsExpression()
-        Expression transformedRightExpression = transformExpression(iExpression.rightExpression as Expression, "DeclarationExpression:rightExpression")
-        DeclarationExpression transformedDeclarationExpression = new DeclarationExpression(iExpression.leftExpression as Expression, iExpression.operation as Token, transformedRightExpression)
         MethodCallExpression expressionExecutionOpenMethodCallExpression = GeneralUtils.callX(
                 GeneralUtils.varX("automaticBlackBox"),
                 "expressionExecutionOpen",
@@ -336,7 +334,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 "executionClose"
         )
         listOfExpressionsExpression.addExpression(expressionExecutionOpenMethodCallExpression)
-        listOfExpressionsExpression.addExpression(transformedDeclarationExpression)
+        listOfExpressionsExpression.addExpression(iExpression)
         listOfExpressionsExpression.addExpression(expressionExecutionCloseMethodCallExpression)
         listOfExpressionsExpression.copyNodeMetaData(iExpression)
         listOfExpressionsExpression.setSourcePosition(iExpression)
@@ -347,9 +345,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     Expression transformExpression(Expression iExpression, String iSourceNodeName) {
         //see also: https://issues.apache.org/jira/browse/GROOVY-8834
         Expression transformedExpression = iExpression
-        if (iExpression instanceof ConstantExpression && iExpression.getValue()=="this") {
-            throw new Exception("!123")
-        }
         if (iExpression == null ||
                 blackBoxLevel.value() < BlackBoxLevel.EXPRESSION.value() ||
                 iExpression instanceof EmptyExpression ||
@@ -362,15 +357,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             return iExpression
         } else if (iExpression.getClass() == DeclarationExpression.class) {
             return transformDeclarationExpression(iExpression as DeclarationExpression, iSourceNodeName)
-        } else if (iExpression.getClass() == BinaryExpression.class) {
-            Expression transformedRightExpression = transformExpression(iExpression.rightExpression as Expression, "BinaryExpression:rightExpression")
-            Expression transformedLeftExpression
-            if (iExpression.operation.text == "=") {
-                transformedLeftExpression = iExpression.leftExpression
-            } else {
-                transformedLeftExpression = transformExpression(iExpression.leftExpression as Expression, "BinaryExpression:leftExpression")
-            }
-            transformedExpression = new BinaryExpression(transformedLeftExpression as Expression, iExpression.operation as Token, transformedRightExpression)
         } else if (iExpression.getClass() == BitwiseNegationExpression.class) {
             transformedExpression = new BitwiseNegationExpression(transformExpression(iExpression.getExpression() as Expression, "BitwiseNegationExpression:expression"))
         } else if (iExpression.getClass() == NotExpression.class) {
