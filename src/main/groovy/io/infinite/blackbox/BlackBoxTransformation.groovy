@@ -225,7 +225,27 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                                 GeneralUtils.block(
                                                         methodExecutionOpen,
                                                         logException,
-                                                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "executionClose")),
+                                                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "executionClose")),//todo: log autonomous exception here
+                                                        createThrowStatement()
+                                                )
+                                        )
+                                )
+                                return tryCatchStatement
+                            }.call() as TryCatchStatement
+                    )
+            )
+        } else if (blackBoxLevel == BlackBoxLevel.ERROR) {
+            iMethodNode.setCode(
+                    GeneralUtils.block(
+                            firstStatement,
+                            blackBoxDeclaration,
+                            {
+                                TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
+                                tryCatchStatement.addCatch(
+                                        GeneralUtils.catchS(
+                                                GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"),
+                                                GeneralUtils.block(
+                                                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exceptionPlaintext", GeneralUtils.args(GeneralUtils.varX("automaticException")))),
                                                         createThrowStatement()
                                                 )
                                         )

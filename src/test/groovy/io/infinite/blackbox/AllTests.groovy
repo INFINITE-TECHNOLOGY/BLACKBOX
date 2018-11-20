@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
 import io.infinite.blackbox.others.DuplicateException
+import io.infinite.blackbox.others.ExceptionPlaintext
 import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
 import io.infinite.blackbox.others.RoundRobin
@@ -349,6 +350,7 @@ class AllTests {
         new Suppress().test()
         new DuplicateException().test()
         BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "")
+        new ExceptionPlaintext().test()
     }
 
 

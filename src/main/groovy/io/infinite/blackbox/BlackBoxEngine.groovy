@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-
+import groovy.util.logging.Slf4j
 import io.infinite.blackbox.generated.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
@@ -12,6 +12,7 @@ import javax.xml.datatype.XMLGregorianCalendar
  * This class implements BlackBox Runtime API - Base functionality
  *
  */
+@Slf4j
 class BlackBoxEngine {
 
     /**
@@ -346,6 +347,17 @@ class BlackBoxEngine {
             ((XMLMethodNode) astNode).setException(xmlException)
             exception.isLoggedByBlackBox = true
         }
+    }
+
+    /**
+     * Logs exception as plaintext<br/>
+     * Does not use XML format<br/>
+     * Does not log neither method arguments nor preceding AST.<br/>
+     *
+     * @param exception
+     */
+    void exceptionPlaintext(Exception exception) {
+        log.error(exception.getMessage(), new StackTraceUtils().sanitize(exception))
     }
 
 }

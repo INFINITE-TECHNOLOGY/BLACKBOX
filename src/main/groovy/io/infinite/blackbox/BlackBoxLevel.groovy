@@ -24,9 +24,13 @@ enum BlackBoxLevel {
      */
     METHOD_ERROR(2),
     /**
+     * Corresponds to Exception handling transformation
+     */
+    ERROR(1),
+    /**
      * Method is unmodified
      */
-    NONE(1);
+    NONE(0);
 
     private final int blackBoxLevel
 
