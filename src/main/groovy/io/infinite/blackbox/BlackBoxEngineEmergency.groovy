@@ -34,12 +34,12 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
     /**
      * In addition to base behavior of BlackBoxEngine, Exception causes actual printing of the Log (whole failed branch of AST Log is printed).<br/>
      * Since the AST tree is finite at this point of time - hierarchical XML marshaller is used.
-     * @param iThrowable
+     * @param exception
      */
     @Override
-    void exception(Throwable iThrowable) {
-        super.exception(iThrowable)
-        if (iThrowable.isLoggedByBlackBox != true) {
+    void exception(Exception exception) {
+        super.exception(exception)
+        if (exception.isLoggedByBlackBox != true) {
             JAXBContext lJAXBContext = JAXBContext.newInstance(astNode.getClass())
             Marshaller marshaller = lJAXBContext.createMarshaller()
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE)
@@ -47,7 +47,7 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
             marshaller.marshal(new ObjectFactory().createRootAstNode(astNode), stringWriter)
             String xmlString = stringWriter.toString()
             log.error(xmlString)
-            iThrowable.isLoggedByBlackBox = true
+            exception.isLoggedByBlackBox = true
         }
     }
 }

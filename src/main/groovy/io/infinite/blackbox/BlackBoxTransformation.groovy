@@ -65,9 +65,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
             }
             log.debug(codeString(methodNode.getCode()))
-        } catch (Throwable throwable) {
-            log.error(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
-            throw throwable
+        } catch (Exception exception) {
+            log.error(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+            throw exception
         }
     }
 
@@ -182,7 +182,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                         )
                 )
         )
-        Statement logException = new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exception", GeneralUtils.args(GeneralUtils.varX("automaticThrowable"))))
+        Statement logException = new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exception", GeneralUtils.args(GeneralUtils.varX("automaticException"))))
         if (blackBoxLevel.value() >= BlackBoxLevel.METHOD.value()) {
             iMethodNode.getCode().visit(new BlackBoxVisitor(this, blackBoxLevel))//<<<<<<<<<<<<<<VISIT<<<<<
             iMethodNode.setCode(
@@ -206,7 +206,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                         new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "executionClose"))
                                 )
                                 tryCatchStatement.addCatch(
-                                        GeneralUtils.catchS(GeneralUtils.param(ClassHelper.make(Throwable.class), "automaticThrowable"), GeneralUtils.block(logException, createThrowStatement()))
+                                        GeneralUtils.catchS(GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"), GeneralUtils.block(logException, createThrowStatement()))
                                 )
                                 return tryCatchStatement
                             }.call() as TryCatchStatement
@@ -221,7 +221,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
                                 tryCatchStatement.addCatch(
                                         GeneralUtils.catchS(
-                                                GeneralUtils.param(ClassHelper.make(Throwable.class), "automaticThrowable"),
+                                                GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"),
                                                 GeneralUtils.block(
                                                         methodExecutionOpen,
                                                         logException,
@@ -239,7 +239,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     private Statement createThrowStatement() {
         if (!suppressExceptions) {
-            ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticThrowable"))
+            ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticException"))
             throwStatement.setSourcePosition(annotationNode)
             return throwStatement
         } else {

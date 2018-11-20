@@ -59,7 +59,7 @@ class BlackBoxEngine {
         BlackBoxEngine blackBoxEngine = blackBoxEngineThreadLocal.get() as BlackBoxEngine
         if (blackBoxEngine == null) {
             XMLASTNode.getMetaClass().parentAstNode = null
-            Throwable.getMetaClass().isLoggedByBlackBox = null
+            Exception.getMetaClass().isLoggedByBlackBox = null
             if (System.getProperty("blackbox.mode") == BlackBoxMode.SEQUENTIAL.value()) {
                 blackBoxEngine = new BlackBoxEngineSequential()
             } else if (System.getProperty("blackbox.mode") == BlackBoxMode.HIERARCHICAL.value()) {
@@ -163,8 +163,6 @@ class BlackBoxEngine {
                 astNode.setExpressionValue(xmlObject)
             }
             return evaluationResult
-        } catch (Throwable throwable) {
-            throw throwable
         } finally {
             executionClose()
         }
@@ -334,19 +332,19 @@ class BlackBoxEngine {
      * Logs method exception<br/>
      * Logs the bypassing (closing) of AST Nodes until MethodNode becomes active node.<br/>
      *
-     * @param throwable
+     * @param exception
      */
-    void exception(Throwable throwable) {
+    void exception(Exception exception) {
         //todo: when duplicate exception - print reference to previous logging
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()
         }
-        if (throwable.isLoggedByBlackBox != true) {
+        if (exception.isLoggedByBlackBox != true) {
             XMLException xmlException = new XMLException()
-            xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(throwable)))
+            xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
             xmlException.setExceptionDateTime(getXMLGregorianCalendar())
             ((XMLMethodNode) astNode).setException(xmlException)
-            throwable.isLoggedByBlackBox = true
+            exception.isLoggedByBlackBox = true
         }
     }
 
