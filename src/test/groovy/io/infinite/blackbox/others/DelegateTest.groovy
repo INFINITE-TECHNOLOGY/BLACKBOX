@@ -10,6 +10,8 @@ class DelegateTest {
     void test() {
         Closure c = {
             assert delegate == this
+            assert owner == this
+            assert thisObject == this
         }
         c()
     }

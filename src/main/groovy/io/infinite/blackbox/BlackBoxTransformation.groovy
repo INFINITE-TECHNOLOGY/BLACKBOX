@@ -98,16 +98,12 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    private static ClosureExpression prepareEquivalentClosure(Statement statement) {
+    private static ClosureExpression prepareBlackBoxClosure(Statement statement) {
         ClosureExpression closureExpression = GeneralUtils.closureX(
                 GeneralUtils.params(
                         GeneralUtils.param(ClassHelper.make(Object.class), "itVariableReplacement" + uniqueClosureParamCounter)
                 ),
-                GeneralUtils.block(
-                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("this"), "setDelegate", GeneralUtils.varX("automaticThis"))),
-                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("this"), "setResolveStrategy", GeneralUtils.propX(GeneralUtils.classX(Closure.class), "DELEGATE_ONLY"))),
-                        statement
-                )
+                statement
         )
         uniqueClosureParamCounter++
         closureExpression.isTransformed = statement.isTransformed
@@ -124,7 +120,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
      */
     private static MethodCallExpression wrapExpressionIntoMethodCallExpression(Expression iExpression, iSourceNodeName) {
         //See also: https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/issues/1
-        ClosureExpression closureExpression = prepareEquivalentClosure(GeneralUtils.returnS(iExpression))
+        ClosureExpression closureExpression = prepareBlackBoxClosure(GeneralUtils.returnS(iExpression))
         closureExpression.setVariableScope(new VariableScope())
         MethodCallExpression methodCallExpression = GeneralUtils.callX(
                 GeneralUtils.varX("automaticBlackBox"),
@@ -137,7 +133,8 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                         GeneralUtils.constX(iExpression.getLineNumber()),
                         GeneralUtils.constX(iExpression.getLastLineNumber()),
                         closureExpression,
-                        GeneralUtils.constX(iSourceNodeName)
+                        GeneralUtils.constX(iSourceNodeName),
+                        GeneralUtils.varX("automaticThis")
                 )
         )
         methodCallExpression.copyNodeMetaData(iExpression)
@@ -219,7 +216,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                                 return new ExpressionStatement(GeneralUtils.callX(
                                                         GeneralUtils.varX("automaticBlackBox"),
                                                         "executeMethod",
-                                                        GeneralUtils.args(prepareEquivalentClosure(iMethodNode.getCode()))
+                                                        GeneralUtils.args(prepareBlackBoxClosure(iMethodNode.getCode()), GeneralUtils.varX("automaticThis"))
                                                 ))
                                             }
                                         }.call() as Statement,

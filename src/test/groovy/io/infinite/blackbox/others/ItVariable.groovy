@@ -3,7 +3,7 @@ package io.infinite.blackbox.others
 import io.infinite.blackbox.BlackBox
 import io.infinite.blackbox.BlackBoxLevel
 
-class ItVariable {
+class ItVariable implements Runnable{
 
     @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
     void test() {
@@ -13,4 +13,8 @@ class ItVariable {
         }
     }
 
+    @Override
+    void run() {
+        test()
+    }
 }
