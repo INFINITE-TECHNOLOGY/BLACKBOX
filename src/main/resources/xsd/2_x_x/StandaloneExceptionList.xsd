@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="StandaloneException.xsd"/>
+    <xs:complexType name="StandaloneExceptionList">
+        <xs:annotation>
+            <xs:documentation>
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#standaloneexceptionlist
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element type="StandaloneException" name="standaloneException" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
