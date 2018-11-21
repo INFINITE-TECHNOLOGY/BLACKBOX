@@ -1,5 +1,6 @@
 package io.infinite.blackbox
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.util.logging.Slf4j
 import io.infinite.blackbox.generated.*
 import org.apache.commons.lang3.exception.ExceptionUtils
@@ -14,6 +15,17 @@ import javax.xml.datatype.XMLGregorianCalendar
  */
 @Slf4j
 class BlackBoxEngine {
+
+    /**
+     * Externalized configuration
+     *
+     */
+    static BlackBoxConfig blackBoxConfig = new BlackBoxConfig()
+    static {
+        if (new File("./BlackBox.json").exists()) {
+            blackBoxConfig = new ObjectMapper().readValue(new File("./BlackBox.json").getText(), BlackBoxConfig.class)
+        }
+    }
 
     /**
      * Placeholder for Thread-specific instance of BlackBoxEngine
@@ -61,9 +73,9 @@ class BlackBoxEngine {
         if (blackBoxEngine == null) {
             XMLASTNode.getMetaClass().parentAstNode = null
             Exception.getMetaClass().isLoggedByBlackBox = null
-            if (System.getProperty("blackbox.mode") == BlackBoxMode.SEQUENTIAL.value()) {
+            if (blackBoxConfig.runtime.mode == BlackBoxMode.SEQUENTIAL.value()) {
                 blackBoxEngine = new BlackBoxEngineSequential()
-            } else if (System.getProperty("blackbox.mode") == BlackBoxMode.HIERARCHICAL.value()) {
+            } else if (blackBoxConfig.runtime.mode == BlackBoxMode.HIERARCHICAL.value()) {
                 blackBoxEngine = new BlackBoxEngineHierarchical()
             } else {
                 blackBoxEngine = new BlackBoxEngineEmergency()

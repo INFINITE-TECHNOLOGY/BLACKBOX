@@ -2,16 +2,16 @@ package io.infinite.blackbox
 
 class BlackBoxConfig {
 
-    class BlackBoxConfigCompile {
+    class Compile {
         String defaultLevel = "METHOD"
     }
 
-    class BlackBoxConfigRuntime {
+    class Runtime {
         String mode = "EMERGENCY"
     }
 
-    BlackBoxConfigCompile compile
+    Compile compile = new Compile()
 
-    BlackBoxConfigRuntime runtime
+    Runtime runtime = new Runtime()
 
 }

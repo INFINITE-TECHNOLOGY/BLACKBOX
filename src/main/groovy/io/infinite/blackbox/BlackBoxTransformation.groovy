@@ -35,7 +35,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     BlackBoxLevel blackBoxLevel
     boolean suppressExceptions
     static Integer uniqueClosureParamCounter = 0
-    static BlackBoxConfig blackBoxConfig = new BlackBoxConfig()
+    private static BlackBoxConfig blackBoxConfig = new BlackBoxConfig()
 
     static {
         if (new File("./BlackBox.json").exists()) {

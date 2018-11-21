@@ -63,10 +63,6 @@ import io.infinite.blackbox.tests.VisitUnaryPlusExpression
 import io.infinite.blackbox.tests.VisitVariableExpression
 import io.infinite.blackbox.tests.VisitWhileLoop
 
-import java.lang.reflect.Field
-import java.lang.reflect.Method
-import java.lang.reflect.Modifier
-
 class AllTests {
 
     public static void main(String[] args) {
@@ -74,9 +70,7 @@ class AllTests {
     }
 
     void run() {
-        //System.setProperty("blackbox.mode", BlackBoxMode.EMERGENCY.value())
-        System.setProperty("blackbox.mode", BlackBoxMode.SEQUENTIAL.value())
-        //System.setProperty("blackbox.mode", BlackBoxMode.HIERARCHICAL.value())
+        BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.SEQUENTIAL.value()
         new VisitBlockStatement().visitBlockStatementNoneLevel()
         new VisitBlockStatement().visitBlockStatementMethodErrorLevel()
         new VisitBlockStatement().visitBlockStatementMethodLevel()
