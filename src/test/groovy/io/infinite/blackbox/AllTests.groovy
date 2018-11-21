@@ -1,5 +1,6 @@
 package io.infinite.blackbox
 
+import io.infinite.blackbox.others.DelegateTest
 import io.infinite.blackbox.others.DuplicateException
 import io.infinite.blackbox.others.ExceptionPlaintext
 import io.infinite.blackbox.others.ItVariable
@@ -8,6 +9,7 @@ import io.infinite.blackbox.others.RoundRobin
 import io.infinite.blackbox.others.StaticToString
 import io.infinite.blackbox.others.Suppress
 import io.infinite.blackbox.others.ThreadSafety
+import io.infinite.blackbox.others.ToString
 import io.infinite.blackbox.others.superconstructor.Bar
 import io.infinite.blackbox.others.supermethod.SubClass
 import io.infinite.blackbox.tests.VisitArgumentlistExpression
@@ -346,6 +348,9 @@ class AllTests {
         BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "")
         new ExceptionPlaintext().test()
         new DefaultBlackBoxLevel().foo()
+        ToString toString = new ToString()
+        assert toString.toString() == "io.infinite.blackbox.others.ToString@" + Integer.toHexString(toString.hashCode())
+        new DelegateTest().test()
     }
 
 
