@@ -345,7 +345,7 @@ class AllTests {
         new SubClass().bar("foo")
         new Suppress().test()
         new DuplicateException().test()
-        BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "")
+        BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "", null)
         new ExceptionPlaintext().test()
         new DefaultBlackBoxLevel().foo()
         ToString toString = new ToString()

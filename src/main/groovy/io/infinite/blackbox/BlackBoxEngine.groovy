@@ -8,6 +8,7 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
+import java.lang.reflect.Field
 
 /**
  * This class implements BlackBox Runtime API - Base functionality
@@ -159,10 +160,12 @@ class BlackBoxEngine {
             Integer iLineNumber,
             Integer iLastLineNumber,
             Closure iClosure,
-            String iNodeSourceName
+            String iNodeSourceName,
+            Object iAutomaticThis
     ) {
         expressionExecutionOpen(iExpressionName, iRestoredScriptCode, iColumnNumber, iLastColumnNumber, iLineNumber, iLastLineNumber, iNodeSourceName)
         try {
+            ensureClosureEquivalency(iClosure, iAutomaticThis)
             Object evaluationResult = iClosure.call()
             //Avoid logging empty results such as for void method call expressions
             if (evaluationResult != null) {
@@ -332,13 +335,32 @@ class BlackBoxEngine {
      * @param iMethodClosure Method code to run.
      * @return Actual Method result
      */
-    Object executeMethod(Closure iMethodClosure) {
+    Object executeMethod(Closure iMethodClosure, Object iAutomaticThis) {
+        ensureClosureEquivalency(iMethodClosure, iAutomaticThis)
         Object methodResult = iMethodClosure.call()
         XMLObject xmlMethodResult = new XMLObject()
         xmlMethodResult.setValue(methodResult.toString())
         xmlMethodResult.setClassName(methodResult.getClass().getCanonicalName())
         ((XMLMethodNode) astNode).setMethodResult(xmlMethodResult)
         return methodResult
+    }
+
+    /**
+     * @see "https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/issues/2"
+     * @param iClosure
+     * @param iAutomaticThis
+     */
+    static void ensureClosureEquivalency(Closure iClosure, Object iAutomaticThis) {
+        Field thisObjectField = Closure.getDeclaredField('thisObject')
+        Field ownerField = Closure.getDeclaredField('owner')
+        thisObjectField.setAccessible(true)
+        ownerField.setAccessible(true)
+        thisObjectField.set(iClosure, iAutomaticThis)
+        ownerField.set(iClosure, iAutomaticThis)
+        iClosure.setDelegate(iAutomaticThis)
+        iClosure.setResolveStrategy(Closure.DELEGATE_ONLY)
+        ownerField.setAccessible(false)
+        thisObjectField.setAccessible(false)
     }
 
     /**
