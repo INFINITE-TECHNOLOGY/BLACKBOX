@@ -98,6 +98,22 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
+    private static ClosureExpression prepareEquivalentClosure(Statement statement) {
+        ClosureExpression closureExpression = GeneralUtils.closureX(
+                GeneralUtils.params(
+                        GeneralUtils.param(ClassHelper.make(Object.class), "itVariableReplacement" + uniqueClosureParamCounter)
+                ),
+                GeneralUtils.block(
+                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("this"), "setDelegate", GeneralUtils.varX("automaticThis"))),
+                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("this"), "setResolveStrategy", GeneralUtils.propX(GeneralUtils.classX(Closure.class), "DELEGATE_ONLY"))),
+                        statement
+                )
+        )
+        uniqueClosureParamCounter++
+        closureExpression.isTransformed = statement.isTransformed
+        return closureExpression
+    }
+
     /**
      * Used for Standard Expression transformation. <br/>
      * Transforms any expression into MethodCallExpression to BlackBoxEngine instance -> expressionEvaluation method.
@@ -108,13 +124,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
      */
     private static MethodCallExpression wrapExpressionIntoMethodCallExpression(Expression iExpression, iSourceNodeName) {
         //See also: https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/issues/1
-        ClosureExpression closureExpression = GeneralUtils.closureX(
-                GeneralUtils.params(
-                        GeneralUtils.param(ClassHelper.make(Object.class), "itVariableReplacement" + uniqueClosureParamCounter)
-                ),
-                GeneralUtils.returnS(iExpression)
-        )
-        uniqueClosureParamCounter++
+        ClosureExpression closureExpression = prepareEquivalentClosure(GeneralUtils.returnS(iExpression))
         closureExpression.setVariableScope(new VariableScope())
         MethodCallExpression methodCallExpression = GeneralUtils.callX(
                 GeneralUtils.varX("automaticBlackBox"),
@@ -168,6 +178,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 GeneralUtils.varX("automaticBlackBox", ClassHelper.make(BlackBoxEngine.class)),
                 GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")
         )
+        Statement automaticThisDeclaration = GeneralUtils.declS(
+                GeneralUtils.varX("automaticThis", iMethodNode.getDeclaringClass()),
+                GeneralUtils.varX("this", iMethodNode.getDeclaringClass())
+        )
         Statement firstStatement = checkSuperConstructorCall(iMethodNode)
         Statement methodExecutionOpen = new ExpressionStatement(
                 GeneralUtils.callX(
@@ -194,6 +208,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                     GeneralUtils.block(
                             firstStatement,
                             blackBoxDeclaration,
+                            automaticThisDeclaration,
                             methodExecutionOpen,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(
@@ -204,7 +219,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                                 return new ExpressionStatement(GeneralUtils.callX(
                                                         GeneralUtils.varX("automaticBlackBox"),
                                                         "executeMethod",
-                                                        GeneralUtils.args(GeneralUtils.closureX(iMethodNode.getCode()))
+                                                        GeneralUtils.args(prepareEquivalentClosure(iMethodNode.getCode()))
                                                 ))
                                             }
                                         }.call() as Statement,
@@ -222,6 +237,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                     GeneralUtils.block(
                             firstStatement,
                             blackBoxDeclaration,
+                            automaticThisDeclaration,
                             {
                                 TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
                                 tryCatchStatement.addCatch(

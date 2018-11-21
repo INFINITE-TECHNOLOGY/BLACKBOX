@@ -1,5 +1,8 @@
 {
   "compile": {
     "defaultLevel": "EXPRESSION"
+  },
+  "runtime": {
+    "mode": "SEQUENTIAL"
   }
 }
