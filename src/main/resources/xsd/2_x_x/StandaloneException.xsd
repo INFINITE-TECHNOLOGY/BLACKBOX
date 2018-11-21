@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="Argument.xsd"/>
+    <xs:include schemaLocation="ASTNode.xsd"/>
+    <xs:include schemaLocation="Exception.xsd"/>
+    <xs:complexType name="StandaloneException">
+        <xs:annotation>
+            <xs:documentation>
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#standaloneexception
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ASTNode">
+                <xs:sequence>
+                    <xs:element type="ArgumentList" name="argumentList" minOccurs="0"/>
+                    <xs:element type="Exception" name="exception" minOccurs="0"/>
+                </xs:sequence>
+                <xs:attribute name="methodName" type="xs:string" use="required"/>
+                <xs:attribute name="className" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

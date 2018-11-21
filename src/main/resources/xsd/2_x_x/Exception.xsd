@@ -3,16 +3,19 @@
            targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
            xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="ExceptionReference.xsd"/>
     <xs:complexType name="Exception">
         <xs:annotation>
             <xs:documentation>
                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#exception
             </xs:documentation>
         </xs:annotation>
-        <xs:sequence>
-            <xs:element name="exceptionStackTrace" type="xs:string"/>
-        </xs:sequence>
-        <xs:attribute use="required" name="exceptionDateTime" type="xs:dateTime"/>
-        <xs:attribute name="exceptionUid" type="xs:string"/>
+        <xs:complexContent>
+            <xs:extension base="ExceptionReference">
+                <xs:sequence>
+                    <xs:element name="exceptionStackTrace" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 </xs:schema>
