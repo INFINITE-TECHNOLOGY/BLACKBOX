@@ -224,7 +224,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance", GeneralUtils.args("automaticLog"))
         )
         Statement automaticThisDeclaration = GeneralUtils.declS(
-                GeneralUtils.varX("automaticThis", iMethodNode.getDeclaringClass()),
+                iMethodNode.isStatic() ? GeneralUtils.varX("automaticThis", ClassHelper.make(Class.class)) : GeneralUtils.varX("automaticThis", iMethodNode.getDeclaringClass()),
                 GeneralUtils.varX("this", iMethodNode.getDeclaringClass())
         )
         Statement firstStatement = checkSuperConstructorCall(iMethodNode)

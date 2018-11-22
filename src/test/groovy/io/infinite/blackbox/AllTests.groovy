@@ -9,6 +9,7 @@ import io.infinite.blackbox.others.ExceptionPlaintext
 import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
 import io.infinite.blackbox.others.RoundRobin
+import io.infinite.blackbox.others.Static
 import io.infinite.blackbox.others.StaticToString
 import io.infinite.blackbox.others.Suppress
 import io.infinite.blackbox.others.ThreadSafety
@@ -360,6 +361,7 @@ class AllTests {
         new DelegateTest().test()
         new ErrorStrategies().test()
         new ClassAnnotation().someMethod()
+        new Static().test()
     }
 
 
