@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-import groovy.util.logging.Slf4j
+
 import io.infinite.blackbox.generated.ObjectFactory
 import io.infinite.blackbox.generated.XMLASTNode
 
@@ -17,7 +17,6 @@ import javax.xml.bind.Marshaller
  * When exception is occured - this class prints whole runtime stack.
  *
  */
-@Slf4j
 class BlackBoxEngineEmergency extends BlackBoxEngine {
 
     /**
@@ -52,7 +51,7 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
             StringWriter stringWriter = new StringWriter()
             marshaller.marshal(new ObjectFactory().createRootAstNode(astNodeToPrint), stringWriter)
             String xmlString = stringWriter.toString()
-            log.debug(xmlString)
+            automaticLog.debug(xmlString)
             exception.isLoggedByBlackBox = true
         }
     }

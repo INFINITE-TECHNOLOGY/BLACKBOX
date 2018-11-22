@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-import groovy.util.logging.Slf4j
+
 import groovy.xml.XmlUtil
 import io.infinite.blackbox.generated.XMLArgument
 import io.infinite.blackbox.generated.XMLException
@@ -18,7 +18,6 @@ import io.infinite.blackbox.generated.XMLStatement
  * This class prints runtime AST Node execution in realitime.
  *
  */
-@Slf4j
 class BlackBoxEngineSequential extends BlackBoxEngine {
 
     Integer depth = 0
@@ -36,7 +35,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      */
     private void log(String iText) {
         //todo: break multiline text into separate log calls
-        log.debug(getPad() + iText)
+        automaticLog.debug(getPad() + iText)
     }
 
     /**
@@ -44,7 +43,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      */
     private void logError(String iText) {
         //todo: break multiline text into separate log calls
-        log.error(getPad() + iText)
+        automaticLog.error(getPad() + iText)
     }
 
     /**

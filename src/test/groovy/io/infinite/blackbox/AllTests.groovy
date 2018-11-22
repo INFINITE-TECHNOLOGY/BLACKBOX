@@ -1,5 +1,6 @@
 package io.infinite.blackbox
 
+import groovy.util.logging.Slf4j
 import io.infinite.blackbox.others.DelegateTest
 import io.infinite.blackbox.others.DuplicateException
 import io.infinite.blackbox.others.ErrorStrategies
@@ -67,6 +68,7 @@ import io.infinite.blackbox.tests.VisitVariableExpression
 import io.infinite.blackbox.tests.VisitWhileLoop
 import org.codehaus.groovy.control.SourceUnit
 
+@Slf4j
 class AllTests {
 
     public static void main(String[] args) {
@@ -349,7 +351,7 @@ class AllTests {
         new SubClass().bar("foo")
         new Suppress().test()
         new DuplicateException().test()
-        BlackBoxEngine.getInstance().expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "", null)
+        BlackBoxEngine.getInstance(log).expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "", null)
         new ExceptionPlaintext().test()
         new DefaultBlackBoxLevel().foo()
         ToString toString = new ToString()

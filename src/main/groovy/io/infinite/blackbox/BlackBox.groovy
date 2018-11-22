@@ -1,6 +1,8 @@
 package io.infinite.blackbox
 
+import groovy.util.logging.Slf4j
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
+import org.codehaus.groovy.transform.LogASTTransformation
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
@@ -14,7 +16,7 @@ import java.lang.annotation.Target
  * Applies to methods and contstuctors.
  *
  */
-@Target([ElementType.METHOD, ElementType.CONSTRUCTOR])
+@Target([ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE])
 @Retention(RetentionPolicy.RUNTIME)
 @GroovyASTTransformationClass("io.infinite.blackbox.BlackBoxTransformation")
 @interface BlackBox {

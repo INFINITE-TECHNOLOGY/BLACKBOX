@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.inspect.swingui.AstNodeToScriptVisitor
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
+import jdk.internal.org.objectweb.asm.Opcodes
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.codehaus.groovy.GroovyBugError
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.*
@@ -16,7 +18,10 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
+import org.codehaus.groovy.transform.LogASTTransformation
 import org.codehaus.groovy.transform.sc.ListOfExpressionsExpression
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This class implements BlackBox Transformation Rules for @BlackBox annotation.
@@ -55,10 +60,51 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
+            ASTNode.getMetaClass().automaticLogDeclared = null
             init(iAstNodeArray, iSourceUnit)
+            if (iAstNodeArray[1] instanceof MethodNode) {
+                visitMethod(iAstNodeArray, iSourceUnit)
+            } else if (iAstNodeArray[1] instanceof ClassNode) {
+                ClassNode classNode = iAstNodeArray[1] as ClassNode
+                classNode.addField("automaticLog",
+                        Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
+                        ClassHelper.make(Logger.class),
+                        GeneralUtils.callX(
+                                new ClassExpression(ClassHelper.make(LoggerFactory.class)),
+                                "getLogger",
+                                GeneralUtils.constX(classNode.getName())
+                        ))
+                classNode.automaticLogDeclared = true
+                classNode.methods.each {
+                    visitMethod([annotationNode, it] as ASTNode[], iSourceUnit)
+                }
+            } else {
+                throw new GroovyBugError("Unsupported Annotated Node; Only [Class, Method, Constructor] are supported.")
+            }
+        } catch (Exception exception) {
+            log.error(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+            throw exception
+        }
+    }
+
+    void visitMethod(ASTNode[] iAstNodeArray, SourceUnit iSourceUnit) {
+        try {
+            ASTNode.getMetaClass().origCodeString = null
+            ASTNode.getMetaClass().isTransformed = null
             MethodNode methodNode = iAstNodeArray[1] as MethodNode
             if (methodNode.getDeclaringClass().getOuterClass() != null) {
                 throw new Exception("BlackBox currently does not support annotations in Inner Classes.")
+            }
+            if (!methodNode.getDeclaringClass().automaticLogDeclared) {
+                methodNode.getDeclaringClass().addField("automaticLog",
+                        Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
+                        ClassHelper.make(Logger.class),
+                        GeneralUtils.callX(
+                                new ClassExpression(ClassHelper.make(LoggerFactory.class)),
+                                "getLogger",
+                                GeneralUtils.constX(methodNode.getDeclaringClass().getName())
+                        ))
+                methodNode.getDeclaringClass().automaticLogDeclared = true
             }
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
@@ -175,7 +221,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
         Statement blackBoxDeclaration = GeneralUtils.declS(
                 GeneralUtils.varX("automaticBlackBox", ClassHelper.make(BlackBoxEngine.class)),
-                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance")
+                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance", GeneralUtils.args("automaticLog"))
         )
         Statement automaticThisDeclaration = GeneralUtils.declS(
                 GeneralUtils.varX("automaticThis", iMethodNode.getDeclaringClass()),

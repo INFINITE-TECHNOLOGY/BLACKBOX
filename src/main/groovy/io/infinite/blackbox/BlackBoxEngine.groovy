@@ -1,10 +1,11 @@
 package io.infinite.blackbox
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import groovy.util.logging.Slf4j
 import io.infinite.blackbox.generated.*
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
@@ -14,8 +15,9 @@ import java.lang.reflect.Field
  * This class implements BlackBox Runtime API - Base functionality
  *
  */
-@Slf4j
 class BlackBoxEngine {
+
+    Logger automaticLog = LoggerFactory.getLogger(BlackBoxEngine.class)
 
     /**
      * Externalized configuration
@@ -69,7 +71,7 @@ class BlackBoxEngine {
      *
      * @return BlackBoxEngine instance implementation as per "blackbox.mode" System property.
      */
-    static BlackBoxEngine getInstance() {
+    static BlackBoxEngine getInstance(Logger automaticLog) {
         BlackBoxEngine blackBoxEngine = blackBoxEngineThreadLocal.get() as BlackBoxEngine
         if (blackBoxEngine == null) {
             XMLASTNode.getMetaClass().parentAstNode = null
@@ -85,6 +87,7 @@ class BlackBoxEngine {
             }
             blackBoxEngineThreadLocal.set(blackBoxEngine)
         }
+        blackBoxEngine.automaticLog = automaticLog
         return blackBoxEngine
     }
 
@@ -450,7 +453,7 @@ class BlackBoxEngine {
             case ErrorLoggingStrategy.NOTHING:
                 break
             default:
-                log.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
+                this.automaticLog.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
         }
         XMLStandaloneException xmlStandaloneException = new XMLStandaloneException()
         XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
@@ -483,34 +486,34 @@ class BlackBoxEngine {
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()
-                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                    this.automaticLog.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
                 } else {
-                    log.error(exception.getMessage(), exception.uuid)
+                    this.automaticLog.error(exception.getMessage(), exception.uuid)
                 }
                 break
             case ErrorLoggingStrategy.ALWAYS_REFERENCE:
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()
-                    log.error(exception.getMessage(), exception.uuid)
+                    this.automaticLog.error(exception.getMessage(), exception.uuid)
                 } else {
-                    log.error(exception.getMessage(), exception.uuid)
+                    this.automaticLog.error(exception.getMessage(), exception.uuid)
                 }
                 break
             case ErrorLoggingStrategy.ALWAYS_FULL:
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()
-                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                    this.automaticLog.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
                 } else {
-                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                    this.automaticLog.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
                 }
                 break
             case ErrorLoggingStrategy.FULL_THEN_NOTHING:
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()
-                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                    this.automaticLog.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
                 }
                 break
             case ErrorLoggingStrategy.REFERENCE_THEN_NOTHING:
@@ -518,13 +521,13 @@ class BlackBoxEngine {
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()
-                    log.error(exception.getMessage(), exception.uuid)
+                    this.automaticLog.error(exception.getMessage(), exception.uuid)
                 }
                 break
             case ErrorLoggingStrategy.NOTHING:
                 break
             default:
-                log.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
+                this.automaticLog.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
         }
     }
 
