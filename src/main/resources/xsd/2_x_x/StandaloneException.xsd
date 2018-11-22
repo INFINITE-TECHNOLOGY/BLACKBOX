@@ -16,7 +16,7 @@
             <xs:extension base="ASTNode">
                 <xs:sequence>
                     <xs:element type="ArgumentList" name="argumentList" minOccurs="0"/>
-                    <xs:element type="Exception" name="exception" minOccurs="0"/>
+                    <xs:element type="ExceptionReference" name="exception" minOccurs="0"/>
                 </xs:sequence>
                 <xs:attribute name="methodName" type="xs:string" use="required"/>
                 <xs:attribute name="className" type="xs:string" use="required"/>

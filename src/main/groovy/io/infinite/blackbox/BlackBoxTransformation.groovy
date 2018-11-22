@@ -265,7 +265,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                         GeneralUtils.catchS(
                                                 GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"),
                                                 GeneralUtils.block(
-                                                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exceptionPlaintext", GeneralUtils.args(GeneralUtils.varX("automaticException")))),
+                                                        new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exceptionPlaintext", GeneralUtils.args(GeneralUtils.varX("automaticException"), GeneralUtils.propX(GeneralUtils.classX(ErrorLoggingStrategy.class), GeneralUtils.constX(strategy))))),
                                                         createThrowStatement()
                                                 )
                                         )

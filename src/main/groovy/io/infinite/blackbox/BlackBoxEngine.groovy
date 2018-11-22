@@ -75,7 +75,7 @@ class BlackBoxEngine {
             XMLASTNode.getMetaClass().parentAstNode = null
             Exception.getMetaClass().isLoggedByBlackBox = null
             Exception.getMetaClass().uuid = null
-            XMLASTNode.getMetaClass().standaloneException = null
+            XMLMethodNode.getMetaClass().standaloneException = null
             if (blackBoxConfig.runtime.mode == BlackBoxMode.SEQUENTIAL.value()) {
                 blackBoxEngine = new BlackBoxEngineSequential()
             } else if (blackBoxConfig.runtime.mode == BlackBoxMode.HIERARCHICAL.value()) {
@@ -372,7 +372,6 @@ class BlackBoxEngine {
      * @param exception
      */
     void exception(Exception exception, ErrorLoggingStrategy compileTimeStrategy) {
-        //todo: when duplicate exception - print reference to previous logging
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()
         }
@@ -389,7 +388,7 @@ class BlackBoxEngine {
                     exception.uuid = xmlException.getExceptionUid()
                 } else {
                     xmlException = new XMLExceptionReference()
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setExceptionUid(exception.uuid)
                     xmlException.setIsAlreadyLogged(true)
                 }
                 xmlException.setExceptionDateTime(getXMLGregorianCalendar())
@@ -403,7 +402,7 @@ class BlackBoxEngine {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = xmlException.getExceptionUid()
                 } else {
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setExceptionUid(exception.uuid)
                     xmlException.setIsAlreadyLogged(true)
                 }
                 xmlException.setExceptionDateTime(getXMLGregorianCalendar())
@@ -419,7 +418,7 @@ class BlackBoxEngine {
                     exception.uuid = xmlException.getExceptionUid()
                 } else {
                     xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setExceptionUid(exception.uuid)
                     xmlException.setIsAlreadyLogged(true)
                 }
                 xmlException.setExceptionDateTime(getXMLGregorianCalendar())
@@ -453,6 +452,21 @@ class BlackBoxEngine {
             default:
                 log.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
         }
+        XMLStandaloneException xmlStandaloneException = new XMLStandaloneException()
+        XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
+        xmlStandaloneException.setArgumentList(xmlMethodNode.getArgumentList())
+        xmlStandaloneException.setClassName(xmlMethodNode.getClassName())
+        xmlStandaloneException.setException(xmlMethodNode.getException())
+        xmlStandaloneException.setMethodName(xmlMethodNode.getMethodName())
+        xmlStandaloneException.setAstNodeList(xmlMethodNode.getAstNodeList())
+        xmlStandaloneException.setColumnNumber(xmlMethodNode.getColumnNumber())
+        xmlStandaloneException.setLastColumnNumber(xmlMethodNode.getLastColumnNumber())
+        xmlStandaloneException.setLastLineNumber(xmlMethodNode.getLastLineNumber())
+        xmlStandaloneException.setLineNumber(xmlMethodNode.getLineNumber())
+        xmlStandaloneException.setRestoredScriptCode(xmlMethodNode.getRestoredScriptCode())
+        xmlStandaloneException.setSourceNodeName(xmlMethodNode.getSourceNodeName())
+        xmlStandaloneException.setStartDateTime(xmlMethodNode.getStartDateTime())
+        xmlMethodNode.standaloneException = xmlStandaloneException
     }
 
     /**
@@ -462,8 +476,56 @@ class BlackBoxEngine {
      *
      * @param exception
      */
-    void exceptionPlaintext(Exception exception) {
-        log.error(exception.getMessage(), new StackTraceUtils().sanitize(exception))
+    void exceptionPlaintext(Exception exception, ErrorLoggingStrategy compileTimeStrategy) {
+        ErrorLoggingStrategy errorLoggingStrategy = (compileTimeStrategy == ErrorLoggingStrategy.UNDEFINED ? ErrorLoggingStrategy.valueOf(blackBoxConfig.runtime.strategy) : compileTimeStrategy)
+        switch (errorLoggingStrategy) {
+            case ErrorLoggingStrategy.FULL_THEN_REFERENCE:
+                if (exception.isLoggedByBlackBox != true) {
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = UUID.randomUUID().toString()
+                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                } else {
+                    log.error(exception.getMessage(), exception.uuid)
+                }
+                break
+            case ErrorLoggingStrategy.ALWAYS_REFERENCE:
+                if (exception.isLoggedByBlackBox != true) {
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = UUID.randomUUID().toString()
+                    log.error(exception.getMessage(), exception.uuid)
+                } else {
+                    log.error(exception.getMessage(), exception.uuid)
+                }
+                break
+            case ErrorLoggingStrategy.ALWAYS_FULL:
+                if (exception.isLoggedByBlackBox != true) {
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = UUID.randomUUID().toString()
+                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                } else {
+                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                }
+                break
+            case ErrorLoggingStrategy.FULL_THEN_NOTHING:
+                if (exception.isLoggedByBlackBox != true) {
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = UUID.randomUUID().toString()
+                    log.error(exception.getMessage(), exception.uuid, new StackTraceUtils().sanitize(exception))
+                }
+                break
+            case ErrorLoggingStrategy.REFERENCE_THEN_NOTHING:
+                XMLExceptionReference xmlException = new XMLExceptionReference()
+                if (exception.isLoggedByBlackBox != true) {
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = UUID.randomUUID().toString()
+                    log.error(exception.getMessage(), exception.uuid)
+                }
+                break
+            case ErrorLoggingStrategy.NOTHING:
+                break
+            default:
+                log.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
+        }
     }
 
 }

@@ -153,6 +153,31 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         log("""<exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
                     }
                 }
+                if (xmlMethodNode.standaloneException != null) {
+                    logError("""<standaloneException methodName="${xmlMethodNode.getMethodName()}" className="${xmlMethodNode.getClassName()}" startDateTime="${xmlMethodNode.startDateTime.toXMLFormat()}" lineNumber="${xmlMethodNode.getLineNumber()}" columnNumber="${xmlMethodNode.getColumnNumber()}" lastLineNumber="${xmlMethodNode.getLastLineNumber()}" lastColumnNumber="${xmlMethodNode.getLastColumnNumber()}">""")
+                    if (BlackBoxTransformation.methodArgumentsPresent(xmlMethodNode.getArgumentList().getArgument())) {
+                        logError("""    <argumentList>""")
+                        for (XMLArgument xmlArgument in xmlMethodNode.getArgumentList().getArgument()) {
+                            logError("""        <argument argumentClassName="${xmlArgument.getArgumentClassName()}" argumentName="${xmlArgument.getArgumentName()}">""")
+                            logError("""            <argumentValue>${XmlUtil.escapeXml(xmlArgument.getArgumentValue())}</argumentValue>""")
+                            logError("""        </argument>""")
+                        }
+                        logError("""    </argumentList>""")
+                    }
+                    if (xmlMethodNode.standaloneException.getException() != null) {
+                        XMLExceptionReference xmlException = xmlMethodNode.standaloneException.getException()
+                        if (xmlException instanceof XMLException) {
+                            logError("""    <exception xsi:type="Exception" exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}">""")
+                            depth++
+                            logError("""        <exceptionStackTrace>${XmlUtil.escapeXml(xmlException.getExceptionStackTrace())}</exceptionStackTrace>""")
+                            depth--
+                            logError("""    </exception>""")
+                        } else if (xmlException instanceof XMLExceptionReference) {
+                            log("""    <exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
+                        }
+                    }
+                    logError("""</standaloneException>""")
+                }
                 depth--
                 log("""</astNode>""")
                 break
