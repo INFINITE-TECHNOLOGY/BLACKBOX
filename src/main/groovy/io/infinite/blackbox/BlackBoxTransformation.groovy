@@ -18,7 +18,6 @@ import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.codehaus.groovy.transform.AbstractASTTransformation
 import org.codehaus.groovy.transform.GroovyASTTransformation
-import org.codehaus.groovy.transform.LogASTTransformation
 import org.codehaus.groovy.transform.sc.ListOfExpressionsExpression
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -66,15 +65,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 visitMethod(iAstNodeArray)
             } else if (iAstNodeArray[1] instanceof ClassNode) {
                 ClassNode classNode = iAstNodeArray[1] as ClassNode
-                classNode.addField("automaticLog",
-                        Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
-                        ClassHelper.make(Logger.class),
-                        GeneralUtils.callX(
-                                new ClassExpression(ClassHelper.make(LoggerFactory.class)),
-                                "getLogger",
-                                GeneralUtils.constX(classNode.getName())
-                        ))
-                classNode.automaticLogDeclared = true
+                declareAutomaticLogger(classNode)
                 classNode.methods.each {
                     if (!it.isAbstract()) {
                         visitMethod([iAstNodeArray[0], it] as ASTNode[])
@@ -89,6 +80,20 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
+    static void declareAutomaticLogger(ClassNode classNode) {
+        if (!classNode.automaticLogDeclared) {
+            classNode.addField("automaticLog",
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_STATIC | Opcodes.ACC_PRIVATE,
+                    ClassHelper.make(Logger.class),
+                    GeneralUtils.callX(
+                            new ClassExpression(ClassHelper.make(LoggerFactory.class)),
+                            "getLogger",
+                            GeneralUtils.constX(classNode.getName())
+                    ))
+            classNode.automaticLogDeclared = true
+        }
+    }
+
     void visitMethod(ASTNode[] iAstNodeArray) {
         try {
             ASTNode.getMetaClass().origCodeString = null
@@ -100,17 +105,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             if (methodNode.isAbstract()) {
                 throw new Exception("BlackBox does not support annotation of Abstract Methods")
             }
-            if (!methodNode.getDeclaringClass().automaticLogDeclared) {
-                methodNode.getDeclaringClass().addField("automaticLog",
-                        Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
-                        ClassHelper.make(Logger.class),
-                        GeneralUtils.callX(
-                                new ClassExpression(ClassHelper.make(LoggerFactory.class)),
-                                "getLogger",
-                                GeneralUtils.constX(methodNode.getDeclaringClass().getName())
-                        ))
-                methodNode.getDeclaringClass().automaticLogDeclared = true
-            }
+            declareAutomaticLogger(methodNode.getDeclaringClass())
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             Thread.currentThread().setName("Compilation_$className.$methodName")
