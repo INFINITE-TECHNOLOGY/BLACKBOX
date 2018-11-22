@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
 import groovy.util.logging.Slf4j
+import io.infinite.blackbox.others.ClassAnnotation
 import io.infinite.blackbox.others.DelegateTest
 import io.infinite.blackbox.others.DuplicateException
 import io.infinite.blackbox.others.ErrorStrategies
@@ -358,6 +359,7 @@ class AllTests {
         assert toString.toString() == "io.infinite.blackbox.others.ToString@" + Integer.toHexString(toString.hashCode())
         new DelegateTest().test()
         new ErrorStrategies().test()
+        new ClassAnnotation().someMethod()
     }
 
 

@@ -5,4 +5,12 @@ import io.infinite.blackbox.BlackBoxLevel
 
 @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
 class ClassAnnotation {
+
+    void someMethod() {
+        anotherMethod()
+    }
+
+    void anotherMethod() {
+
+    }
 }

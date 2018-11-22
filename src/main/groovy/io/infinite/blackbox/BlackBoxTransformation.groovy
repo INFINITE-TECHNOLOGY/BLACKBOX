@@ -63,7 +63,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             ASTNode.getMetaClass().automaticLogDeclared = null
             init(iAstNodeArray, iSourceUnit)
             if (iAstNodeArray[1] instanceof MethodNode) {
-                visitMethod(iAstNodeArray, iSourceUnit)
+                visitMethod(iAstNodeArray)
             } else if (iAstNodeArray[1] instanceof ClassNode) {
                 ClassNode classNode = iAstNodeArray[1] as ClassNode
                 classNode.addField("automaticLog",
@@ -76,7 +76,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                         ))
                 classNode.automaticLogDeclared = true
                 classNode.methods.each {
-                    visitMethod([annotationNode, it] as ASTNode[], iSourceUnit)
+                    visitMethod([iAstNodeArray[0], it] as ASTNode[])
                 }
             } else {
                 throw new GroovyBugError("Unsupported Annotated Node; Only [Class, Method, Constructor] are supported.")
@@ -87,7 +87,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    void visitMethod(ASTNode[] iAstNodeArray, SourceUnit iSourceUnit) {
+    void visitMethod(ASTNode[] iAstNodeArray) {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
