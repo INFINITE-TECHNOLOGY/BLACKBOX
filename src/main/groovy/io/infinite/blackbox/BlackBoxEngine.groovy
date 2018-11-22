@@ -74,6 +74,8 @@ class BlackBoxEngine {
         if (blackBoxEngine == null) {
             XMLASTNode.getMetaClass().parentAstNode = null
             Exception.getMetaClass().isLoggedByBlackBox = null
+            Exception.getMetaClass().uuid = null
+            XMLASTNode.getMetaClass().standaloneException = null
             if (blackBoxConfig.runtime.mode == BlackBoxMode.SEQUENTIAL.value()) {
                 blackBoxEngine = new BlackBoxEngineSequential()
             } else if (blackBoxConfig.runtime.mode == BlackBoxMode.HIERARCHICAL.value()) {
@@ -369,17 +371,87 @@ class BlackBoxEngine {
      *
      * @param exception
      */
-    void exception(Exception exception) {
+    void exception(Exception exception, ErrorLoggingStrategy compileTimeStrategy) {
         //todo: when duplicate exception - print reference to previous logging
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()
         }
-        if (exception.isLoggedByBlackBox != true) {
-            XMLException xmlException = new XMLException()
-            xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
-            xmlException.setExceptionDateTime(getXMLGregorianCalendar())
-            ((XMLMethodNode) astNode).setException(xmlException)
-            exception.isLoggedByBlackBox = true
+        ErrorLoggingStrategy errorLoggingStrategy = (compileTimeStrategy == ErrorLoggingStrategy.UNDEFINED ? ErrorLoggingStrategy.valueOf(blackBoxConfig.runtime.strategy) : compileTimeStrategy)
+        switch (errorLoggingStrategy) {
+            case ErrorLoggingStrategy.FULL_THEN_REFERENCE:
+                XMLExceptionReference xmlException
+                if (exception.isLoggedByBlackBox != true) {
+                    xmlException = new XMLException()
+                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(false)
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = xmlException.getExceptionUid()
+                } else {
+                    xmlException = new XMLExceptionReference()
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(true)
+                }
+                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlException)
+                break
+            case ErrorLoggingStrategy.ALWAYS_REFERENCE:
+                XMLExceptionReference xmlException = new XMLExceptionReference()
+                if (exception.isLoggedByBlackBox != true) {
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(false)
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = xmlException.getExceptionUid()
+                } else {
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(true)
+                }
+                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlException)
+                break
+            case ErrorLoggingStrategy.ALWAYS_FULL:
+                XMLException xmlException = new XMLException()
+                if (exception.isLoggedByBlackBox != true) {
+                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(false)
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = xmlException.getExceptionUid()
+                } else {
+                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(true)
+                }
+                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlException)
+                break
+            case ErrorLoggingStrategy.FULL_THEN_NOTHING:
+                XMLException xmlException = new XMLException()
+                if (exception.isLoggedByBlackBox != true) {
+                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(false)
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = xmlException.getExceptionUid()
+                    xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+                    ((XMLMethodNode) astNode).setException(xmlException)
+                }
+                break
+            case ErrorLoggingStrategy.REFERENCE_THEN_NOTHING:
+                XMLExceptionReference xmlException = new XMLExceptionReference()
+                if (exception.isLoggedByBlackBox != true) {
+                    xmlException.setExceptionUid(UUID.randomUUID().toString())
+                    xmlException.setIsAlreadyLogged(false)
+                    exception.isLoggedByBlackBox = true
+                    exception.uuid = xmlException.getExceptionUid()
+                    xmlException.setExceptionDateTime(getXMLGregorianCalendar())
+                    ((XMLMethodNode) astNode).setException(xmlException)
+                }
+                break
+            case ErrorLoggingStrategy.NOTHING:
+                break
+            default:
+                log.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
         }
     }
 

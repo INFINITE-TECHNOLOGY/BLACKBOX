@@ -2,6 +2,7 @@ package io.infinite.blackbox
 
 import groovy.util.logging.Slf4j
 import io.infinite.blackbox.generated.ObjectFactory
+import io.infinite.blackbox.generated.XMLASTNode
 
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.Marshaller
@@ -37,16 +38,21 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
      * @param exception
      */
     @Override
-    void exception(Exception exception) {
-        super.exception(exception)
-        if (exception.isLoggedByBlackBox != true) {
-            JAXBContext lJAXBContext = JAXBContext.newInstance(astNode.getClass())
+    void exception(Exception exception, ErrorLoggingStrategy compileTimeStrategy) {
+        Boolean needsPrinting = (!exception.isLoggedByBlackBox)
+        super.exception(exception, compileTimeStrategy)
+        XMLASTNode astNodeToPrint = astNode
+        if (needsPrinting) {
+            while (astNodeToPrint.parentAstNode != null) {
+                astNodeToPrint = astNodeToPrint.parentAstNode
+            }
+            JAXBContext lJAXBContext = JAXBContext.newInstance(astNodeToPrint.getClass())
             Marshaller marshaller = lJAXBContext.createMarshaller()
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE)
             StringWriter stringWriter = new StringWriter()
-            marshaller.marshal(new ObjectFactory().createRootAstNode(astNode), stringWriter)
+            marshaller.marshal(new ObjectFactory().createRootAstNode(astNodeToPrint), stringWriter)
             String xmlString = stringWriter.toString()
-            log.error(xmlString)
+            log.debug(xmlString)
             exception.isLoggedByBlackBox = true
         }
     }

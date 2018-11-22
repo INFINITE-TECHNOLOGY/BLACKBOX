@@ -33,6 +33,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     AnnotationNode annotationNode
     BlackBoxLevel blackBoxLevel
+    ErrorLoggingStrategy strategy
     boolean suppressExceptions
     static Integer uniqueClosureParamCounter = 0
     private static BlackBoxConfig blackBoxConfig = new BlackBoxConfig()
@@ -64,6 +65,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             Thread.currentThread().setName("Compilation_$className.$methodName")
             annotationNode = iAstNodeArray[0] as AnnotationNode
             blackBoxLevel = getAnnotationValue("blackBoxLevel", annotationNode, methodName, BlackBoxLevel.valueOf(blackBoxConfig.compile.defaultLevel)) as BlackBoxLevel
+            strategy = getAnnotationValue("strategy", annotationNode, methodName, ErrorLoggingStrategy.valueOf(blackBoxConfig.compile.defaultStrategy)) as ErrorLoggingStrategy
             suppressExceptions = getAnnotationValue("suppressExceptions", annotationNode, methodName, false)
             transformMethod(methodNode)
             sourceUnit.AST.classes.each {
@@ -198,7 +200,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                         )
                 )
         )
-        Statement logException = new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exception", GeneralUtils.args(GeneralUtils.varX("automaticException"))))
+        Statement logException = new ExpressionStatement(GeneralUtils.callX(GeneralUtils.varX("automaticBlackBox"), "exception", GeneralUtils.args(GeneralUtils.varX("automaticException"), GeneralUtils.propX(GeneralUtils.classX(ErrorLoggingStrategy.class), GeneralUtils.constX(strategy)))))
         if (blackBoxLevel.value() >= BlackBoxLevel.METHOD.value()) {
             iMethodNode.getCode().visit(new BlackBoxVisitor(this, blackBoxLevel))//<<<<<<<<<<<<<<VISIT<<<<<
             iMethodNode.setCode(

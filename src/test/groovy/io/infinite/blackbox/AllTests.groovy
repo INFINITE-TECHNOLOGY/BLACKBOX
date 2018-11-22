@@ -2,6 +2,7 @@ package io.infinite.blackbox
 
 import io.infinite.blackbox.others.DelegateTest
 import io.infinite.blackbox.others.DuplicateException
+import io.infinite.blackbox.others.ErrorStrategies
 import io.infinite.blackbox.others.ExceptionPlaintext
 import io.infinite.blackbox.others.ItVariable
 import io.infinite.blackbox.others.DefaultBlackBoxLevel
@@ -64,6 +65,7 @@ import io.infinite.blackbox.tests.VisitUnaryMinusExpression
 import io.infinite.blackbox.tests.VisitUnaryPlusExpression
 import io.infinite.blackbox.tests.VisitVariableExpression
 import io.infinite.blackbox.tests.VisitWhileLoop
+import org.codehaus.groovy.control.SourceUnit
 
 class AllTests {
 
@@ -73,6 +75,8 @@ class AllTests {
 
     void run() {
         BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.SEQUENTIAL.value()
+        //BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.HIERARCHICAL.value()
+        //BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.EMERGENCY.value()
         new VisitBlockStatement().visitBlockStatementNoneLevel()
         new VisitBlockStatement().visitBlockStatementMethodErrorLevel()
         new VisitBlockStatement().visitBlockStatementMethodLevel()
@@ -351,6 +355,7 @@ class AllTests {
         ToString toString = new ToString()
         assert toString.toString() == "io.infinite.blackbox.others.ToString@" + Integer.toHexString(toString.hashCode())
         new DelegateTest().test()
+        new ErrorStrategies().test()
     }
 
 

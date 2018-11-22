@@ -32,4 +32,6 @@ import java.lang.annotation.Target
      */
     boolean suppressExceptions() default false
 
+    ErrorLoggingStrategy strategy() default ErrorLoggingStrategy.UNDEFINED
+
 }

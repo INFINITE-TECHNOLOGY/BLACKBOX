@@ -3,6 +3,8 @@ package io.infinite.blackbox
 import groovy.util.logging.Slf4j
 import groovy.xml.XmlUtil
 import io.infinite.blackbox.generated.XMLArgument
+import io.infinite.blackbox.generated.XMLException
+import io.infinite.blackbox.generated.XMLExceptionReference
 import io.infinite.blackbox.generated.XMLExpression
 import io.infinite.blackbox.generated.XMLMethodNode
 import io.infinite.blackbox.generated.XMLStatement
@@ -138,12 +140,18 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                     depth--
                     log("""</methodResult>""")
                 }
-                if (astNode.getException() != null) {
-                    logError("""<exception exceptionDateTime="${astNode.getException().getExceptionDateTime().toXMLFormat()}">""")
-                    depth++
-                    logError("""<exceptionStackTrace>${XmlUtil.escapeXml(astNode.getException().getExceptionStackTrace())}</exceptionStackTrace>""")
-                    depth--
-                    logError("""</exception>""")
+                XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
+                if (xmlMethodNode.getException() != null) {
+                    XMLExceptionReference xmlException = xmlMethodNode.getException()
+                    if (xmlException instanceof XMLException) {
+                        log("""<exception xsi:type="Exception" exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}">""")
+                        depth++
+                        log("""<exceptionStackTrace>${XmlUtil.escapeXml(xmlException.getExceptionStackTrace())}</exceptionStackTrace>""")
+                        depth--
+                        log("""</exception>""")
+                    } else if (xmlException instanceof XMLExceptionReference) {
+                        log("""<exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
+                    }
                 }
                 depth--
                 log("""</astNode>""")
