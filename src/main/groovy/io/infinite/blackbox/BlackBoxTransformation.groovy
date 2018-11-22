@@ -76,7 +76,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                         ))
                 classNode.automaticLogDeclared = true
                 classNode.methods.each {
-                    visitMethod([iAstNodeArray[0], it] as ASTNode[])
+                    if (!it.isAbstract()) {
+                        visitMethod([iAstNodeArray[0], it] as ASTNode[])
+                    }
                 }
             } else {
                 throw new GroovyBugError("Unsupported Annotated Node; Only [Class, Method, Constructor] are supported.")
@@ -94,6 +96,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             MethodNode methodNode = iAstNodeArray[1] as MethodNode
             if (methodNode.getDeclaringClass().getOuterClass() != null) {
                 throw new Exception("BlackBox currently does not support annotations in Inner Classes.")
+            }
+            if (methodNode.isAbstract()) {
+                throw new Exception("BlackBox does not support annotation of Abstract Methods")
             }
             if (!methodNode.getDeclaringClass().automaticLogDeclared) {
                 methodNode.getDeclaringClass().addField("automaticLog",
