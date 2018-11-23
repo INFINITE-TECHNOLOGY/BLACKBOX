@@ -61,14 +61,15 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             ASTNode.getMetaClass().isTransformed = null
             ASTNode.getMetaClass().automaticLogDeclared = null
             init(iAstNodeArray, iSourceUnit)
+            annotationNode = iAstNodeArray[0] as AnnotationNode
             if (iAstNodeArray[1] instanceof MethodNode) {
-                visitMethod(iAstNodeArray)
+                visitMethod(iAstNodeArray[1])
             } else if (iAstNodeArray[1] instanceof ClassNode) {
                 ClassNode classNode = iAstNodeArray[1] as ClassNode
                 declareAutomaticLogger(classNode)
                 classNode.methods.each {
                     if (!it.isAbstract()) {
-                        visitMethod([iAstNodeArray[0], it] as ASTNode[])
+                        visitMethod(it)
                     }
                 }
             } else {
@@ -94,11 +95,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    void visitMethod(ASTNode[] iAstNodeArray) {
+    void visitMethod(MethodNode methodNode) {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
-            MethodNode methodNode = iAstNodeArray[1] as MethodNode
             if (methodNode.getDeclaringClass().getOuterClass() != null) {
                 throw new Exception("BlackBox currently does not support annotations in Inner Classes.")
             }
@@ -109,7 +109,11 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             Thread.currentThread().setName("Compilation_$className.$methodName")
-            annotationNode = iAstNodeArray[0] as AnnotationNode
+            methodNode.getAnnotations().findAll {
+                it.getClassNode().getName() == BlackBox.getCanonicalName()
+            }.each {
+                annotationNode = it
+            }
             blackBoxLevel = getAnnotationValue("blackBoxLevel", annotationNode, methodName, BlackBoxLevel.valueOf(blackBoxConfig.compile.defaultLevel)) as BlackBoxLevel
             strategy = getAnnotationValue("strategy", annotationNode, methodName, ErrorLoggingStrategy.valueOf(blackBoxConfig.compile.defaultStrategy)) as ErrorLoggingStrategy
             suppressExceptions = getAnnotationValue("suppressExceptions", annotationNode, methodName, false)
