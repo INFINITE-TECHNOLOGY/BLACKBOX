@@ -43,7 +43,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      */
     private void logError(String iText) {
         //todo: break multiline text into separate log calls
-        automaticLog.error(getPad() + iText)
+        automaticLog.error(iText)
     }
 
     /**
