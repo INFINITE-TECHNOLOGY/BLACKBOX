@@ -172,7 +172,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                             depth--
                             logError("""    </exception>""")
                         } else if (xmlException instanceof XMLExceptionReference) {
-                            log("""    <exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
+                            logError("""    <exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
                         }
                     }
                     logError("""</standaloneException>""")

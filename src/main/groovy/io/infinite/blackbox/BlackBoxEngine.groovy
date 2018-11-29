@@ -6,6 +6,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
@@ -86,6 +87,7 @@ class BlackBoxEngine {
                 blackBoxEngine = new BlackBoxEngineEmergency()
             }
             blackBoxEngineThreadLocal.set(blackBoxEngine)
+            MDC.put("automaticThreadName", Thread.currentThread().getName())
         }
         blackBoxEngine.automaticLog = automaticLog
         return blackBoxEngine

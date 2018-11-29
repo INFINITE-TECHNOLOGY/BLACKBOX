@@ -59,11 +59,11 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         try {
             ASTNode.getMetaClass().origCodeString = null
             ASTNode.getMetaClass().isTransformed = null
-            ASTNode.getMetaClass().automaticLogDeclared = null
+            ClassNode.getMetaClass().automaticLogDeclared = null
             init(iAstNodeArray, iSourceUnit)
             annotationNode = iAstNodeArray[0] as AnnotationNode
             if (iAstNodeArray[1] instanceof MethodNode) {
-                visitMethod(iAstNodeArray[1])
+                visitMethod(iAstNodeArray[1] as MethodNode)
             } else if (iAstNodeArray[1] instanceof ClassNode) {
                 ClassNode classNode = iAstNodeArray[1] as ClassNode
                 declareAutomaticLogger(classNode)
@@ -97,8 +97,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     void visitMethod(MethodNode methodNode) {
         try {
-            ASTNode.getMetaClass().origCodeString = null
-            ASTNode.getMetaClass().isTransformed = null
+            if (methodNode.isTransformed == true) {
+                return
+            }
             if (methodNode.getDeclaringClass().getOuterClass() != null) {
                 throw new Exception("BlackBox currently does not support annotations in Inner Classes.")
             }
@@ -122,6 +123,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
             }
             log.debug(codeString(methodNode.getCode()))
+            methodNode.isTransformed = true
         } catch (Exception exception) {
             log.error(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
             throw exception
