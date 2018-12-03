@@ -3,13 +3,13 @@ package io.infinite.blackbox
 class BlackBoxConfig {
 
     class Compile {
-        String defaultLevel = BlackBoxLevel.METHOD.value()
-        String defaultStrategy = ErrorLoggingStrategy.FULL_THEN_REFERENCE.value()
+        String defaultLevel = BlackBoxLevel.METHOD.name()
+        String defaultStrategy = ErrorLoggingStrategy.FULL_THEN_REFERENCE.name()
     }
 
     class Runtime {
-        String mode = BlackBoxMode.EMERGENCY.value()
-        String strategy = ErrorLoggingStrategy.FULL_THEN_REFERENCE.value()
+        String mode = BlackBoxMode.EMERGENCY.name()
+        String strategy = ErrorLoggingStrategy.FULL_THEN_REFERENCE.name()
     }
 
     Compile compile = new Compile()

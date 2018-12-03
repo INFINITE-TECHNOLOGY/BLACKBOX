@@ -109,7 +109,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             declareAutomaticLogger(methodNode.getDeclaringClass())
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
-            Thread.currentThread().setName("Compilation_$className.$methodName")
+            Thread.currentThread().setName("Compilation_$className.${methodName.replace("<", "").replace(">", "")}")
             methodNode.getAnnotations().findAll {
                 it.getClassNode().getName() == BlackBox.getCanonicalName()
             }.each {

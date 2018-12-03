@@ -1,79 +1,16 @@
 package io.infinite.blackbox
 
 import groovy.util.logging.Slf4j
-import io.infinite.blackbox.others.ClassAnnotation
-import io.infinite.blackbox.others.DelegateTest
-import io.infinite.blackbox.others.DuplicateException
-import io.infinite.blackbox.others.ErrorStrategies
-import io.infinite.blackbox.others.ExceptionPlaintext
-import io.infinite.blackbox.others.ItVariable
-import io.infinite.blackbox.others.DefaultBlackBoxLevel
-import io.infinite.blackbox.others.RoundRobin
-import io.infinite.blackbox.others.Static
-import io.infinite.blackbox.others.StaticToString
-import io.infinite.blackbox.others.Suppress
-import io.infinite.blackbox.others.ThreadSafety
-import io.infinite.blackbox.others.ToString
+import io.infinite.blackbox.others.*
 import io.infinite.blackbox.others.superconstructor.Bar
 import io.infinite.blackbox.others.supermethod.SubClass
-import io.infinite.blackbox.tests.VisitArgumentlistExpression
-import io.infinite.blackbox.tests.VisitArrayExpression
-import io.infinite.blackbox.tests.VisitAssertStatement
-import io.infinite.blackbox.tests.VisitAttributeExpression
-import io.infinite.blackbox.tests.VisitBinaryExpression
-import io.infinite.blackbox.tests.VisitBitwiseNegationExpression
-import io.infinite.blackbox.tests.VisitBlockStatement
-import io.infinite.blackbox.tests.VisitBooleanExpression
-import io.infinite.blackbox.tests.VisitBreakStatement
-import io.infinite.blackbox.tests.VisitCaseStatement
-import io.infinite.blackbox.tests.VisitCastExpression
-import io.infinite.blackbox.tests.VisitCatchStatement
-import io.infinite.blackbox.tests.VisitClassExpression
-import io.infinite.blackbox.tests.VisitClosureExpression
-import io.infinite.blackbox.tests.VisitClosureListExpression
-import io.infinite.blackbox.tests.VisitConstantExpression
-import io.infinite.blackbox.tests.VisitConstructorCallExpression
-import io.infinite.blackbox.tests.VisitContinueStatement
-import io.infinite.blackbox.tests.VisitDeclarationExpression
-import io.infinite.blackbox.tests.VisitDoWhileLoop
-import io.infinite.blackbox.tests.VisitEmptyStatement
-import io.infinite.blackbox.tests.VisitExpressionStatement
-import io.infinite.blackbox.tests.VisitFieldExpression
-import io.infinite.blackbox.tests.VisitForLoop
-import io.infinite.blackbox.tests.VisitGStringExpression
-import io.infinite.blackbox.tests.VisitIfElse
-import io.infinite.blackbox.tests.VisitListExpression
-import io.infinite.blackbox.tests.VisitListOfExpressions
-import io.infinite.blackbox.tests.VisitMapEntryExpression
-import io.infinite.blackbox.tests.VisitMapExpression
-import io.infinite.blackbox.tests.VisitMethodCallExpression
-import io.infinite.blackbox.tests.VisitMethodPointerExpression
-import io.infinite.blackbox.tests.VisitNotExpression
-import io.infinite.blackbox.tests.VisitPostfixExpression
-import io.infinite.blackbox.tests.VisitPrefixExpression
-import io.infinite.blackbox.tests.VisitPropertyExpression
-import io.infinite.blackbox.tests.VisitRangeExpression
-import io.infinite.blackbox.tests.VisitReturnStatement
-import io.infinite.blackbox.tests.VisitShortTernaryExpression
-import io.infinite.blackbox.tests.VisitSpreadExpression
-import io.infinite.blackbox.tests.VisitSpreadMapExpression
-import io.infinite.blackbox.tests.VisitStaticMethodCallExpression
-import io.infinite.blackbox.tests.VisitSwitch
-import io.infinite.blackbox.tests.VisitSynchronizedStatement
-import io.infinite.blackbox.tests.VisitTernaryExpression
-import io.infinite.blackbox.tests.VisitThrowStatement
-import io.infinite.blackbox.tests.VisitTryCatchFinally
-import io.infinite.blackbox.tests.VisitTupleExpression
-import io.infinite.blackbox.tests.VisitUnaryMinusExpression
-import io.infinite.blackbox.tests.VisitUnaryPlusExpression
-import io.infinite.blackbox.tests.VisitVariableExpression
-import io.infinite.blackbox.tests.VisitWhileLoop
-import org.codehaus.groovy.control.SourceUnit
+import io.infinite.blackbox.tests.*
+import org.junit.Test
 
 @Slf4j
-class AllTests {
+class AllTests implements Runnable{
 
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
         new AllTests().run()
     }
 
@@ -353,7 +290,7 @@ class AllTests {
         new SubClass().bar("foo")
         new Suppress().test()
         new DuplicateException().test()
-        BlackBoxEngine.getInstance(log).expressionEvaluation("","", 0, 0, 0, 0, {StaticToString}, "", null)
+        BlackBoxEngine.getInstance(log).expressionEvaluation("", "", 0, 0, 0, 0, { StaticToString }, "", null)
         new ExceptionPlaintext().test()
         new DefaultBlackBoxLevel().foo()
         ToString toString = new ToString()
