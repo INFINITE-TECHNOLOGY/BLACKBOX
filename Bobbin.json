@@ -6,8 +6,8 @@
       "name": "io.infinite.bobbin.destinations.FileDestination",
       "properties": {
         "fileKey": "threadName + level",
-        "fileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/${threadName}_${level}_${date}.log\"",
-        "zipFileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/ARCHIVE/${threadName}_${level}_${date}.zip\"",
+        "fileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/${date}.log\"",
+        "zipFileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/ARCHIVE/${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
       "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\""
