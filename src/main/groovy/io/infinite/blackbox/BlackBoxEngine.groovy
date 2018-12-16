@@ -51,8 +51,6 @@ class BlackBoxEngine {
      */
     BlackBoxEngine() {
         addShutdownHook {
-            //todo: possibly need to set this thread name to parent thread name for proper sifting appender file selection
-            Thread.currentThread().setName("BlackBoxEngine Shutdown Hook " + Thread.currentThread().getId())
             while (astNode != null) {
                 executionClose()
             }
@@ -87,7 +85,6 @@ class BlackBoxEngine {
                 blackBoxEngine = new BlackBoxEngineEmergency()
             }
             blackBoxEngineThreadLocal.set(blackBoxEngine)
-            MDC.put("automaticThreadName", Thread.currentThread().getName())
         }
         blackBoxEngine.automaticLog = automaticLog
         return blackBoxEngine

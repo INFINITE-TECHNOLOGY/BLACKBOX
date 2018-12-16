@@ -21,6 +21,7 @@ import org.codehaus.groovy.transform.GroovyASTTransformation
 import org.codehaus.groovy.transform.sc.ListOfExpressionsExpression
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 
 /**
  * This class implements BlackBox Transformation Rules for @BlackBox annotation.
@@ -68,7 +69,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 ClassNode classNode = iAstNodeArray[1] as ClassNode
                 declareAutomaticLogger(classNode)
                 classNode.methods.each {
-                    if (!it.isAbstract()) {
+                    if ((!it.isAbstract()) && it.getName() != "toString") {
                         visitMethod(it)
                     }
                 }
@@ -109,7 +110,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             declareAutomaticLogger(methodNode.getDeclaringClass())
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
-            Thread.currentThread().setName("Compilation_$className.${methodName.replace("<", "").replace(">", "")}")
+            MDC.put("unitName", "$className.${methodName.replace("<", "").replace(">", "")}")
             methodNode.getAnnotations().findAll {
                 it.getClassNode().getName() == BlackBox.getCanonicalName()
             }.each {
