@@ -9,6 +9,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
@@ -26,11 +27,13 @@ class BlackBoxEngine extends CarburetorEngine {
     XMLASTNode astNode
 
     BlackBoxEngine() {
+        /*def contextMap = MDC.getCopyOfContextMap()
         addShutdownHook {
+            MDC.setContextMap(contextMap)
             while (astNode != null) {
                 executionClose()
             }
-        }
+        }*/
     }
 
     static BlackBoxEngine getInstance(Logger automaticLog) {
