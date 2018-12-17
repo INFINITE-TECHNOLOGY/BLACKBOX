@@ -185,7 +185,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                     }" columnNumber="${xmlMethodNode.getColumnNumber()}" lastLineNumber="${
                         xmlMethodNode.getLastLineNumber()
                     }" lastColumnNumber="${xmlMethodNode.getLastColumnNumber()}">""")
-                    if (BlackBoxTransformation.methodArgumentsPresent(xmlMethodNode.getArgumentList().getArgument())) {
+                    if (methodArgumentsPresent(xmlMethodNode.getArgumentList().getArgument())) {
                         logError("""    <argumentList>""")
                         for (XMLArgument xmlArgument in xmlMethodNode.getArgumentList().getArgument()) {
                             logError("""        <argument argumentClassName="${
