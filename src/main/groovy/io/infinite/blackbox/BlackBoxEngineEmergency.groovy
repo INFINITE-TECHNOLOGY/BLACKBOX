@@ -37,9 +37,9 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
      * @param exception
      */
     @Override
-    void exception(Exception exception, ErrorLoggingStrategy compileTimeStrategy) {
+    void exception(Exception exception) {
         Boolean needsPrinting = (!exception.isLoggedByBlackBox)
-        super.exception(exception, compileTimeStrategy)
+        super.exception(exception)
         XMLASTNode astNodeToPrint = astNode
         if (needsPrinting) {
             while (astNodeToPrint.parentAstNode != null) {
@@ -51,7 +51,7 @@ class BlackBoxEngineEmergency extends BlackBoxEngine {
             StringWriter stringWriter = new StringWriter()
             marshaller.marshal(new ObjectFactory().createRootAstNode(astNodeToPrint), stringWriter)
             String xmlString = stringWriter.toString()
-            automaticLog.debug(xmlString)
+            internalLogger.debug(xmlString)
             exception.isLoggedByBlackBox = true
         }
     }

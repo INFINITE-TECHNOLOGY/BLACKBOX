@@ -18,7 +18,9 @@ enum BlackBoxMode {
     /**
      * Use only for BlackBox solution testing itself.
      */
-    HIERARCHICAL("HIERARCHICAL");
+    HIERARCHICAL("HIERARCHICAL"),
+
+    PLAINTEXT("PLAINTEXT")
 
     private final String blackBoxMode
 

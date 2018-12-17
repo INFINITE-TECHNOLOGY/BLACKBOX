@@ -22,7 +22,7 @@ class BlackBoxEngineHierarchical extends BlackBoxEngine{
             StringWriter stringWriter = new StringWriter()
             marshaller.marshal(new ObjectFactory().createRootAstNode(astNode), stringWriter)
             String xmlString = stringWriter.toString()
-            automaticLog.debug(xmlString)
+            internalLogger.debug(xmlString)
         }
         super.executionClose()
     }
