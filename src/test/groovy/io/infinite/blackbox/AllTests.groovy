@@ -1,20 +1,36 @@
 package io.infinite.blackbox
 
-import groovy.util.logging.Slf4j
-import io.infinite.blackbox.others.*
-import io.infinite.blackbox.others.superconstructor.Bar
-import io.infinite.blackbox.others.supermethod.SubClass
-import io.infinite.blackbox.tests.*
-import org.junit.Test
+class AllTests extends GroovyTestCase {
 
-@Slf4j
-class AllTests implements Runnable{
-
-    public static void main1(String[] args) {
-        new AllTests().run()
+    void test() {
+        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.SEQUENTIAL.value()
+        executeTests()
+        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.HIERARCHICAL.value()
+        executeTests()
+        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.EMERGENCY.value()
+        executeTests()
+        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.PLAINTEXT.value()
+        executeTests()
     }
 
-    void run() {
+    void executeTests() {
+        GroovyClassLoader groovyClassLoader = new GroovyClassLoader()
+        Class aClass = groovyClassLoader.parseClass(getTestScript("tests", "VisitBlockStatement.groovy"))
+        aClass.newInstance().visitBlockStatementNoneLevel()
+        aClass.newInstance().visitBlockStatementMethodErrorLevel()
+        aClass.newInstance().visitBlockStatementMethodLevel()
+        aClass.newInstance().visitBlockStatementStatementLevel()
+        aClass.newInstance().visitBlockStatementExpressionLevel()
+    }
+
+    File getTestScript(String sectionName, String testScriptName) {
+        ClassLoader classLoader = getClass().getClassLoader()
+        File file = new File(classLoader.getResource(sectionName + "/" + testScriptName).getFile())
+        return file
+    }
+
+    void run1() {
+        /*
         BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.SEQUENTIAL.value()
         //BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.HIERARCHICAL.value()
         //BlackBoxEngine.blackBoxConfig.runtime.mode = BlackBoxMode.EMERGENCY.value()
@@ -298,7 +314,7 @@ class AllTests implements Runnable{
         new DelegateTest().test()
         new ErrorStrategies().test()
         new ClassAnnotation().someMethod()
-        new Static().test()
+        new Static().test()*/
     }
 
 

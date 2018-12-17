@@ -1,13 +1,10 @@
 package io.infinite.blackbox
 
-
 import groovy.xml.XmlUtil
-import io.infinite.blackbox.generated.XMLArgument
-import io.infinite.blackbox.generated.XMLException
-import io.infinite.blackbox.generated.XMLExceptionReference
-import io.infinite.blackbox.generated.XMLExpression
-import io.infinite.blackbox.generated.XMLMethodNode
-import io.infinite.blackbox.generated.XMLStatement
+import io.infinite.blackbox.generated.*
+import io.infinite.carburetor.ast.MetaDataExpression
+import io.infinite.carburetor.ast.MetaDataMethodNode
+import io.infinite.carburetor.ast.MetaDataStatement
 
 /**
  * This class implements BlackBox Runtime API - Sequential Mode functionality
@@ -24,7 +21,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
 
     private String getPad() {
         if (depth >= 0) {
-            return "".padRight(depth*4)
+            return "".padRight(depth * 4)
         } else {
             return "!!!"
         }
@@ -35,7 +32,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      */
     private void log(String iText) {
         //todo: break multiline text into separate log calls
-        automaticLog.debug(getPad() + iText)
+        internalLogger.debug(getPad() + iText)
     }
 
     /**
@@ -43,7 +40,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      */
     private void logError(String iText) {
         //todo: break multiline text into separate log calls
-        automaticLog.error(iText)
+        internalLogger.error(iText)
     }
 
     /**
@@ -51,9 +48,15 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      * - prints opening tags of Expression.
      */
     @Override
-    void expressionExecutionOpen(String iExpressionName, String iRestoredScriptCode, Integer iColumnNumber, Integer iLastColumnNumber, Integer iLineNumber, Integer iLastLineNumber, String iNodeSourceName) {
-        super.expressionExecutionOpen(iExpressionName, iRestoredScriptCode, iColumnNumber, iLastColumnNumber, iLineNumber, iLastLineNumber, iNodeSourceName)
-        log("""<astNode xsi:type="Expression" expressionClassName="${astNode.getExpressionClassName()}" startDateTime="${astNode.startDateTime.toXMLFormat()}" sourceNodeName="${astNode.getSourceNodeName()}" lineNumber="${astNode.getLineNumber()}" columnNumber="${astNode.getColumnNumber()}" lastLineNumber="${astNode.getLastLineNumber()}" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
+    void expressionExecutionOpen(MetaDataExpression metaDataExpression) {
+        super.expressionExecutionOpen(metaDataExpression)
+        log("""<astNode xsi:type="Expression" expressionClassName="${
+            astNode.getExpressionClassName()
+        }" startDateTime="${astNode.startDateTime.toXMLFormat()}" sourceNodeName="${
+            astNode.getSourceNodeName()
+        }" lineNumber="${astNode.getLineNumber()}" columnNumber="${astNode.getColumnNumber()}" lastLineNumber="${
+            astNode.getLastLineNumber()
+        }" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
         depth++
         log("""<restoredScriptCode>${XmlUtil.escapeXml(astNode.getRestoredScriptCode())}</restoredScriptCode>""")
         log("""<astNodeList>""")
@@ -65,9 +68,13 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      * - prints opening tags of Statement.
      */
     @Override
-    void statementExecutionOpen(String iStatementName, String iRestoredScriptCode, Integer iColumnNumber, Integer iLastColumnNumber, Integer iLineNumber, Integer iLastLineNumber, String iNodeSourceName) {
-        super.statementExecutionOpen(iStatementName, iRestoredScriptCode, iColumnNumber, iLastColumnNumber, iLineNumber, iLastLineNumber, iNodeSourceName)
-        log("""<astNode xsi:type="Statement" statementClassName="${astNode.getStatementClassName()}" startDateTime="${astNode.startDateTime.toXMLFormat()}" sourceNodeName="${astNode.getSourceNodeName()}" lineNumber="${astNode.getLineNumber()}" columnNumber="${astNode.getColumnNumber()}" lastLineNumber="${astNode.getLastLineNumber()}" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
+    void statementExecutionOpen(MetaDataStatement metaDataStatement) {
+        super.statementExecutionOpen(metaDataStatement)
+        log("""<astNode xsi:type="Statement" statementClassName="${astNode.getStatementClassName()}" startDateTime="${
+            astNode.startDateTime.toXMLFormat()
+        }" sourceNodeName="${astNode.getSourceNodeName()}" lineNumber="${astNode.getLineNumber()}" columnNumber="${
+            astNode.getColumnNumber()
+        }" lastLineNumber="${astNode.getLastLineNumber()}" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
         depth++
         log("""<restoredScriptCode>${XmlUtil.escapeXml(astNode.getRestoredScriptCode())}</restoredScriptCode>""")
         log("""<astNodeList>""")
@@ -79,15 +86,23 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      * - prints closing tags of MethodNode.
      */
     @Override
-    void methodExecutionOpen(String iClassSimpleName, String iPackageName, String iMethodName, Integer iColumnNumber, Integer iLastColumnNumber, Integer iLineNumber, Integer iLastLineNumber, Map<String, Object> methodArgumentMap) {
-        super.methodExecutionOpen(iClassSimpleName, iPackageName, iMethodName, iColumnNumber, iLastColumnNumber, iLineNumber, iLastLineNumber, methodArgumentMap)
-        log("""<astNode xsi:type="MethodNode" methodName="${astNode.getMethodName()}" className="${astNode.getClassName()}" startDateTime="${astNode.startDateTime.toXMLFormat()}" lineNumber="${astNode.getLineNumber()}" columnNumber="${astNode.getColumnNumber()}" lastLineNumber="${astNode.getLastLineNumber()}" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
+    void methodExecutionOpen(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
+        super.methodExecutionOpen(metaDataMethodNode, methodArgumentMap)
+        log("""<astNode xsi:type="MethodNode" methodName="${astNode.getMethodName()}" className="${
+            astNode.getClassName()
+        }" startDateTime="${astNode.startDateTime.toXMLFormat()}" lineNumber="${
+            astNode.getLineNumber()
+        }" columnNumber="${astNode.getColumnNumber()}" lastLineNumber="${
+            astNode.getLastLineNumber()
+        }" lastColumnNumber="${astNode.getLastColumnNumber()}">""")
         depth++
-        if (BlackBoxTransformation.methodArgumentsPresent(astNode.getArgumentList().getArgument())) {
+        if (methodArgumentsPresent(astNode.getArgumentList().getArgument())) {
             log("""<argumentList>""")
             depth++
             for (XMLArgument xmlArgument in astNode.getArgumentList().getArgument()) {
-                log("""<argument argumentClassName="${xmlArgument.getArgumentClassName()}" argumentName="${xmlArgument.getArgumentName()}">""")
+                log("""<argument argumentClassName="${xmlArgument.getArgumentClassName()}" argumentName="${
+                    xmlArgument.getArgumentName()
+                }">""")
                 depth++
                 log("""<argumentValue>${XmlUtil.escapeXml(xmlArgument.getArgumentValue())}</argumentValue>""")
                 depth--
@@ -109,7 +124,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
         if (astNode.parentAstNode != null) {
             astNode.parentAstNode.getAstNodeList().getAstNode().remove(astNode)
         }
-        switch(astNode) {
+        switch (astNode) {
             case XMLExpression:
                 depth--
                 log("""</astNodeList>""")
@@ -143,22 +158,42 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                 if (xmlMethodNode.getException() != null) {
                     XMLExceptionReference xmlException = xmlMethodNode.getException()
                     if (xmlException instanceof XMLException) {
-                        log("""<exception xsi:type="Exception" exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}">""")
+                        log("""<exception xsi:type="Exception" exceptionDateTime="${
+                            xmlException.getExceptionDateTime().toXMLFormat()
+                        }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
+                            xmlException.isIsAlreadyLogged()
+                        }">""")
                         depth++
-                        log("""<exceptionStackTrace>${XmlUtil.escapeXml(xmlException.getExceptionStackTrace())}</exceptionStackTrace>""")
+                        log("""<exceptionStackTrace>${
+                            XmlUtil.escapeXml(xmlException.getExceptionStackTrace())
+                        }</exceptionStackTrace>""")
                         depth--
                         log("""</exception>""")
                     } else if (xmlException instanceof XMLExceptionReference) {
-                        log("""<exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
+                        log("""<exception exceptionDateTime="${
+                            xmlException.getExceptionDateTime().toXMLFormat()
+                        }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
+                            xmlException.isIsAlreadyLogged()
+                        }"/>""")
                     }
                 }
                 if (xmlMethodNode.standaloneException != null) {
-                    logError("""<standaloneException methodName="${xmlMethodNode.getMethodName()}" className="${xmlMethodNode.getClassName()}" startDateTime="${xmlMethodNode.startDateTime.toXMLFormat()}" lineNumber="${xmlMethodNode.getLineNumber()}" columnNumber="${xmlMethodNode.getColumnNumber()}" lastLineNumber="${xmlMethodNode.getLastLineNumber()}" lastColumnNumber="${xmlMethodNode.getLastColumnNumber()}">""")
+                    logError("""<standaloneException methodName="${xmlMethodNode.getMethodName()}" className="${
+                        xmlMethodNode.getClassName()
+                    }" startDateTime="${xmlMethodNode.startDateTime.toXMLFormat()}" lineNumber="${
+                        xmlMethodNode.getLineNumber()
+                    }" columnNumber="${xmlMethodNode.getColumnNumber()}" lastLineNumber="${
+                        xmlMethodNode.getLastLineNumber()
+                    }" lastColumnNumber="${xmlMethodNode.getLastColumnNumber()}">""")
                     if (BlackBoxTransformation.methodArgumentsPresent(xmlMethodNode.getArgumentList().getArgument())) {
                         logError("""    <argumentList>""")
                         for (XMLArgument xmlArgument in xmlMethodNode.getArgumentList().getArgument()) {
-                            logError("""        <argument argumentClassName="${xmlArgument.getArgumentClassName()}" argumentName="${xmlArgument.getArgumentName()}">""")
-                            logError("""            <argumentValue>${XmlUtil.escapeXml(xmlArgument.getArgumentValue())}</argumentValue>""")
+                            logError("""        <argument argumentClassName="${
+                                xmlArgument.getArgumentClassName()
+                            }" argumentName="${xmlArgument.getArgumentName()}">""")
+                            logError("""            <argumentValue>${
+                                XmlUtil.escapeXml(xmlArgument.getArgumentValue())
+                            }</argumentValue>""")
                             logError("""        </argument>""")
                         }
                         logError("""    </argumentList>""")
@@ -166,13 +201,23 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                     if (xmlMethodNode.standaloneException.getException() != null) {
                         XMLExceptionReference xmlException = xmlMethodNode.standaloneException.getException()
                         if (xmlException instanceof XMLException) {
-                            logError("""    <exception xsi:type="Exception" exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}">""")
+                            logError("""    <exception xsi:type="Exception" exceptionDateTime="${
+                                xmlException.getExceptionDateTime().toXMLFormat()
+                            }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
+                                xmlException.isIsAlreadyLogged()
+                            }">""")
                             depth++
-                            logError("""        <exceptionStackTrace>${XmlUtil.escapeXml(xmlException.getExceptionStackTrace())}</exceptionStackTrace>""")
+                            logError("""        <exceptionStackTrace>${
+                                XmlUtil.escapeXml(xmlException.getExceptionStackTrace())
+                            }</exceptionStackTrace>""")
                             depth--
                             logError("""    </exception>""")
                         } else if (xmlException instanceof XMLExceptionReference) {
-                            logError("""    <exception exceptionDateTime="${xmlException.getExceptionDateTime().toXMLFormat()}" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${xmlException.isIsAlreadyLogged()}"/>""")
+                            logError("""    <exception exceptionDateTime="${
+                                xmlException.getExceptionDateTime().toXMLFormat()
+                            }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
+                                xmlException.isIsAlreadyLogged()
+                            }"/>""")
                         }
                     }
                     logError("""</standaloneException>""")
@@ -197,9 +242,26 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
     @Override
     void initRootAstNode() {
         super.initRootAstNode()
-        log("""<rootAstNode startDateTime="${astNode.startDateTime.toXMLFormat()}" xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">""")
+        log("""<rootAstNode startDateTime="${
+            astNode.startDateTime.toXMLFormat()
+        }" xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">""")
         depth++
         log("""<astNodeList>""")
         depth++
     }
+
+    Boolean methodArgumentsPresent(Object iArgs) {
+        if (iArgs != null) {
+            if (iArgs instanceof Collection) {
+                return iArgs.size() > 0
+            } else if (iArgs instanceof Object[]) {
+                return iArgs.length > 0
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+
 }

@@ -5,16 +5,16 @@
     {
       "name": "io.infinite.bobbin.destinations.FileDestination",
       "properties": {
-        "fileKey": "threadName + level",
-        "fileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/${date}.log\"",
-        "zipFileName": "\"./LOGS/BLACKBOX/${level}/${threadName}/ARCHIVE/${date}.zip\"",
+        "fileKey": "MDC.unitName + level",
+        "fileName": "\"./LOGS/BLACKBOX/${level}/${MDC.unitName}/${date}.log\"",
+        "zipFileName": "\"./LOGS/BLACKBOX/${level}/${MDC.unitName}/ARCHIVE/${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
-      "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\""
+      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\""
     },
     {
       "name": "io.infinite.bobbin.destinations.ConsoleDestination",
-      "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\"",
+      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\"",
       "levels": "['info', 'warn', 'error'].contains(level)"
     }
   ]

@@ -5,12 +5,12 @@
     {
       "name": "io.infinite.bobbin.destinations.FileDestination",
       "properties": {
-        "fileKey": "threadName + level",
-        "fileName": "\"./LOGS/${threadName}/${level}/${threadName}_${level}_${date}.log\"",
-        "zipFileName": "\"./LOGS/${threadName}/${level}/ARCHIVE/${threadName}_${level}_${date}.zip\"",
+        "fileKey": "MDC.unitName + level",
+        "fileName": "\"./LOGS/${MDC.unitName}/${level}/${MDC.unitName}_${level}_${date}.log\"",
+        "zipFileName": "\"./LOGS/${MDC.unitName}/${level}/ARCHIVE/${MDC.unitName}_${level}_${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
-      "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\\n\"",
+      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\"",
       "classes": "className.contains('io.infinite.')"
     },
     {
@@ -20,12 +20,12 @@
         "zipFileName": "\"./LOGS/WARNINGS_AND_ERRORS_${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
-      "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\\n\"",
+      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\"",
       "levels": "['warn', 'error'].contains(level)"
     },
     {
       "name": "io.infinite.bobbin.destinations.ConsoleDestination",
-      "format": "\"${dateTime}|${level}|${threadName}|${className}|${event.message}\\n\""
+      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\""
     }
   ]
 }
