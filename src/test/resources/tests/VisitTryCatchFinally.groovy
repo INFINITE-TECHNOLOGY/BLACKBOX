@@ -1,9 +1,9 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitTryCatchFinallyNoneLevel() {
     int wwww = 0
     while (wwww < 3) {
@@ -21,7 +21,7 @@ void visitTryCatchFinallyNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitTryCatchFinallyMethodErrorLevel() {
     int wwww = 0
     while (wwww < 3) {
@@ -39,7 +39,7 @@ void visitTryCatchFinallyMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitTryCatchFinallyMethodLevel() {
     int wwww = 0
     while (wwww < 3) {
@@ -57,7 +57,7 @@ void visitTryCatchFinallyMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitTryCatchFinallyStatementLevel() {
     int wwww = 0
     while (wwww < 3) {
@@ -75,7 +75,7 @@ void visitTryCatchFinallyStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitTryCatchFinallyExpressionLevel() {
     int wwww = 0
     while (wwww < 3) {

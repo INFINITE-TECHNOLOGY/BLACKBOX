@@ -1,11 +1,11 @@
 package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 class ToString {
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     @Override
     String toString() {
         return super.toString()

@@ -1,9 +1,9 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitSwitchNoneLevel() {
     switch (1) {
         case 1:
@@ -21,7 +21,7 @@ void visitSwitchNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitSwitchMethodErrorLevel() {
     switch (1) {
         case 1:
@@ -39,7 +39,7 @@ void visitSwitchMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitSwitchMethodLevel() {
     switch (1) {
         case 1:
@@ -57,7 +57,7 @@ void visitSwitchMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitSwitchStatementLevel() {
     switch (1) {
         case 1:
@@ -75,7 +75,7 @@ void visitSwitchStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitSwitchExpressionLevel() {
     switch (1) {
         case 1:

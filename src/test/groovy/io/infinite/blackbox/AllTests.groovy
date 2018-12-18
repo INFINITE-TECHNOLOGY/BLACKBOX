@@ -312,7 +312,7 @@ class AllTests extends GroovyTestCase {
         new DuplicateException().test()
         BlackBoxEngine.getInstance(log).expressionEvaluation("", "", 0, 0, 0, 0, { StaticToString }, "", null)
         new ExceptionPlaintext().test()
-        new DefaultBlackBoxLevel().foo()
+        new DefaultCarburetorLevel().foo()
         ToString toString = new ToString()
         assert toString.toString() == "io.infinite.blackbox.others.ToString@" + Integer.toHexString(toString.hashCode())
         new DelegateTest().test()

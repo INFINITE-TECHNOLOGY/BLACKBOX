@@ -1,9 +1,9 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitSynchronizedStatementNoneLevel() {
     Object object = new Object()
     synchronized (object) {
@@ -12,7 +12,7 @@ void visitSynchronizedStatementNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitSynchronizedStatementMethodErrorLevel() {
     Object object = new Object()
     synchronized (object) {
@@ -21,7 +21,7 @@ void visitSynchronizedStatementMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitSynchronizedStatementMethodLevel() {
     Object object = new Object()
     synchronized (object) {
@@ -30,7 +30,7 @@ void visitSynchronizedStatementMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitSynchronizedStatementStatementLevel() {
     Object object = new Object()
     synchronized (object) {
@@ -39,7 +39,7 @@ void visitSynchronizedStatementStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitSynchronizedStatementExpressionLevel() {
     Object object = new Object()
     synchronized (object) {

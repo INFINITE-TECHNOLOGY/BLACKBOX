@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.infinite.blackbox.generated.XMLASTNode
 import io.infinite.blackbox.generated.XMLMethodNode
 
-class BlackBoxFactory {
+class BlackBoxEngineFactory {
 
     static ThreadLocal engineThreadLocal = new ThreadLocal()
 

@@ -1,33 +1,33 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitExpressionStatementNoneLevel() {
     int z
     z = z
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitExpressionStatementMethodErrorLevel() {
     int z
     z = z
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitExpressionStatementMethodLevel() {
     int z
     z = z
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitExpressionStatementStatementLevel() {
     int z
     z = z
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitExpressionStatementExpressionLevel() {
     int z
     z = z

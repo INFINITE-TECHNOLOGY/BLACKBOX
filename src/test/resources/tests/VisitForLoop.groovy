@@ -1,37 +1,37 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitForLoopNoneLevel() {
     for (z in [1,2,3,4]) {
         System.out.println("Test")
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitForLoopMethodErrorLevel() {
     for (z in [1,2,3,4]) {
         System.out.println("Test")
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitForLoopMethodLevel() {
     for (z in [1,2,3,4]) {
         System.out.println("Test")
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitForLoopStatementLevel() {
     for (z in [1,2,3,4]) {
         System.out.println("Test")
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitForLoopExpressionLevel() {
     for (z in [1,2,3,4]) {
         System.out.println("Test")

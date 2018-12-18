@@ -1,21 +1,21 @@
 package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 class ErrorStrategies {
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION, suppressExceptions = true)
+    @BlackBox(level = CarburetorLevel.EXPRESSION, suppressExceptions = true)
     void test() {
         test2()
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     void test2() {
         test3()
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     void test3() {
         throw new Exception("Test exception")
     }

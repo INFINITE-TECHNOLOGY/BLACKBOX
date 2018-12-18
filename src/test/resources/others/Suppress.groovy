@@ -1,7 +1,7 @@
 package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 public class Suppress {
 
@@ -9,7 +9,7 @@ public class Suppress {
         throw new Exception("This is test exception")
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION, suppressExceptions = true)
+    @BlackBox(level = CarburetorLevel.EXPRESSION, suppressExceptions = true)
     void test() {
         exception()
     }

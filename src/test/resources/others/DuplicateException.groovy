@@ -1,16 +1,16 @@
 package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 public class DuplicateException {
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+    @BlackBox(level = CarburetorLevel.ERROR)
     void exception() {
         throw new Exception("This is test exception")
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+    @BlackBox(level = CarburetorLevel.ERROR)
     void exception2() {
         exception()
     }

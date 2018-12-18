@@ -1,9 +1,9 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitThrowStatementNoneLevel() {
     try {
         System.out.println("test")
@@ -18,7 +18,7 @@ void visitThrowStatementNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitThrowStatementMethodErrorLevel() {
     try {
         System.out.println("test")
@@ -33,7 +33,7 @@ void visitThrowStatementMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitThrowStatementMethodLevel() {
     try {
         System.out.println("test")
@@ -48,7 +48,7 @@ void visitThrowStatementMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitThrowStatementStatementLevel() {
     try {
         System.out.println("test")
@@ -63,7 +63,7 @@ void visitThrowStatementStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitThrowStatementExpressionLevel() {
     try {
         System.out.println("test")

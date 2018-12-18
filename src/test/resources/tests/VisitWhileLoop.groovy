@@ -1,10 +1,10 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitWhileLoopNoneLevel() {
     int z = 0
     while (z < 3) {
@@ -13,7 +13,7 @@ void visitWhileLoopNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitWhileLoopMethodErrorLevel() {
     int z = 0
     while (z < 3) {
@@ -22,7 +22,7 @@ void visitWhileLoopMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitWhileLoopMethodLevel() {
     int z = 0
     while (z < 3) {
@@ -31,7 +31,7 @@ void visitWhileLoopMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitWhileLoopStatementLevel() {
     int z = 0
     while (z < 3) {
@@ -40,7 +40,7 @@ void visitWhileLoopStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitWhileLoopExpressionLevel() {
     int z = 0
     while (z < 3) {

@@ -2,17 +2,17 @@ package io.infinite.blackbox.others
 
 import groovy.util.logging.Slf4j
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 @Slf4j
 class Static {
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     static void test3() {
         System.out.println("Test")
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     static void testBlackBox(Object iThis) {
         Closure c = {
             assert delegate == this

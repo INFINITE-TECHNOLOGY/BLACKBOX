@@ -2,6 +2,8 @@ package io.infinite.blackbox
 
 import io.infinite.blackbox.generated.*
 import io.infinite.carburetor.CarburetorEngine
+import io.infinite.carburetor.CarburetorRuntimeException
+import io.infinite.carburetor.ast.MetaDataASTNode
 import io.infinite.carburetor.ast.MetaDataExpression
 import io.infinite.carburetor.ast.MetaDataMethodNode
 import io.infinite.carburetor.ast.MetaDataStatement
@@ -9,7 +11,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 
 import javax.xml.datatype.DatatypeFactory
 import javax.xml.datatype.XMLGregorianCalendar
@@ -37,7 +38,7 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     static BlackBoxEngine getInstance(Logger automaticLog) {
-        BlackBoxEngine blackBoxEngine = new BlackBoxFactory().getInstance()
+        BlackBoxEngine blackBoxEngine = new BlackBoxEngineFactory().getInstance()
         blackBoxEngine.internalLogger = automaticLog
         return blackBoxEngine
     }
@@ -79,6 +80,11 @@ class BlackBoxEngine extends CarburetorEngine {
             astNode.setExpressionValue(xmlObject)
         }
         return expressionEvaluationResult
+    }
+
+    @Override
+    Exception carburetorRuntimeExceptionHandle(Exception exception, MetaDataASTNode metaDataASTNode) {
+        return new CarburetorRuntimeException(metaDataASTNode, exception)
     }
 
     void statementExecutionOpen(MetaDataStatement metaDataStatement) {

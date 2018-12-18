@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
 import groovy.util.logging.Slf4j
+import io.infinite.carburetor.CarburetorLevel
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 import org.codehaus.groovy.transform.LogASTTransformation
 
@@ -25,7 +26,7 @@ import java.lang.annotation.Target
      * BlackBox level, default BlackBoxLevel.METHOD (can be overriden by System property "blackbox.level.default")
      * @return BlackBox level for transforming method/constructor.
      */
-    BlackBoxLevel blackBoxLevel() default BlackBoxLevel.METHOD
+    CarburetorLevel level() default CarburetorLevel.METHOD
 
     /**
      * When enabled, this will cause BlackBox with levels METHOD_ERROR and above to suppress exceptions
@@ -33,7 +34,5 @@ import java.lang.annotation.Target
      * @return
      */
     boolean suppressExceptions() default false
-
-    ErrorLoggingStrategy strategy() default ErrorLoggingStrategy.UNDEFINED
 
 }

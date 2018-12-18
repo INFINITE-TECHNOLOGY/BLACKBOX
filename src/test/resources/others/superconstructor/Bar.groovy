@@ -1,11 +1,11 @@
 package io.infinite.blackbox.others.superconstructor
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 class Bar extends Foo {
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     Bar(String foo) {
         super("test")
         def z = "q"

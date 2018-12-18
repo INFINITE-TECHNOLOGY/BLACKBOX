@@ -1,7 +1,7 @@
 package io.infinite.blackbox.others
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
 class ThreadSafety extends Thread{
 
@@ -10,7 +10,7 @@ class ThreadSafety extends Thread{
         runWithLogging()
     }
 
-    @BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+    @BlackBox(level = CarburetorLevel.EXPRESSION)
     void runWithLogging() {
         [1..5].each {
             sleep(10)

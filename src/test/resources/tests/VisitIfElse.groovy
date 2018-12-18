@@ -1,9 +1,9 @@
 package io.infinite.blackbox.tests
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.blackbox.BlackBoxLevel
+import io.infinite.carburetor.CarburetorLevel
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.NONE)
+@BlackBox(level = CarburetorLevel.NONE)
 void visitIfElseNoneLevel() {
     if (true) {
         if (false) {
@@ -16,7 +16,7 @@ void visitIfElseNoneLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD_ERROR)
+@BlackBox(level = CarburetorLevel.ERROR)
 void visitIfElseMethodErrorLevel() {
     if (true) {
         if (false) {
@@ -29,7 +29,7 @@ void visitIfElseMethodErrorLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.METHOD)
+@BlackBox(level = CarburetorLevel.METHOD)
 void visitIfElseMethodLevel() {
     if (true) {
         if (false) {
@@ -42,7 +42,7 @@ void visitIfElseMethodLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.STATEMENT)
+@BlackBox(level = CarburetorLevel.STATEMENT)
 void visitIfElseStatementLevel() {
     if (true) {
         if (false) {
@@ -55,7 +55,7 @@ void visitIfElseStatementLevel() {
     }
 }
 
-@BlackBox(blackBoxLevel = BlackBoxLevel.EXPRESSION)
+@BlackBox(level = CarburetorLevel.EXPRESSION)
 void visitIfElseExpressionLevel() {
     if (true) {
         if (false) {
