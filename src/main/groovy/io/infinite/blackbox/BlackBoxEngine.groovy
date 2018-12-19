@@ -165,16 +165,21 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     void handleMethodResult(Object methodResult) {
+        closeUpToMethod()
         XMLObject xmlMethodResult = new XMLObject()
         xmlMethodResult.setValue(methodResult.toString())
         xmlMethodResult.setClassName(methodResult.getClass().getCanonicalName())
         ((XMLMethodNode) astNode).setMethodResult(xmlMethodResult)
     }
 
-    void exception(Exception exception) {
+    void closeUpToMethod() {
         while (!(astNode instanceof XMLMethodNode)) {
             executionClose()
         }
+    }
+
+    void exception(Exception exception) {
+        closeUpToMethod()
         ErrorLoggingStrategy errorLoggingStrategy = ErrorLoggingStrategy.valueOf(blackBoxConfig.runtime.strategy)
         switch (errorLoggingStrategy) {
             case ErrorLoggingStrategy.FULL_THEN_REFERENCE:
