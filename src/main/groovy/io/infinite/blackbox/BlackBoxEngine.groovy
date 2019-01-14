@@ -27,16 +27,6 @@ class BlackBoxEngine extends CarburetorEngine {
 
     XMLASTNode astNode
 
-    BlackBoxEngine() {
-        /*def contextMap = MDC.getCopyOfContextMap()
-        addShutdownHook {
-            MDC.setContextMap(contextMap)
-            while (astNode != null) {
-                executionClose()
-            }
-        }*/
-    }
-
     static BlackBoxEngine getInstance(Logger automaticLog) {
         BlackBoxEngine blackBoxEngine = new BlackBoxEngineFactory().getInstance()
         blackBoxEngine.internalLogger = automaticLog

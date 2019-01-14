@@ -6,8 +6,6 @@ import io.infinite.blackbox.generated.XMLMethodNode
 
 class BlackBoxEngineFactory {
 
-    static ThreadLocal engineThreadLocal = new ThreadLocal()
-
     static {
         XMLASTNode.getMetaClass().parentAstNode = null
         Exception.getMetaClass().isLoggedByBlackBox = null
@@ -16,7 +14,7 @@ class BlackBoxEngineFactory {
     }
 
     BlackBoxEngine getInstance() {
-        BlackBoxEngine blackBoxEngine = engineThreadLocal.get() as BlackBoxEngine
+        BlackBoxEngine blackBoxEngine = BlackBoxThreadLocal.get() as BlackBoxEngine
         if (blackBoxEngine == null) {
             BlackBoxConfig blackBoxConfig = initBlackBoxConfig()
             if (blackBoxConfig.runtime.mode == BlackBoxMode.SEQUENTIAL.value()) {
@@ -29,7 +27,7 @@ class BlackBoxEngineFactory {
                 blackBoxEngine = new BlackBoxEngineEmergency()
             }
             blackBoxEngine.setBlackBoxConfig(blackBoxConfig)
-            engineThreadLocal.set(blackBoxEngine)
+            BlackBoxThreadLocal.set(blackBoxEngine)
         }
         return blackBoxEngine
     }
