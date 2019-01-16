@@ -17,14 +17,14 @@ class BlackBoxEngineFactory {
         BlackBoxEngine blackBoxEngine = BlackBoxThreadLocal.get() as BlackBoxEngine
         if (blackBoxEngine == null) {
             BlackBoxConfig blackBoxConfig = initBlackBoxConfig()
-            if (blackBoxConfig.runtime.mode == BlackBoxMode.SEQUENTIAL.value()) {
-                blackBoxEngine = new BlackBoxEngineSequential()
+            if (blackBoxConfig.runtime.mode == BlackBoxMode.EMERGENCY.value()) {
+                blackBoxEngine = new BlackBoxEngineEmergency()
             } else if (blackBoxConfig.runtime.mode == BlackBoxMode.HIERARCHICAL.value()) {
                 blackBoxEngine = new BlackBoxEngineHierarchical()
             } else if (blackBoxConfig.runtime.mode == BlackBoxMode.PLAINTEXT.value()) {
                 blackBoxEngine = new BlackBoxEnginePlainText()
             } else {
-                blackBoxEngine = new BlackBoxEngineEmergency()
+                blackBoxEngine = new BlackBoxEngineSequential()
             }
             blackBoxEngine.setBlackBoxConfig(blackBoxConfig)
             BlackBoxThreadLocal.set(blackBoxEngine)

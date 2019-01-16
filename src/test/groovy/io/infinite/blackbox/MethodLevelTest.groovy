@@ -8,16 +8,28 @@ class MethodLevelTest extends GroovyTestCase {
         assertScript("""import io.infinite.blackbox.BlackBox
 import io.infinite.carburetor.CarburetorLevel
 
-class MethodLevel {
+abstract class Foo extends Thread {
 
+    @Override
     @BlackBox(level = CarburetorLevel.METHOD)
-    def test() {
+    void run() {
         println "OK"
     }
 
 }
 
-new MethodLevel().test()
+class Bar extends Foo {
+
+    @Override
+    @BlackBox
+    void run() {
+        println "OK"
+        super.run()
+    }
+
+}
+
+new Bar().run()
 """)
     }
 
