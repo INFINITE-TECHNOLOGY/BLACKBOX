@@ -56,7 +56,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
 
     @Override
     void getAnnotationParameters() {
-        suppressExceptions = getAnnotationParameter("suppressExceptions", false)
+        suppressExceptions = getAnnotationParameter("suppressExceptions", false, annotatationNode)
     }
 
     @Override
@@ -75,7 +75,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
     Statement createThrowStatement() {
         if (!suppressExceptions) {
             ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticException"))
-            throwStatement.setSourcePosition(annotationNode)
+            throwStatement.setSourcePosition(annotatationNode)
             return throwStatement
         } else {
             return new EmptyStatement()
