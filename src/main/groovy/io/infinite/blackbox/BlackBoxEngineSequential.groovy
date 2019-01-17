@@ -2,9 +2,9 @@ package io.infinite.blackbox
 
 import groovy.xml.XmlUtil
 import io.infinite.blackbox.generated.*
-import io.infinite.carburetor.ast.MetaDataExpression
-import io.infinite.carburetor.ast.MetaDataMethodNode
-import io.infinite.carburetor.ast.MetaDataStatement
+import io.infinite.supplies.ast.metadata.MetaDataExpression
+import io.infinite.supplies.ast.metadata.MetaDataMethodNode
+import io.infinite.supplies.ast.metadata.MetaDataStatement
 
 /**
  * This class implements BlackBox Runtime API - Sequential Mode functionality
