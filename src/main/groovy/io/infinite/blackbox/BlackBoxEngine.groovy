@@ -74,7 +74,10 @@ class BlackBoxEngine extends CarburetorEngine {
 
     @Override
     Exception carburetorRuntimeExceptionHandle(Exception exception, MetaDataASTNode metaDataASTNode) {
-        return new CarburetorRuntimeException(metaDataASTNode, exception)
+        CarburetorRuntimeException carburetorRuntimeException = CarburetorRuntimeException(metaDataASTNode, exception)
+        carburetorRuntimeException.isLoggedByBlackBox = exception.isLoggedByBlackBox
+        carburetorRuntimeException.uuid = exception.uuid
+        return carburetorRuntimeException
     }
 
     void statementExecutionOpen(MetaDataStatement metaDataStatement) {
