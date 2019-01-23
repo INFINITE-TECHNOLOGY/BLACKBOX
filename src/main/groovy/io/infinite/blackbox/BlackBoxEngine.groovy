@@ -74,10 +74,16 @@ class BlackBoxEngine extends CarburetorEngine {
 
     @Override
     Exception carburetorRuntimeExceptionHandle(Exception exception, MetaDataASTNode metaDataASTNode) {
-        CarburetorRuntimeException carburetorRuntimeException = new CarburetorRuntimeException(metaDataASTNode, exception)
+        CarburetorRuntimeException carburetorRuntimeException
+        if (exception.runtimeException != null) {
+            carburetorRuntimeException = new CarburetorRuntimeException(metaDataASTNode, exception.runtimeException as Exception)
+        } else {
+            carburetorRuntimeException = new CarburetorRuntimeException(metaDataASTNode, exception)
+        }
         carburetorRuntimeException.isLoggedByBlackBox = exception.isLoggedByBlackBox
         carburetorRuntimeException.uuid = exception.uuid
-        return carburetorRuntimeException
+        exception.runtimeException = carburetorRuntimeException
+        return exception
     }
 
     void statementExecutionOpen(MetaDataStatement metaDataStatement) {
@@ -105,7 +111,7 @@ class BlackBoxEngine extends CarburetorEngine {
         xmlMethodNode.setAstNodeList(new XMLASTNodeList())
         xmlMethodNode.setStartDateTime(getXMLGregorianCalendar())
         xmlMethodNode.setMethodName(metaDataMethodNode.getMethodName())
-        xmlMethodNode.setClassName(metaDataMethodNode.getPackageName()+ "." + metaDataMethodNode.getClassSimpleName())
+        xmlMethodNode.setClassName(metaDataMethodNode.getPackageName() + "." + metaDataMethodNode.getClassSimpleName())
         xmlMethodNode.setColumnNumber(metaDataMethodNode.getColumnNumber() as BigInteger)
         xmlMethodNode.setLastColumnNumber(metaDataMethodNode.getLastColumnNumber() as BigInteger)
         xmlMethodNode.setLineNumber(metaDataMethodNode.getLineNumber() as BigInteger)

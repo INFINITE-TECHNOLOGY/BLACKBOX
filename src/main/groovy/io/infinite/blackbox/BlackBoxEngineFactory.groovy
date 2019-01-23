@@ -10,6 +10,7 @@ class BlackBoxEngineFactory {
         XMLASTNode.getMetaClass().parentAstNode = null
         Exception.getMetaClass().isLoggedByBlackBox = null
         Exception.getMetaClass().uuid = null
+        Exception.getMetaClass().runtimeException = null
         XMLMethodNode.getMetaClass().standaloneException = null
     }
 
