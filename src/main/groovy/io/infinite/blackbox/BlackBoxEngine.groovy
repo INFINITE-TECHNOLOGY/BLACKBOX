@@ -7,7 +7,7 @@ import io.infinite.supplies.ast.metadata.MetaDataASTNode
 import io.infinite.supplies.ast.metadata.MetaDataExpression
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
-import org.apache.commons.lang3.exception.ExceptionUtils
+import io.infinite.supplies.ast.exceptions.ExceptionUtils
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -185,7 +185,7 @@ class BlackBoxEngine extends CarburetorEngine {
                 XMLExceptionReference xmlException
                 if (exception.isLoggedByBlackBox != true) {
                     xmlException = new XMLException()
-                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
                     xmlException.setExceptionUid(UUID.randomUUID().toString())
                     xmlException.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
@@ -215,13 +215,13 @@ class BlackBoxEngine extends CarburetorEngine {
             case ErrorLoggingStrategy.ALWAYS_FULL:
                 XMLException xmlException = new XMLException()
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
                     xmlException.setExceptionUid(UUID.randomUUID().toString())
                     xmlException.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
                     exception.uuid = xmlException.getExceptionUid()
                 } else {
-                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
                     xmlException.setExceptionUid(exception.uuid)
                     xmlException.setIsAlreadyLogged(true)
                 }
@@ -231,7 +231,7 @@ class BlackBoxEngine extends CarburetorEngine {
             case ErrorLoggingStrategy.FULL_THEN_NOTHING:
                 XMLException xmlException = new XMLException()
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException.setExceptionStackTrace(ExceptionUtils.getStackTrace(new StackTraceUtils().sanitize(exception)))
+                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
                     xmlException.setExceptionUid(UUID.randomUUID().toString())
                     xmlException.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
