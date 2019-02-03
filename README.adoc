@@ -1,4 +1,4 @@
-= Infinite Logging ∞ BlackBox
+= Infinite Logging ∞ BlackBox ⬛
 Anton Pryamostanov <https://github.com/apryamostanov[@apryamostanov]>
 :description: BlackBox is a solution to automatically generate Groovy Semantic logging code and inject it into User code during the Compilation stage resulting in a possibility to produce and review exhaustive application runtime data in a form of XML files with XSD model based on simplified Groovy AST class model - by the means of developing and using a BlackBox Annotation,Groovy Annotation.
 :keywords: Groovy, AST, annotation, transformation, logging, code injection, semantic logging
@@ -43,6 +43,14 @@ Project is in pre-release phase.
 It is suitable only for experimental usage.
 
 WARNING: Do not use on Production until stable release is published.
+
+|Attribute\Release type|Latest|Stable|
+|----------------------|------|------|
+|Version|1.0.6-SNAPSHOT|N/A|
+|Branch|[master](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX)|N/A|
+|CI Build status|[![Build Status](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX.svg?branch=master)](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX)|N/A|
+|Test coverage|[![codecov](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs/badge.svg)](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs)|N/A|
+|Library (Maven)|[oss.jfrog.org snapshot](https://oss.jfrog.org/artifactory/webapp/#/artifacts/browse/tree/General/oss-snapshot-local/io/infinite/blackbox/1.0.6-SNAPSHOT)|N/A|
 
 == Purpose
 {description}
