@@ -8,7 +8,6 @@ import io.infinite.supplies.ast.metadata.MetaDataExpression
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
 import io.infinite.supplies.ast.exceptions.ExceptionUtils
-import org.codehaus.groovy.runtime.StackTraceUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -182,66 +181,66 @@ class BlackBoxEngine extends CarburetorEngine {
         ErrorLoggingStrategy errorLoggingStrategy = ErrorLoggingStrategy.valueOf(blackBoxConfig.runtime.strategy)
         switch (errorLoggingStrategy) {
             case ErrorLoggingStrategy.FULL_THEN_REFERENCE:
-                XMLExceptionReference xmlException
+                XMLStackTrace xmlStackTrace
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException = new XMLException()
-                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
-                    xmlException.setIsAlreadyLogged(false)
+                    xmlStackTrace = new XMLStackTrace()
+                    xmlStackTrace.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
+                    xmlStackTrace.setExceptionUid(UUID.randomUUID().toString())
+                    xmlStackTrace.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
-                    exception.uuid = xmlException.getExceptionUid()
+                    exception.uuid = xmlStackTrace.getExceptionUid()
                 } else {
-                    xmlException = new XMLExceptionReference()
-                    xmlException.setExceptionUid(exception.uuid)
-                    xmlException.setIsAlreadyLogged(true)
+                    xmlStackTrace = new XMLStackTrace()
+                    xmlStackTrace.setExceptionUid(exception.uuid)
+                    xmlStackTrace.setIsAlreadyLogged(true)
                 }
-                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
-                ((XMLMethodNode) astNode).setException(xmlException)
+                xmlStackTrace.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlStackTrace)
                 break
             case ErrorLoggingStrategy.ALWAYS_REFERENCE:
-                XMLExceptionReference xmlException = new XMLExceptionReference()
+                XMLStackTrace xmlStackTrace = new XMLStackTrace()
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
-                    xmlException.setIsAlreadyLogged(false)
+                    xmlStackTrace.setExceptionUid(UUID.randomUUID().toString())
+                    xmlStackTrace.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
-                    exception.uuid = xmlException.getExceptionUid()
+                    exception.uuid = xmlStackTrace.getExceptionUid()
                 } else {
-                    xmlException.setExceptionUid(exception.uuid)
-                    xmlException.setIsAlreadyLogged(true)
+                    xmlStackTrace.setExceptionUid(exception.uuid)
+                    xmlStackTrace.setIsAlreadyLogged(true)
                 }
-                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
-                ((XMLMethodNode) astNode).setException(xmlException)
+                xmlStackTrace.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlStackTrace)
                 break
             case ErrorLoggingStrategy.ALWAYS_FULL:
-                XMLException xmlException = new XMLException()
+                XMLStackTrace xmlStackTrace = new XMLStackTrace()
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
-                    xmlException.setIsAlreadyLogged(false)
+                    xmlStackTrace.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
+                    xmlStackTrace.setExceptionUid(UUID.randomUUID().toString())
+                    xmlStackTrace.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
-                    exception.uuid = xmlException.getExceptionUid()
+                    exception.uuid = xmlStackTrace.getExceptionUid()
                 } else {
-                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
-                    xmlException.setExceptionUid(exception.uuid)
-                    xmlException.setIsAlreadyLogged(true)
+                    xmlStackTrace.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
+                    xmlStackTrace.setExceptionUid(exception.uuid)
+                    xmlStackTrace.setIsAlreadyLogged(true)
                 }
-                xmlException.setExceptionDateTime(getXMLGregorianCalendar())
-                ((XMLMethodNode) astNode).setException(xmlException)
+                xmlStackTrace.setExceptionDateTime(getXMLGregorianCalendar())
+                ((XMLMethodNode) astNode).setException(xmlStackTrace)
                 break
             case ErrorLoggingStrategy.FULL_THEN_NOTHING:
-                XMLException xmlException = new XMLException()
+                XMLStackTrace xmlStackTrace = new XMLStackTrace()
                 if (exception.isLoggedByBlackBox != true) {
-                    xmlException.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
-                    xmlException.setExceptionUid(UUID.randomUUID().toString())
-                    xmlException.setIsAlreadyLogged(false)
+                    xmlStackTrace.setExceptionStackTrace(new ExceptionUtils().stacktrace(exception))
+                    xmlStackTrace.setExceptionUid(UUID.randomUUID().toString())
+                    xmlStackTrace.setIsAlreadyLogged(false)
                     exception.isLoggedByBlackBox = true
-                    exception.uuid = xmlException.getExceptionUid()
-                    xmlException.setExceptionDateTime(getXMLGregorianCalendar())
-                    ((XMLMethodNode) astNode).setException(xmlException)
+                    exception.uuid = xmlStackTrace.getExceptionUid()
+                    xmlStackTrace.setExceptionDateTime(getXMLGregorianCalendar())
+                    ((XMLMethodNode) astNode).setException(xmlStackTrace)
                 }
                 break
             case ErrorLoggingStrategy.REFERENCE_THEN_NOTHING:
-                XMLExceptionReference xmlException = new XMLExceptionReference()
+                XMLStackTrace xmlException = new XMLStackTrace()
                 if (exception.isLoggedByBlackBox != true) {
                     xmlException.setExceptionUid(UUID.randomUUID().toString())
                     xmlException.setIsAlreadyLogged(false)
@@ -256,21 +255,21 @@ class BlackBoxEngine extends CarburetorEngine {
             default:
                 this.internalLogger.warn("Unsupported/undefined BlackBox Strategy: " + errorLoggingStrategy)
         }
-        XMLStandaloneException xmlStandaloneException = new XMLStandaloneException()
+        XMLException xmlException = new XMLException()
         XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
-        xmlStandaloneException.setArgumentList(xmlMethodNode.getArgumentList())
-        xmlStandaloneException.setClassName(xmlMethodNode.getClassName())
-        xmlStandaloneException.setException(xmlMethodNode.getException())
-        xmlStandaloneException.setMethodName(xmlMethodNode.getMethodName())
-        xmlStandaloneException.setAstNodeList(xmlMethodNode.getAstNodeList())
-        xmlStandaloneException.setColumnNumber(xmlMethodNode.getColumnNumber())
-        xmlStandaloneException.setLastColumnNumber(xmlMethodNode.getLastColumnNumber())
-        xmlStandaloneException.setLastLineNumber(xmlMethodNode.getLastLineNumber())
-        xmlStandaloneException.setLineNumber(xmlMethodNode.getLineNumber())
-        xmlStandaloneException.setRestoredScriptCode(xmlMethodNode.getRestoredScriptCode())
-        xmlStandaloneException.setSourceNodeName(xmlMethodNode.getSourceNodeName())
-        xmlStandaloneException.setStartDateTime(xmlMethodNode.getStartDateTime())
-        xmlMethodNode.standaloneException = xmlStandaloneException
+        xmlException.setArgumentList(xmlMethodNode.getArgumentList())
+        xmlException.setClassName(xmlMethodNode.getClassName())
+        xmlException.setException(xmlMethodNode.getException())
+        xmlException.setMethodName(xmlMethodNode.getMethodName())
+        xmlException.setAstNodeList(xmlMethodNode.getAstNodeList())
+        xmlException.setColumnNumber(xmlMethodNode.getColumnNumber())
+        xmlException.setLastColumnNumber(xmlMethodNode.getLastColumnNumber())
+        xmlException.setLastLineNumber(xmlMethodNode.getLastLineNumber())
+        xmlException.setLineNumber(xmlMethodNode.getLineNumber())
+        xmlException.setRestoredScriptCode(xmlMethodNode.getRestoredScriptCode())
+        xmlException.setSourceNodeName(xmlMethodNode.getSourceNodeName())
+        xmlException.setStartDateTime(xmlMethodNode.getStartDateTime())
+        xmlMethodNode.standaloneException = xmlException
     }
 
 }

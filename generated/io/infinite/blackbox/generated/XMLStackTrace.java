@@ -10,24 +10,26 @@ package io.infinite.blackbox.generated;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * 
- *                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#statement-1
+ *                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#exception
  *             
  * 
- * <p>Java class for Statement complex type.
+ * <p>Java class for StackTrace complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Statement">
+ * &lt;complexType name="StackTrace">
  *   &lt;complexContent>
- *     &lt;extension base="{https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd}ASTNode">
- *       &lt;attribute name="statementClassName" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *     &lt;extension base="{https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd}ExceptionReference">
+ *       &lt;sequence>
+ *         &lt;element name="stackTrace" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,36 +38,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Statement")
-public class XMLStatement
-    extends XMLASTNode
+@XmlType(name = "StackTrace", propOrder = {
+    "stackTrace"
+})
+public class XMLStackTrace
+    extends XMLExceptionReference
 {
 
-    @XmlAttribute(name = "statementClassName", required = true)
-    protected String statementClassName;
+    @XmlElement(required = true)
+    protected String stackTrace;
 
     /**
-     * Gets the value of the statementClassName property.
+     * Gets the value of the stackTrace property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getStatementClassName() {
-        return statementClassName;
+    public String getStackTrace() {
+        return stackTrace;
     }
 
     /**
-     * Sets the value of the statementClassName property.
+     * Sets the value of the stackTrace property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setStatementClassName(String value) {
-        this.statementClassName = value;
+    public void setStackTrace(String value) {
+        this.stackTrace = value;
     }
 
 }

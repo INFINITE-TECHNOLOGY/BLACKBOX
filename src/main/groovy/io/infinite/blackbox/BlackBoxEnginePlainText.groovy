@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-import io.infinite.blackbox.generated.XMLExceptionReference
+import io.infinite.blackbox.generated.XMLStackTrace
 import io.infinite.supplies.ast.metadata.MetaDataExpression
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
@@ -53,7 +53,7 @@ class BlackBoxEnginePlainText extends BlackBoxEngine {
                 }
                 break
             case ErrorLoggingStrategy.REFERENCE_THEN_NOTHING:
-                XMLExceptionReference xmlException = new XMLExceptionReference()
+                XMLStackTrace xmlException = new XMLStackTrace()
                 if (exception.isLoggedByBlackBox != true) {
                     exception.isLoggedByBlackBox = true
                     exception.uuid = UUID.randomUUID().toString()

@@ -156,8 +156,8 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                 }
                 XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
                 if (xmlMethodNode.getException() != null) {
-                    XMLExceptionReference xmlException = xmlMethodNode.getException()
-                    if (xmlException instanceof XMLException) {
+                    XMLStackTrace xmlException = xmlMethodNode.getException()
+                    if (xmlException instanceof XMLStackTrace) {
                         log("""<exception xsi:type="Exception" exceptionDateTime="${
                             xmlException.getExceptionDateTime().toXMLFormat()
                         }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
@@ -169,7 +169,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         }</exceptionStackTrace>""")
                         depth--
                         log("""</exception>""")
-                    } else if (xmlException instanceof XMLExceptionReference) {
+                    } else if (xmlException instanceof XMLStackTrace) {
                         log("""<exception exceptionDateTime="${
                             xmlException.getExceptionDateTime().toXMLFormat()
                         }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
@@ -199,8 +199,8 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         logError("""    </argumentList>""")
                     }
                     if (xmlMethodNode.standaloneException.getException() != null) {
-                        XMLExceptionReference xmlException = xmlMethodNode.standaloneException.getException()
-                        if (xmlException instanceof XMLException) {
+                        XMLStackTrace xmlException = xmlMethodNode.standaloneException.getException()
+                        if (xmlException instanceof XMLStackTrace) {
                             logError("""    <exception xsi:type="Exception" exceptionDateTime="${
                                 xmlException.getExceptionDateTime().toXMLFormat()
                             }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
@@ -212,7 +212,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                             }</exceptionStackTrace>""")
                             depth--
                             logError("""    </exception>""")
-                        } else if (xmlException instanceof XMLExceptionReference) {
+                        } else if (xmlException instanceof XMLStackTrace) {
                             logError("""    <exception exceptionDateTime="${
                                 xmlException.getExceptionDateTime().toXMLFormat()
                             }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${

@@ -6,7 +6,7 @@
     <xs:include schemaLocation="Argument.xsd"/>
     <xs:include schemaLocation="Object.xsd"/>
     <xs:include schemaLocation="ASTNode.xsd"/>
-    <xs:include schemaLocation="Exception.xsd"/>
+    <xs:include schemaLocation="StackTrace.xsd"/>
     <xs:complexType name="MethodNode">
         <xs:annotation>
             <xs:documentation>

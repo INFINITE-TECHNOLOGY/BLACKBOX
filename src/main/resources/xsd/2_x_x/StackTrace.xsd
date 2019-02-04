@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified"
+           targetNamespace="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="ExceptionReference.xsd"/>
+    <xs:complexType name="StackTrace">
+        <xs:annotation>
+            <xs:documentation>
+                https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#exception
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ExceptionReference">
+                <xs:sequence>
+                    <xs:element name="stackTrace" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

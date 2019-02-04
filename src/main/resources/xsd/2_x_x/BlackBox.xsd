@@ -14,15 +14,15 @@
     <xs:include schemaLocation="MethodNode.xsd"/>
     <xs:include schemaLocation="Object.xsd"/>
     <xs:include schemaLocation="Argument.xsd"/>
-    <xs:include schemaLocation="Exception.xsd"/>
+    <xs:include schemaLocation="StackTrace.xsd"/>
     <xs:include schemaLocation="ExceptionReference.xsd"/>
-    <xs:include schemaLocation="Exception.xsd"/>
+    <xs:include schemaLocation="StackTrace.xsd"/>
     <xs:include schemaLocation="ArgumentList.xsd"/>
     <xs:include schemaLocation="Expression.xsd"/>
     <xs:include schemaLocation="ASTNode.xsd"/>
     <xs:include schemaLocation="ASTNodeList.xsd"/>
-    <xs:include schemaLocation="StandaloneException.xsd"/>
-    <xs:include schemaLocation="StandaloneExceptionList.xsd"/>
+    <xs:include schemaLocation="Exception.xsd"/>
+    <xs:include schemaLocation="ExceptionList.xsd"/>
     <xs:include schemaLocation="Statement.xsd"/>
     <!---->
     <xs:element name="rootAstNode" type="ASTNode">
@@ -32,7 +32,7 @@
             </xs:documentation>
         </xs:annotation>
     </xs:element>
-    <xs:element name="standaloneExceptionList" type="StandaloneExceptionList">
+    <xs:element name="exceptionList" type="ExceptionList">
         <xs:annotation>
             <xs:documentation>
                 List of standalone exceptions. Used for error log format only.
