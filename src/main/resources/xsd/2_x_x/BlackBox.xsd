@@ -14,9 +14,9 @@
     <xs:include schemaLocation="MethodNode.xsd"/>
     <xs:include schemaLocation="Object.xsd"/>
     <xs:include schemaLocation="Argument.xsd"/>
-    <xs:include schemaLocation="StackTrace.xsd"/>
+    <xs:include schemaLocation="ExceptionStackTrace.xsd"/>
     <xs:include schemaLocation="ExceptionReference.xsd"/>
-    <xs:include schemaLocation="StackTrace.xsd"/>
+    <xs:include schemaLocation="ExceptionStackTrace.xsd"/>
     <xs:include schemaLocation="ArgumentList.xsd"/>
     <xs:include schemaLocation="Expression.xsd"/>
     <xs:include schemaLocation="ASTNode.xsd"/>

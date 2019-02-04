@@ -1,8 +1,6 @@
 package io.infinite.blackbox
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.infinite.blackbox.generated.XMLASTNode
-import io.infinite.blackbox.generated.XMLMethodNode
 
 class BlackBoxEngineFactory {
 
@@ -11,36 +9,15 @@ class BlackBoxEngineFactory {
         Exception.getMetaClass().isLoggedByBlackBox = null
         Exception.getMetaClass().uuid = null
         Exception.getMetaClass().runtimeException = null
-        XMLMethodNode.getMetaClass().xmlException = null
     }
 
     BlackBoxEngine getInstance() {
         BlackBoxEngine blackBoxEngine = BlackBoxThreadLocal.get() as BlackBoxEngine
         if (blackBoxEngine == null) {
-            BlackBoxConfig blackBoxConfig = initBlackBoxConfig()
-            if (blackBoxConfig.runtime.mode == BlackBoxMode.EMERGENCY.value()) {
-                blackBoxEngine = new BlackBoxEngineEmergency()
-            } else if (blackBoxConfig.runtime.mode == BlackBoxMode.HIERARCHICAL.value()) {
-                blackBoxEngine = new BlackBoxEngineHierarchical()
-            } else if (blackBoxConfig.runtime.mode == BlackBoxMode.PLAINTEXT.value()) {
-                blackBoxEngine = new BlackBoxEnginePlainText()
-            } else {
-                blackBoxEngine = new BlackBoxEngineSequential()
-            }
-            blackBoxEngine.setBlackBoxConfig(blackBoxConfig)
+            blackBoxEngine = new BlackBoxEngineSequential()
             BlackBoxThreadLocal.set(blackBoxEngine)
         }
         return blackBoxEngine
-    }
-
-    BlackBoxConfig initBlackBoxConfig() {
-        BlackBoxConfig blackBoxConfig
-        if (new File("./BlackBox.json").exists()) {
-            blackBoxConfig = new ObjectMapper().readValue(new File("./BlackBox.json").getText(), BlackBoxConfig.class)
-        } else {
-            blackBoxConfig = new BlackBoxConfig()
-        }
-        return blackBoxConfig
     }
 
 }

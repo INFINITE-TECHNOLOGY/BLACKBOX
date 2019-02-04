@@ -4,7 +4,7 @@
            xmlns="https://i-t.io/BlackBox/xsd/2_x_x/BlackBox.xsd"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="ExceptionReference.xsd"/>
-    <xs:complexType name="StackTrace">
+    <xs:complexType name="ExceptionStackTrace">
         <xs:annotation>
             <xs:documentation>
                 https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki#exception
@@ -13,7 +13,7 @@
         <xs:complexContent>
             <xs:extension base="ExceptionReference">
                 <xs:sequence>
-                    <xs:element name="stackTrace" type="xs:string"/>
+                    <xs:element name="exceptionStackTrace" type="xs:string"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

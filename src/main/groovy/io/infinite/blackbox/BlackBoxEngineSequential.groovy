@@ -31,7 +31,6 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      * Logback call to perform actual log printing.
      */
     private void log(String iText) {
-        //todo: break multiline text into separate log calls
         internalLogger.debug(getPad() + iText)
     }
 
@@ -39,7 +38,6 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
      * Logback call to perform actual log printing.
      */
     private void logError(String iText) {
-        //todo: break multiline text into separate log calls
         internalLogger.error(iText)
     }
 
@@ -156,7 +154,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                 }
                 XMLMethodNode xmlMethodNode = astNode as XMLMethodNode
                 if (xmlMethodNode.getException() != null) {
-                    XMLStackTrace xmlException = xmlMethodNode.getException()
+                    XMLExceptionReference xmlException = xmlMethodNode.getException()
                     if (xmlException instanceof XMLStackTrace) {
                         log("""<exception xsi:type="Exception" exceptionDateTime="${
                             xmlException.getExceptionDateTime().toXMLFormat()
@@ -169,7 +167,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         }</exceptionStackTrace>""")
                         depth--
                         log("""</exception>""")
-                    } else if (xmlException instanceof XMLStackTrace) {
+                    } else if (xmlException instanceof XMLExceptionReference) {
                         log("""<exception exceptionDateTime="${
                             xmlException.getExceptionDateTime().toXMLFormat()
                         }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${
@@ -212,7 +210,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                             }</exceptionStackTrace>""")
                             depth--
                             logError("""    </exception>""")
-                        } else if (xmlException instanceof XMLStackTrace) {
+                        } else if (xmlException instanceof XMLExceptionReference) {
                             logError("""    <exception exceptionDateTime="${
                                 xmlException.getExceptionDateTime().toXMLFormat()
                             }" exceptionUid="${xmlException.getExceptionUid()}" isAlreadyLogged="${

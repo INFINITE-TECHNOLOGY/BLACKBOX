@@ -5,7 +5,7 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:include schemaLocation="Argument.xsd"/>
     <xs:include schemaLocation="ASTNode.xsd"/>
-    <xs:include schemaLocation="StackTrace.xsd"/>
+    <xs:include schemaLocation="ExceptionStackTrace.xsd"/>
     <xs:complexType name="Exception">
         <xs:annotation>
             <xs:documentation>
