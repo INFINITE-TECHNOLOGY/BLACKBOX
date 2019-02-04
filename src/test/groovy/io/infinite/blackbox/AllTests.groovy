@@ -8,13 +8,6 @@ class AllTests extends GroovyTestCase {
     GroovyClassLoader groovyClassLoader = new GroovyClassLoader()
 
     void test() {
-        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.SEQUENTIAL.value()
-        executeTests()
-        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.HIERARCHICAL.value()
-        executeTests()
-        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.EMERGENCY.value()
-        executeTests()
-        BlackBoxEngine.getInstance().blackBoxConfig.runtime.mode = BlackBoxMode.PLAINTEXT.value()
         executeTests()
     }
 

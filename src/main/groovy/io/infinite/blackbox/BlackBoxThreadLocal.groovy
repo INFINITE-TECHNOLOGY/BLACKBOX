@@ -10,9 +10,9 @@ import java.util.concurrent.ConcurrentHashMap
  * */
 class BlackBoxThreadLocal {
 
-    public static ConcurrentHashMap<Thread, BlackBoxEngine> blackBoxEnginesByThread = new ConcurrentHashMap<Thread, BlackBoxEngine>()
+    public static ConcurrentHashMap<Thread, BlackBoxEngineSequential> blackBoxEnginesByThread = new ConcurrentHashMap<Thread, BlackBoxEngineSequential>()
 
-    static void set(BlackBoxEngine blackBoxEngine) {
+    static void set(BlackBoxEngineSequential blackBoxEngine) {
         blackBoxEnginesByThread.put(Thread.currentThread(), blackBoxEngine)
     }
 
