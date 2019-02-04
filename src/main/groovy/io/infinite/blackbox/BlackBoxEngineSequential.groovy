@@ -177,8 +177,8 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         }"/>""")
                     }
                 }
-                if (xmlMethodNode.standaloneException != null) {
-                    logError("""<standaloneException methodName="${xmlMethodNode.getMethodName()}" className="${
+                if (xmlMethodNode.xmlException != null) {
+                    logError("""<exception methodName="${xmlMethodNode.getMethodName()}" className="${
                         xmlMethodNode.getClassName()
                     }" startDateTime="${xmlMethodNode.startDateTime.toXMLFormat()}" lineNumber="${
                         xmlMethodNode.getLineNumber()
@@ -198,8 +198,8 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                         }
                         logError("""    </argumentList>""")
                     }
-                    if (xmlMethodNode.standaloneException.getException() != null) {
-                        XMLStackTrace xmlException = xmlMethodNode.standaloneException.getException()
+                    if (xmlMethodNode.xmlException.getException() != null) {
+                        XMLStackTrace xmlException = xmlMethodNode.xmlException.getException()
                         if (xmlException instanceof XMLStackTrace) {
                             logError("""    <exception xsi:type="Exception" exceptionDateTime="${
                                 xmlException.getExceptionDateTime().toXMLFormat()
@@ -220,7 +220,7 @@ class BlackBoxEngineSequential extends BlackBoxEngine {
                             }"/>""")
                         }
                     }
-                    logError("""</standaloneException>""")
+                    logError("""</exception>""")
                 }
                 depth--
                 log("""</astNode>""")

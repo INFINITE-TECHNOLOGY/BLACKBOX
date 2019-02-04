@@ -269,7 +269,7 @@ class BlackBoxEngine extends CarburetorEngine {
         xmlException.setRestoredScriptCode(xmlMethodNode.getRestoredScriptCode())
         xmlException.setSourceNodeName(xmlMethodNode.getSourceNodeName())
         xmlException.setStartDateTime(xmlMethodNode.getStartDateTime())
-        xmlMethodNode.standaloneException = xmlException
+        xmlMethodNode.xmlException = xmlException
     }
 
 }
