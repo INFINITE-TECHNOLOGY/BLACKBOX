@@ -85,7 +85,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
     void declareAutomaticLogger(ClassNode classNode) {
         if (!classNode.automaticLogDeclared) {
             classNode.addField("automaticLog",
-                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_STATIC | Opcodes.ACC_PRIVATE,
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
                     ClassHelper.make(Logger.class),
                     GeneralUtils.callX(
                             new ClassExpression(ClassHelper.make(LoggerFactory.class)),
