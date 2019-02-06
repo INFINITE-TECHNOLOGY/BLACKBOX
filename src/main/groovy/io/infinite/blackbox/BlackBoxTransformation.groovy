@@ -41,7 +41,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
 
     @Override
     Boolean excludeMethodNode(MethodNode methodNode) {
-        return methodNode.getName() == "toString"
+        return (methodNode.getName() == "toString" || methodNode.isStatic())
     }
 
     @Override
