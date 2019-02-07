@@ -26,8 +26,12 @@ class BlackBoxEngine extends CarburetorEngine {
 
     Logger internalLogger
 
+    BlackBoxEngine(Logger internalLogger) {
+        this.internalLogger = internalLogger
+    }
+
     static BlackBoxEngine getInstance(Logger automaticLog) {
-        return new BlackBoxEngine()
+        return new BlackBoxEngine(automaticLog)
     }
 
     private void log(String iText) {
