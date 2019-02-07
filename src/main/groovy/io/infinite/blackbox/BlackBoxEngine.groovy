@@ -1,6 +1,7 @@
 package io.infinite.blackbox
 
-
+import groovy.transform.CompileDynamic
+import groovy.transform.CompileStatic
 import io.infinite.carburetor.CarburetorEngine
 import io.infinite.supplies.ast.exceptions.ExceptionUtils
 import io.infinite.supplies.ast.metadata.MetaDataASTNode
@@ -8,16 +9,25 @@ import io.infinite.supplies.ast.metadata.MetaDataExpression
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
-class BlackBoxEngineSequential extends CarburetorEngine {
+@CompileStatic
+class BlackBoxEngine extends CarburetorEngine {
 
-    Logger internalLogger = LoggerFactory.getLogger(BlackBoxEngineSequential.class)
+    static {
+        staticInit()
+    }
 
-    static BlackBoxEngineSequential getInstance(Logger automaticLog) {
-        BlackBoxEngineSequential blackBoxEngine = new BlackBoxEngineFactory().getInstance()
-        blackBoxEngine.internalLogger = automaticLog
-        return blackBoxEngine
+    @CompileDynamic
+    static void staticInit() {
+        Exception.getMetaClass().isLoggedByBlackBox = null
+        Exception.getMetaClass().uuid = null
+        Exception.getMetaClass().runtimeException = null
+    }
+
+    Logger internalLogger
+
+    static BlackBoxEngine getInstance(Logger automaticLog) {
+        return new BlackBoxEngine()
     }
 
     private void log(String iText) {
@@ -118,7 +128,7 @@ class BlackBoxEngineSequential extends CarburetorEngine {
             if (iArgs instanceof Collection) {
                 return iArgs.size() > 0
             } else if (iArgs instanceof Object[]) {
-                return iArgs.length > 0
+                return ((Object[])iArgs).length > 0
             } else {
                 return false
             }
@@ -127,6 +137,7 @@ class BlackBoxEngineSequential extends CarburetorEngine {
         }
     }
 
+    @CompileDynamic
     void exception(Exception exception) {
         if (exception.isLoggedByBlackBox != true) {
             logError("""EXCEPTION (first occurrence):""")

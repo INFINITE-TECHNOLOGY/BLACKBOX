@@ -67,8 +67,8 @@ class BlackBoxTransformation extends CarburetorTransformation {
     @Override
     Statement createEngineDeclaration() {
         return GeneralUtils.declS(
-                GeneralUtils.varX(getEngineVarName(), ClassHelper.make(BlackBoxEngineSequential.class)),
-                GeneralUtils.callX(ClassHelper.make(BlackBoxEngineSequential.class), "getInstance", GeneralUtils.args("automaticLog"))
+                GeneralUtils.varX(getEngineVarName(), ClassHelper.make(BlackBoxEngine.class)),
+                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance", GeneralUtils.args("automaticLog"))
         )
     }
 
