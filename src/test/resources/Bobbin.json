@@ -5,12 +5,12 @@
     {
       "name": "io.infinite.bobbin.destinations.FileDestination",
       "properties": {
-        "fileKey": "MDC.unitName + level",
-        "fileName": "\"./LOGS/${MDC.unitName}/${level}/${MDC.unitName}_${level}_${date}.log\"",
-        "zipFileName": "\"./LOGS/${MDC.unitName}/${level}/ARCHIVE/${MDC.unitName}_${level}_${date}.zip\"",
+        "fileKey": "MDC.get('unitName') + level",
+        "fileName": "\"./LOGS/${MDC.get('unitName')}/${level}/${MDC.get('unitName')}_${level}_${date}.log\"",
+        "zipFileName": "\"./LOGS/${MDC.get('unitName')}/${level}/ARCHIVE/${MDC.get('unitName')}_${level}_${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
-      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\"",
+      "format": "\"${dateTime}|${level}|${MDC.get('unitName')}|${className}|${message}\\n\"",
       "classes": "className.contains('io.infinite.')"
     },
     {
@@ -20,12 +20,12 @@
         "zipFileName": "\"./LOGS/WARNINGS_AND_ERRORS_${date}.zip\"",
         "cleanupZipFileName": "\"${origFileName}_${System.currentTimeMillis().toString()}.zip\""
       },
-      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\"",
+      "format": "\"${dateTime}|${level}|${MDC.get('unitName')}|${className}|${message}\\n\"",
       "levels": "['warn', 'error'].contains(level)"
     },
     {
       "name": "io.infinite.bobbin.destinations.ConsoleDestination",
-      "format": "\"${dateTime}|${level}|${MDC.unitName}|${className}|${event.message}\\n\""
+      "format": "\"${dateTime}|${level}|${MDC.get('unitName')}|${className}|${message}\\n\""
     }
   ]
 }
