@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory
  */
 @ToString(includeNames = true, includeFields = true, includePackage = false)
 @GroovyASTTransformation(
-        phase = CompilePhase.CANONICALIZATION//if set to SEMANTIC_ANALYSIS, static fields injected into synthetic Script
-        // classes cause error:
-        //Apparent variable 'foo' was found in a static scope but doesn't refer to a local variable, static field or class..
+        phase = CompilePhase.SEMANTIC_ANALYSIS
 )
 @Slf4j
 class BlackBoxTransformation extends CarburetorTransformation {
