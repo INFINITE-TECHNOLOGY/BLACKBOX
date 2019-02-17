@@ -1,18 +1,19 @@
 package io.infinite.blackbox
 
+import groovy.inspect.swingui.AstNodeToScriptAdapter
 import groovy.transform.Memoized
+import org.codehaus.groovy.control.CompilePhase
 import org.slf4j.MDC
 
 class AllTests extends GroovyTestCase {
 
-    GroovyClassLoader groovyClassLoader = new GroovyClassLoader()
+    GroovyClassLoader groovyClassLoader = new GroovyClassLoader(this.getClass().getClassLoader())
 
     void test() {
         executeTests()
     }
 
     void executeTests() {
-
         def testInstance = getTestInstance("tests", "VisitBlockStatement.groovy")
         testInstance.visitBlockStatementNoneLevel()
         testInstance.visitBlockStatementMethodErrorLevel()
@@ -279,6 +280,8 @@ class AllTests extends GroovyTestCase {
 
     @Memoized
     def getTestInstance(String sectionName, String testScriptName) {
+        AstNodeToScriptAdapter astNodeToScriptAdapter = new AstNodeToScriptAdapter()
+        //log.info(astNodeToScriptAdapter.compileToScript(getTestScript(sectionName, testScriptName).getText(), CompilePhase.SEMANTIC_ANALYSIS.phaseNumber))
         def testInstance = groovyClassLoader.parseClass(getTestScript(sectionName, testScriptName)).newInstance()
         MDC.put("unitName", "EXECUTION_${testScriptName}")
         return testInstance

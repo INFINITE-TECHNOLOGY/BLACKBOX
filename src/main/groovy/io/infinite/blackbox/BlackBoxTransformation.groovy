@@ -9,6 +9,7 @@ import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.MethodNode
 import org.codehaus.groovy.ast.expr.ClassExpression
+import org.codehaus.groovy.ast.expr.Expression
 import org.codehaus.groovy.ast.stmt.EmptyStatement
 import org.codehaus.groovy.ast.stmt.Statement
 import org.codehaus.groovy.ast.stmt.ThrowStatement
@@ -26,7 +27,9 @@ import org.slf4j.LoggerFactory
  */
 @ToString(includeNames = true, includeFields = true, includePackage = false)
 @GroovyASTTransformation(
-        phase = CompilePhase.SEMANTIC_ANALYSIS
+        phase = CompilePhase.CANONICALIZATION//if set to SEMANTIC_ANALYSIS, static fields injected into synthetic Script
+        // classes cause error:
+        //Apparent variable 'foo' was found in a static scope but doesn't refer to a local variable, static field or class..
 )
 @Slf4j
 class BlackBoxTransformation extends CarburetorTransformation {
@@ -36,7 +39,6 @@ class BlackBoxTransformation extends CarburetorTransformation {
     static {
         ASTNode.getMetaClass().origCodeString = null
         ASTNode.getMetaClass().isTransformed = null
-        ClassNode.getMetaClass().automaticLogDeclared = null
     }
 
     @Override
@@ -45,13 +47,32 @@ class BlackBoxTransformation extends CarburetorTransformation {
     }
 
     @Override
-    void classDeclarations(ClassNode classNode) {
-        declareAutomaticLogger(classNode)
+    void optionalDeclarations(ClassNode classNode) {
+        if (classNode.getDeclaredField("automaticLog") == null) {
+            classNode.addFieldFirst("automaticLog",
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC,
+                    ClassHelper.make(Logger.class),
+                    GeneralUtils.callX(
+                            new ClassExpression(ClassHelper.make(LoggerFactory.class)),
+                            "getLogger",
+                            GeneralUtils.constX(classNode.getName())
+                    ))
+        }
+    }
+
+    @Override
+    Class getEngineFactoryClass() {
+        return BlackBoxEngine.class
+    }
+
+    @Override
+    Expression getEngineInitArgs() {
+        GeneralUtils.args("automaticLog")
     }
 
     @Override
     void methodDeclarations(MethodNode methodNode) {
-        declareAutomaticLogger(methodNode.getDeclaringClass())
+
     }
 
     @Override
@@ -64,14 +85,6 @@ class BlackBoxTransformation extends CarburetorTransformation {
         return "blackBoxEngine"
     }
 
-    @Override
-    Statement createEngineDeclaration() {
-        return GeneralUtils.declS(
-                GeneralUtils.varX(getEngineVarName(), ClassHelper.make(BlackBoxEngine.class)),
-                GeneralUtils.callX(ClassHelper.make(BlackBoxEngine.class), "getInstance", GeneralUtils.args("automaticLog"))
-        )
-    }
-
     Statement createThrowStatement() {
         if (!suppressExceptions) {
             ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticException"))
@@ -79,20 +92,6 @@ class BlackBoxTransformation extends CarburetorTransformation {
             return throwStatement
         } else {
             return new EmptyStatement()
-        }
-    }
-
-    void declareAutomaticLogger(ClassNode classNode) {
-        if (!classNode.automaticLogDeclared) {
-            classNode.addField("automaticLog",
-                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE,
-                    ClassHelper.make(Logger.class),
-                    GeneralUtils.callX(
-                            new ClassExpression(ClassHelper.make(LoggerFactory.class)),
-                            "getLogger",
-                            GeneralUtils.constX(classNode.getName())
-                    ))
-            classNode.automaticLogDeclared = true
         }
     }
 

@@ -30,7 +30,7 @@ class BlackBoxEngine extends CarburetorEngine {
         this.internalLogger = internalLogger
     }
 
-    static BlackBoxEngine getInstance(Logger automaticLog) {
+    BlackBoxEngine getInstance(Logger automaticLog) {
         return new BlackBoxEngine(automaticLog)
     }
 
@@ -43,8 +43,8 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void expressionExecutionOpen(MetaDataExpression metaDataExpression) {
-        log("""EXPRESSION->${metaDataExpression.className}.${metaDataExpression.methodName}(${
+    void expressionStart(MetaDataExpression metaDataExpression) {
+        log("""EXPRESSION START: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
             metaDataExpression.expressionClassName
         }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
             metaDataExpression.lastColumnNumber
@@ -52,8 +52,17 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void statementExecutionOpen(MetaDataStatement metaDataStatement) {
-        log("""STATEMENT->${metaDataStatement.className}.${metaDataStatement.methodName}(${
+    void expressionEnd(MetaDataExpression metaDataExpression) {
+        log("""EXPRESSION END: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
+            metaDataExpression.expressionClassName
+        }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
+            metaDataExpression.lastColumnNumber
+        }) - ${metaDataExpression.restoredScriptCode}""")
+    }
+
+    @Override
+    void statementStart(MetaDataStatement metaDataStatement) {
+        log("""STATEMENT START: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
             metaDataStatement.statementClassName
         }:${metaDataStatement.lineNumber},${metaDataStatement.columnNumber},${metaDataStatement.lastLineNumber},${
             metaDataStatement.lastColumnNumber
@@ -61,47 +70,61 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void methodExecutionOpen(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
-        log("""METHOD->${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
+    void statementEnd(MetaDataStatement metaDataStatement) {
+        log("""STATEMENT END: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
+            metaDataStatement.statementClassName
+        }:${metaDataStatement.lineNumber},${metaDataStatement.columnNumber},${metaDataStatement.lastLineNumber},${
+            metaDataStatement.lastColumnNumber
+        })""")
+    }
+
+    @Override
+    void methodEnd(MetaDataMethodNode metaDataMethodNode) {
+        log("""METHOD END: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
+            metaDataMethodNode.lineNumber
+        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
+            metaDataMethodNode.lastColumnNumber
+        })""")
+    }
+
+    @Override
+    void methodStart(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
+        log("""METHOD: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
             metaDataMethodNode.lastColumnNumber
         })""")
         if (methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
-                log("""ARGUMENT:${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
                 log(entry.value.toString())
             }
         }
     }
 
     @Override
-    void methodExecutionException(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
-        logError("""METHOD EXCEPTION->${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
+    void methodException(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap, Exception exception) {
+        logException(exception)
+        logError("""METHOD EXCEPTION: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
             metaDataMethodNode.lastColumnNumber
         })""")
         if (methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
-                logError("""ARGUMENT:${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                logError("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
                 logError(entry.value.toString())
             }
         }
     }
 
     @Override
-    void executionClose() {
-        log("""DONE""")
-    }
-
-    @Override
     void handleControlStatement(String controlStatementClassName) {
-
+        log("CONTROL STATEMENT: " + controlStatementClassName)
     }
 
     @Override
-    Object handleExpressionEvaluationResult(Object expressionEvaluationResult) {
+    Object handleExpressionResult(Object expressionEvaluationResult) {
         log("""EXPRESSION VALUE:""")
         //Avoid logging empty results such as for void method call expressions
         if (expressionEvaluationResult != null) {
@@ -116,15 +139,21 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    Exception carburetorRuntimeExceptionHandle(Exception exception, MetaDataASTNode metaDataASTNode) {
+    Exception handleException(Exception exception, MetaDataASTNode metaDataASTNode) {
         logError("""EXPRESSION EVALUATION EXCEPTION: ${metaDataASTNode.toString()}""")
         return exception
     }
 
     void handleMethodResult(Object methodResult) {
         log("METHOD RESULT:")
-        log(methodResult.getClass().getCanonicalName())
-        log(methodResult.toString())
+        if (methodResult != null) {
+            log(methodResult.getClass().getCanonicalName())
+            if (methodResult instanceof List) {
+                log(methodResult.toArray().toString())
+            } else {
+                log(TraceSerializer.toString(methodResult))
+            }
+        }
     }
 
     Boolean methodArgumentsPresent(Object iArgs) {
@@ -142,7 +171,7 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @CompileDynamic
-    void exception(Exception exception) {
+    void logException(Exception exception) {
         if (exception.isLoggedByBlackBox != true) {
             logError("""EXCEPTION (first occurrence):""")
             exception.uuid = UUID.randomUUID().toString()

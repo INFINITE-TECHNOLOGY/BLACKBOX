@@ -14,8 +14,7 @@
     },
     {
       "name": "io.infinite.bobbin.destinations.ConsoleDestination",
-      "format": "\"${dateTime}|${level}|${MDC.get('unitName')}|${className}|${message}\"",
-      "levels": "['info', 'warn', 'error'].contains(level)"
+      "format": "\"${dateTime}|${level}|${MDC.get('unitName')}|${className}|${message}\\n\""
     }
   ]
 }
