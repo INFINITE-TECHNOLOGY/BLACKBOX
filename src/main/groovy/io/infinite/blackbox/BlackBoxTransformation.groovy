@@ -41,14 +41,14 @@ class BlackBoxTransformation extends CarburetorTransformation {
 
     @Override
     Boolean excludeMethodNode(MethodNode methodNode) {
-        return (methodNode.getName() == "toString" || methodNode.isStatic())
+        return (methodNode.getName() == "toString")
     }
 
     @Override
     void optionalDeclarations(ClassNode classNode) {
         if (classNode.getDeclaredField("automaticLog") == null) {
             classNode.addFieldFirst("automaticLog",
-                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC,
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                     ClassHelper.make(Logger.class),
                     GeneralUtils.callX(
                             new ClassExpression(ClassHelper.make(LoggerFactory.class)),

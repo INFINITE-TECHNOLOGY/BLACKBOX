@@ -94,7 +94,7 @@ class BlackBoxEngine extends CarburetorEngine {
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
             metaDataMethodNode.lastColumnNumber
         })""")
-        if (methodArgumentsPresent(methodArgumentMap)) {
+        if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
                 log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
                 log(entry.value.toString())
@@ -110,7 +110,7 @@ class BlackBoxEngine extends CarburetorEngine {
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
             metaDataMethodNode.lastColumnNumber
         })""")
-        if (methodArgumentsPresent(methodArgumentMap)) {
+        if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
                 logError("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
                 logError(entry.value.toString())
@@ -153,20 +153,6 @@ class BlackBoxEngine extends CarburetorEngine {
             } else {
                 log(TraceSerializer.toString(methodResult))
             }
-        }
-    }
-
-    Boolean methodArgumentsPresent(Object iArgs) {
-        if (iArgs != null) {
-            if (iArgs instanceof Collection) {
-                return iArgs.size() > 0
-            } else if (iArgs instanceof Object[]) {
-                return ((Object[])iArgs).length > 0
-            } else {
-                return false
-            }
-        } else {
-            return false
         }
     }
 
