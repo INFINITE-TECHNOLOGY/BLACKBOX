@@ -65,7 +65,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
 
     @Override
     Expression getEngineInitArgs() {
-        GeneralUtils.args("automaticLog")
+        GeneralUtils.args(GeneralUtils.fieldX(methodNode.declaringClass, "automaticLog"))
     }
 
     @Override
