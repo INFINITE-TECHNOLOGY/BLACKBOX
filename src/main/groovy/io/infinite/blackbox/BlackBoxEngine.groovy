@@ -1,7 +1,6 @@
 package io.infinite.blackbox
 
 import groovy.transform.CompileDynamic
-import groovy.transform.CompileStatic
 import io.infinite.carburetor.CarburetorEngine
 import io.infinite.supplies.ast.exceptions.ExceptionUtils
 import io.infinite.supplies.ast.metadata.MetaDataASTNode
@@ -10,7 +9,6 @@ import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
 import org.slf4j.Logger
 
-@CompileStatic
 class BlackBoxEngine extends CarburetorEngine {
 
     static {

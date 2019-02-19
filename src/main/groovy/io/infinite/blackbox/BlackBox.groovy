@@ -1,6 +1,5 @@
 package io.infinite.blackbox
 
-import groovy.transform.CompileStatic
 import io.infinite.carburetor.CarburetorLevel
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
@@ -17,7 +16,6 @@ import java.lang.annotation.Target
 @Target([ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.TYPE])
 @Retention(RetentionPolicy.RUNTIME)
 @GroovyASTTransformationClass("io.infinite.blackbox.BlackBoxTransformation")
-@CompileStatic
 @interface BlackBox {
 
     /**

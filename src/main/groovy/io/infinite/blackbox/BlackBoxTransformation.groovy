@@ -1,5 +1,6 @@
 package io.infinite.blackbox
 
+import groovy.transform.CompileDynamic
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import io.infinite.carburetor.CarburetorTransformation
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory
         phase = CompilePhase.SEMANTIC_ANALYSIS
 )
 @Slf4j
+@CompileDynamic
 class BlackBoxTransformation extends CarburetorTransformation {
 
     boolean suppressExceptions

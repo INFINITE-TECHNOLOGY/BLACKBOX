@@ -11,6 +11,7 @@ plugins {
     id "idea"
     id "jacoco"
     id "org.openrepose.gradle.plugins.jaxb" version "2.5.0"
+    id "enterprise.groovy.plugin" version "1.0.RC4"
 }
 sourceCompatibility = 1.7
 group = "io.infinite"
@@ -21,9 +22,6 @@ wrapper {
 }
 repositories {
     jcenter()
-    maven {
-        url "https://oss.jfrog.org/artifactory/oss-snapshot-local"
-    }
 }
 sourceSets {
     main.groovy.srcDirs = ["src/main/groovy", "generated"]
@@ -33,9 +31,9 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
     compile 'org.codehaus.groovy:groovy-all:2.5.4'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'io.infinite', name: 'carburetor', version: '2.0.5-20190219.111207-41'
+    compile group: 'io.infinite', name: 'carburetor', version: '2.0.5'
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile "io.infinite:bobbin:2.0.0-20190212.114312-48"
+    testCompile "io.infinite:bobbin:2.0.0"
     jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7'
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.5"
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics:0.6.4"
@@ -57,7 +55,6 @@ task jaxb(){
         }
     }
 }
-
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     classifier "sources"
