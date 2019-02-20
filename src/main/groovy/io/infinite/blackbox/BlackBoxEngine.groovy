@@ -24,6 +24,9 @@ class BlackBoxEngine extends CarburetorEngine {
 
     Logger internalLogger
 
+    BlackBoxEngine() {
+    }
+
     BlackBoxEngine(Logger internalLogger) {
         this.internalLogger = internalLogger
     }
