@@ -2,7 +2,7 @@
 
 |Attribute\Release type|Latest|Stable|
 |----------------------|------|------|
-|Version|2.0.0-SNAPSHOT|1.0.6|
+|Version|2.0.0-SNAPSHOT|1.0.x|
 |Branch|[master](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX)|[BLACKBOX_1_0_X](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/tree/BLACKBOX_1_0_X)|
 |CI Build status|[![Build Status](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX.svg?branch=master)](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX)|[![Build Status](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX.svg?branch=BLACKBOX_1_0_X)](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX)|
 |Test coverage|[![codecov](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs/badge.svg)](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs)|[![codecov](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/BLACKBOX_1_0_X/graphs/badge.svg)](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/BLACKBOX_1_0_X/graphs)|
@@ -29,7 +29,7 @@ Granularity of injected code can be defined by the user (programmer) up to:
 Run the below code in Groovy Console:
 
 ```groovy
-@Grab(group='io.infinite', module='blackbox', version='1.0.6')
+@Grab(group='io.infinite', module='blackbox', version='1.0.8')
 @Grab(group='io.infinite', module='bobbin', version='2.0.0')
 
 import io.infinite.blackbox.BlackBox
