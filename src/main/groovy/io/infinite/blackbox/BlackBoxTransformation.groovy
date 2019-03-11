@@ -36,11 +36,6 @@ class BlackBoxTransformation extends CarburetorTransformation {
 
     boolean suppressExceptions
 
-    static {
-        ASTNode.getMetaClass().origCodeString = null
-        ASTNode.getMetaClass().isTransformed = null
-    }
-
     @Override
     Boolean excludeMethodNode(MethodNode methodNode) {
         return (methodNode.getName() == "toString")
@@ -49,7 +44,7 @@ class BlackBoxTransformation extends CarburetorTransformation {
     @Override
     void optionalDeclarations(ClassNode classNode) {
         if (classNode.getDeclaredField("automaticLog") == null) {
-            classNode.addFieldFirst("automaticLog",
+            classNode.addField("automaticLog",
                     Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                     ClassHelper.make(Logger.class),
                     GeneralUtils.callX(

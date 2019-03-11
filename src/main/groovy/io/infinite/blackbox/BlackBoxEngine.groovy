@@ -19,10 +19,12 @@ class BlackBoxEngine extends CarburetorEngine {
     static void staticInit() {
         Exception.getMetaClass().isLoggedByBlackBox = null
         Exception.getMetaClass().uuid = null
-        Exception.getMetaClass().runtimeException = null
     }
 
     Logger internalLogger
+
+    BlackBoxEngine() {
+    }
 
     BlackBoxEngine(Logger internalLogger) {
         this.internalLogger = internalLogger
@@ -161,6 +163,7 @@ class BlackBoxEngine extends CarburetorEngine {
             exception.uuid = UUID.randomUUID().toString()
             logError(exception.uuid)
             logError(new ExceptionUtils().stacktrace(exception))
+            exception.isLoggedByBlackBox = true
         } else {
             logError("""EXCEPTION (additional occurrence):""")
             logError(exception.uuid)
