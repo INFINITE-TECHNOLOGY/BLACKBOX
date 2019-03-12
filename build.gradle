@@ -15,7 +15,7 @@ plugins {
 }
 sourceCompatibility = 1.7
 group = "io.infinite"
-version = "1.0.10-SNAPSHOT"
+version = "1.0.11-SNAPSHOT"
 description = "Groovy Annotation injecting logging code"
 wrapper {
     gradleVersion = "5.0"
