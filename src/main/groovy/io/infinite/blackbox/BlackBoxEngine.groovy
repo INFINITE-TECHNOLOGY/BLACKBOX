@@ -127,11 +127,11 @@ class BlackBoxEngine extends CarburetorEngine {
     Object handleExpressionResult(Object expressionEvaluationResult, MetaDataExpression metaDataExpression) {
         //Avoid logging empty results such as for void method call expressions
         if (expressionEvaluationResult != null) {
-            log("""EXPRESSION VALUE (value class=${expressionEvaluationResult.getClass().getCanonicalName()}): ${metaDataExpression.className}.${metaDataExpression.methodName}(${
+            log("""EXPRESSION VALUE (value class=${expressionEvaluationResult.getClass().getCanonicalName()}; ${metaDataExpression.className}.${metaDataExpression.methodName}(${
                 metaDataExpression.expressionClassName
             }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
                 metaDataExpression.lastColumnNumber
-            })""")
+            })):""")
             if (expressionEvaluationResult instanceof List) {//workaround possible infinite loops with RoundRobin
                 log(metaDataExpression.restoredScriptCode + " = " + expressionEvaluationResult.toArray().toString())
             } else {
