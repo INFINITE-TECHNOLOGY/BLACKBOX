@@ -24,14 +24,9 @@ Granularity of injected code can be defined by the user (programmer) up to:
 
 * [BlackBox Documentation](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki)
 
-## Try it now!
-
-Run the below code in Groovy Console:
+## Sample usage
 
 ```groovy
-@Grab(group='io.infinite', module='blackbox', version='1.0.8')
-@Grab(group='io.infinite', module='bobbin', version='2.0.0')
-
 import io.infinite.blackbox.BlackBox
 import io.infinite.carburetor.CarburetorLevel
 
