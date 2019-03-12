@@ -27,9 +27,9 @@ new Foo().test()
     }
 
     String expectedCode = """
-blackBoxEngine.methodStart(new io.infinite.supplies.ast.metadata.MetaDataMethodNode(10, 13, 5, 6, 'Foo', 'test'), ['bar': bar ])
+blackBoxEngine.methodBegin(new io.infinite.supplies.ast.metadata.MetaDataMethodNode(10, 13, 5, 6, 'Foo', 'test'), ['bar': bar ])
 try {
-    blackBoxEngine.statementStart(new io.infinite.supplies.ast.metadata.MetaDataStatement('IfStatement', 12, 12, 9, 21, 'test', 'Foo'))
+    blackBoxEngine.statementBegin(new io.infinite.supplies.ast.metadata.MetaDataStatement('IfStatement', 12, 12, 9, 21, 'test', 'Foo'))
     if (true) {
     } else {
     }

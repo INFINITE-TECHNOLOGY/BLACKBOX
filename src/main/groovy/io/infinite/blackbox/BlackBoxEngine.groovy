@@ -43,8 +43,8 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void expressionStart(MetaDataExpression metaDataExpression) {
-        log("""EXPRESSION START: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
+    void expressionBegin(MetaDataExpression metaDataExpression) {
+        log("""EXPRESSION BEGIN: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
             metaDataExpression.expressionClassName
         }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
             metaDataExpression.lastColumnNumber
@@ -61,8 +61,8 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void statementStart(MetaDataStatement metaDataStatement) {
-        log("""STATEMENT START: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
+    void statementBegin(MetaDataStatement metaDataStatement) {
+        log("""STATEMENT BEGIN: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
             metaDataStatement.statementClassName
         }:${metaDataStatement.lineNumber},${metaDataStatement.columnNumber},${metaDataStatement.lastLineNumber},${
             metaDataStatement.lastColumnNumber
@@ -88,7 +88,7 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    void methodStart(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
+    void methodBegin(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
         log("""METHOD: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
@@ -124,15 +124,14 @@ class BlackBoxEngine extends CarburetorEngine {
     }
 
     @Override
-    Object handleExpressionResult(Object expressionEvaluationResult) {
-        log("""EXPRESSION VALUE:""")
+    Object handleExpressionResult(Object expressionEvaluationResult, MetaDataExpression metaDataExpression) {
         //Avoid logging empty results such as for void method call expressions
         if (expressionEvaluationResult != null) {
-            log(expressionEvaluationResult.getClass().getCanonicalName())
+            log("""EXPRESSION VALUE (class=${expressionEvaluationResult.getClass().getCanonicalName()}):""")
             if (expressionEvaluationResult instanceof List) {//workaround possible infinite loops with RoundRobin
-                log(expressionEvaluationResult.toArray().toString())
+                log(metaDataExpression.restoredScriptCode + " = " + expressionEvaluationResult.toArray().toString())
             } else {
-                log(TraceSerializer.toString(expressionEvaluationResult))
+                log(metaDataExpression.restoredScriptCode + " = " + TraceSerializer.toString(expressionEvaluationResult))
             }
         }
         return expressionEvaluationResult
