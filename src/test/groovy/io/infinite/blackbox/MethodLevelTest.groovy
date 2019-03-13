@@ -1,7 +1,7 @@
 package io.infinite.blackbox
 
 
-class MethodLevelTest extends GroovyTestCase {
+class MethodLevelTest extends BlackBoxTestCase {
 
 
     void test() {

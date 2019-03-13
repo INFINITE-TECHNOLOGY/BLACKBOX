@@ -5,7 +5,7 @@ import groovy.transform.Memoized
 import org.codehaus.groovy.control.CompilePhase
 import org.slf4j.MDC
 
-class AllTests extends GroovyTestCase {
+class AllTests extends BlackBoxTestCase {
 
     GroovyClassLoader groovyClassLoader = new GroovyClassLoader(this.getClass().getClassLoader())
 

@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-class StaticMethodTest extends GroovyTestCase {
+class StaticMethodTest extends BlackBoxTestCase {
 
     void test() {
         assertScript("""
