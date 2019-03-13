@@ -132,8 +132,8 @@ jacocoTestReport {
     }
 }
 check.dependsOn jacocoTestReport
-
 configurations {
+    providedRuntime
     compile.exclude(group: 'junit')
     compile.exclude(group: 'org.junit.platform')
 }
