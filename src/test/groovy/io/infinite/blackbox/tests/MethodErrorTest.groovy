@@ -1,7 +1,9 @@
 package io.infinite.blackbox.tests
 
+import io.infinite.blackbox.BlackBoxTestCase
 
-class MethodErrorTest extends GroovyTestCase {
+
+class MethodErrorTest extends BlackBoxTestCase {
 
 
     void test() {

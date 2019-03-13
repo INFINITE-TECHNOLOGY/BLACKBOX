@@ -11,7 +11,7 @@ plugins {
     id "idea"
     id "jacoco"
     id "org.openrepose.gradle.plugins.jaxb" version "2.5.0"
-    id "enterprise.groovy.plugin" version "1.0.RC4"
+    id "enterprise.groovy.plugin" version "1.0.1"
 }
 sourceCompatibility = 1.7
 group = "io.infinite"
@@ -31,9 +31,9 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
     compile 'org.codehaus.groovy:groovy-all:2.5.4'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'io.infinite', name: 'carburetor', version: '3.0.1'
-    testCompile "org.junit.jupiter:junit-jupiter-api:5.4.0"
-    testCompile "io.infinite:bobbin:2.0.1"
+    compile group: 'io.infinite', name: 'carburetor', version: '3.0.2'
+    testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
+    testCompile "io.infinite:bobbin:2.0.2"
     jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7'
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.5"
     jaxb "org.jvnet.jaxb2_commons:jaxb2-basics:0.6.4"
@@ -119,6 +119,7 @@ artifactory {
     clientConfig.info.setBuildNumber(System.getProperty('build.number'))
 }
 test {
+    useTestNG()
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"
@@ -131,3 +132,8 @@ jacocoTestReport {
     }
 }
 check.dependsOn jacocoTestReport
+
+configurations {
+    compile.exclude(group: 'junit')
+    compile.exclude(group: 'org.junit.platform')
+}

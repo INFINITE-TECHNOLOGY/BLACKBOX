@@ -1,8 +1,9 @@
 package io.infinite.blackbox.levels
 
+import io.infinite.blackbox.BlackBoxTestCase
 import io.infinite.carburetor.CarburetorTransformation
 
-class ExpressionTest extends GroovyTestCase {
+class ExpressionTest extends BlackBoxTestCase {
 
     void test() {
         assertScript("""

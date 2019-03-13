@@ -3,7 +3,7 @@ package io.infinite.blackbox
 import groovy.transform.Memoized
 import org.slf4j.MDC
 
-abstract class AbstractTest extends GroovyTestCase {
+abstract class AbstractTest extends BlackBoxTestCase {
 
     GroovyClassLoader groovyClassLoader = new GroovyClassLoader()
 
