@@ -54,3 +54,41 @@ String foobar(String foo) {
 
 foobar("foo")
 ```
+
+Result:
+
+```
+2019-03-14 15:42:30:493|debug|Thread-3|ConsoleScript0|METHOD: ConsoleScript0.foobar(7,1,12,2)
+2019-03-14 15:42:30:500|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(DeclarationExpression:9,5,9,23) - java.lang.String bar = 'bar'
+2019-03-14 15:42:30:501|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(ConstantExpression:9,18,9,23) - 'bar'
+2019-03-14 15:42:30:501|debug|Thread-3|ConsoleScript0|EXPRESSION VALUE (value class=java.lang.String; ConsoleScript0.foobar(ConstantExpression:9,18,9,23)):
+2019-03-14 15:42:30:502|debug|Thread-3|ConsoleScript0|'bar' = bar
+2019-03-14 15:42:30:502|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(ConstantExpression:9,18,9,23) - 'bar'
+2019-03-14 15:42:30:504|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(DeclarationExpression:9,5,9,23) - java.lang.String bar = 'bar'
+2019-03-14 15:42:30:505|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(DeclarationExpression:10,5,10,30) - java.lang.String foobar = foo + bar 
+2019-03-14 15:42:30:506|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(BinaryExpression:10,25,10,26) - foo + bar 
+2019-03-14 15:42:30:507|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(VariableExpression:10,21,10,24) - foo 
+2019-03-14 15:42:30:507|debug|Thread-3|ConsoleScript0|EXPRESSION VALUE (value class=java.lang.String; ConsoleScript0.foobar(VariableExpression:10,21,10,24)):
+2019-03-14 15:42:30:507|debug|Thread-3|ConsoleScript0|foo  = foo
+2019-03-14 15:42:30:507|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(VariableExpression:10,21,10,24) - foo 
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(VariableExpression:10,27,10,30) - bar 
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|EXPRESSION VALUE (value class=java.lang.String; ConsoleScript0.foobar(VariableExpression:10,27,10,30)):
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|bar  = bar
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(VariableExpression:10,27,10,30) - bar 
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|EXPRESSION VALUE (value class=java.lang.String; ConsoleScript0.foobar(BinaryExpression:10,25,10,26)):
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|foo + bar  = foobar
+2019-03-14 15:42:30:508|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(BinaryExpression:10,25,10,26) - foo + bar 
+2019-03-14 15:42:30:509|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(DeclarationExpression:10,5,10,30) - java.lang.String foobar = foo + bar 
+2019-03-14 15:42:30:513|debug|Thread-3|ConsoleScript0|STATEMENT BEGIN: ConsoleScript0.foobar(ReturnStatement:11,5,11,18)
+2019-03-14 15:42:30:513|debug|Thread-3|ConsoleScript0|STATEMENT END: ConsoleScript0.foobar(ReturnStatement:11,5,11,18)
+2019-03-14 15:42:30:513|debug|Thread-3|ConsoleScript0|CONTROL STATEMENT: ReturnStatement
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|EXPRESSION BEGIN: ConsoleScript0.foobar(VariableExpression:11,12,11,18) - foobar 
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|EXPRESSION VALUE (value class=java.lang.String; ConsoleScript0.foobar(VariableExpression:11,12,11,18)):
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|foobar  = foobar
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|EXPRESSION END: ConsoleScript0.foobar(VariableExpression:11,12,11,18) - foobar 
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|METHOD RESULT:
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|java.lang.String
+2019-03-14 15:42:30:514|debug|Thread-3|ConsoleScript0|foobar
+2019-03-14 15:42:30:515|debug|Thread-3|ConsoleScript0|METHOD END: ConsoleScript0.foobar(7,1,12,2)
+Result: foobar
+```
