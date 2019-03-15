@@ -39,7 +39,7 @@ compile "io.infinite:blackbox:1.0.15"
 Just simply run the below code in Groovy console:
 
 ```groovy
-@Grab('io.infinite:blackbox:1.0.14')
+@Grab('io.infinite:blackbox:1.0.15')
 @Grab('io.infinite:bobbin:2.0.2')
 
 import io.infinite.blackbox.BlackBox
