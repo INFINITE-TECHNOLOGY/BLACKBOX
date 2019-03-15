@@ -29,7 +29,7 @@ Granularity of injected code can be defined by the user (programmer) up to:
 > ❗ Via **JCenter** repository
 
 ```groovy
-compile "io.infinite:blackbox:1.0.13"
+compile "io.infinite:blackbox:1.0.15"
 ```
 
 ## Try it now!
