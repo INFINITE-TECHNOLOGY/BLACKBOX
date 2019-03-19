@@ -102,9 +102,7 @@ class BlackBoxEngine extends CarburetorEngine {
         }
     }
 
-    @Override
     void methodException(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap, Exception exception) {
-        logException(exception)
         logError("""METHOD EXCEPTION: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
@@ -116,6 +114,7 @@ class BlackBoxEngine extends CarburetorEngine {
                 logError(entry.value.toString())
             }
         }
+        logException(exception)
     }
 
     @Override
