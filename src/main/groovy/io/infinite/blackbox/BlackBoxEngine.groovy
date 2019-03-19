@@ -114,8 +114,12 @@ class BlackBoxEngine extends CarburetorEngine {
         })""")
         if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
-                logError("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
-                logError(entry.value.toString())
+                if (entry.value != null) {
+                    log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                    log(entry.value.toString())
+                } else {
+                    log("""ARGUMENT: ${entry.key}: null""")
+                }
             }
         }
         logException(exception)
