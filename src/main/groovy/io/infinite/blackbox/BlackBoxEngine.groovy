@@ -115,10 +115,10 @@ class BlackBoxEngine extends CarburetorEngine {
         if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
                 if (entry.value != null) {
-                    log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
-                    log(entry.value.toString())
+                    logError("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                    logError(entry.value.toString())
                 } else {
-                    log("""ARGUMENT: ${entry.key}: null""")
+                    logError("""ARGUMENT: ${entry.key}: null""")
                 }
             }
         }
