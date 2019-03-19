@@ -96,13 +96,16 @@ class BlackBoxEngine extends CarburetorEngine {
         })""")
         if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
-                log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
-                log(entry.value.toString())
+                if (entry.value != null) {
+                    log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                    log(entry.value.toString())
+                } else {
+                    log("""ARGUMENT: ${entry.key}: null""")
+                }
             }
         }
     }
 
-    @Override
     void methodException(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap, Exception exception) {
         logError("""METHOD EXCEPTION: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
