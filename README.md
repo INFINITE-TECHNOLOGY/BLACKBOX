@@ -29,7 +29,7 @@ Granularity of injected code can be defined by the user (programmer) up to:
 > ❗ Via **JCenter** repository
 
 ```groovy
-compile "io.infinite:blackbox:1.0.15"
+compile "io.infinite:blackbox:1.0.18"
 ```
 
 ## Try it now!
@@ -39,8 +39,8 @@ compile "io.infinite:blackbox:1.0.15"
 Just simply run the below code in Groovy console:
 
 ```groovy
-@Grab('io.infinite:blackbox:1.0.15')
-@Grab('io.infinite:bobbin:2.0.3')
+@Grab('io.infinite:blackbox:1.0.18')
+@Grab('io.infinite:bobbin:2.0.4')
 
 import io.infinite.blackbox.BlackBox
 import io.infinite.carburetor.CarburetorLevel
