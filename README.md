@@ -20,6 +20,8 @@ Granularity of injected code can be defined by the user (programmer) up to:
 * Statement transformation, Statement-level logging
 * Expression transformation, Expression-level logging
 
+> ❇ BlackBox is available both in `JCenter` and `Maven Central` repositories.
+
 ## Documentation
 
 * [BlackBox Documentation](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki)
@@ -29,7 +31,7 @@ Granularity of injected code can be defined by the user (programmer) up to:
 > ❗ Via **JCenter** repository
 
 ```groovy
-compile "io.infinite:blackbox:1.0.18"
+compile "io.i-t:blackbox:1.0.19"
 ```
 
 ## Try it now!
@@ -39,8 +41,8 @@ compile "io.infinite:blackbox:1.0.18"
 Just simply run the below code in Groovy console:
 
 ```groovy
-@Grab('io.infinite:blackbox:1.0.18')
-@Grab('io.infinite:bobbin:2.0.4')
+@Grab('io.i-t:blackbox:1.0.19')
+@Grab('io.i-t:bobbin:2.0.10')
 
 import io.infinite.blackbox.BlackBox
 import io.infinite.carburetor.CarburetorLevel
