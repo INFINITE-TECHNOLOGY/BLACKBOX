@@ -10,79 +10,101 @@ plugins {
     id "com.jfrog.artifactory" version "4.8.1"
     id "idea"
     id "jacoco"
-    id "org.openrepose.gradle.plugins.jaxb" version "2.5.0"
     id "enterprise.groovy.plugin" version "1.0.1"
 }
+
 sourceCompatibility = 1.7
-group = "io.infinite"
+group = "io.i-t"
 version = "2.0.0-SNAPSHOT"
 description = "Groovy Annotation injecting logging code"
+
 wrapper {
-    gradleVersion = "5.0"
+    gradleVersion = "5.5.1"
 }
+
 repositories {
     jcenter()
 }
+
 sourceSets {
     main.groovy.srcDirs = ["src/main/groovy", "generated"]
+    main.java.srcDirs = ["src/main/java"]
     test.groovy.srcDirs = ["src/test/groovy"]
 }
+
 dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.5.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'io.infinite', name: 'carburetor', version: '3.0.4'
+    compile group: 'io.i-t', name: 'carburetor', version: '3.0.6'
     testCompile 'org.codehaus.groovy:groovy-all:2.5.4'
     testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
-    testCompile "io.infinite:bobbin:2.0.4"
-    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.7'
-    jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-ant:0.6.5"
-    jaxb "org.jvnet.jaxb2_commons:jaxb2-basics:0.6.4"
-    jaxb "org.jvnet.jaxb2_commons:jaxb2-basics-annotate:0.6.4"
+    testCompile "io.i-t:bobbin:2.0.11"
 }
-configurations {
-    jaxb
-}
-task jaxb(){
-    description 'Converts xsds to classes'
-    def jaxbTargetDir = file("generated")
-    System.setProperty('javax.xml.accessExternalSchema', 'all')
-    doLast {
-        jaxbTargetDir.mkdirs()
-        ant.taskdef(name: 'xjc', classname: 'org.jvnet.jaxb2_commons.xjc.XJC2Task', classpath: configurations.jaxb.asPath)
-        ant.jaxbTargetDir = jaxbTargetDir
-        ant.xjc(destdir: '${jaxbTargetDir}', package: 'io.infinite.blackbox.generated', schema:'src/main/resources/xsd/2_x_x/BlackBox.xsd', binding:'src/main/resources/xjb/2_x_x/BlackBox.xjb', extension:'true'){
-            arg(value: "-Xannotate")
-        }
-    }
-}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     classifier "sources"
 }
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
 ext {
     theTitle = "Groovy Annotation injecting logging code"
     titleForDocumentation = archivesBaseName + " " + version
     packageTitle = group
     description = "Groovy Annotation injecting logging code"
 }
+
 publishing {
     publications {
         groovyMaven(MavenPublication) {
             from components.java
+            //https://github.com/webjars/webjars-locator-weblogic/blob/master/build.gradle
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name bintray.pkg.name
+                    description bintray.pkg.desc
+                    url bintray.pkg.websiteUrl
+                    scm {
+                        url bintray.pkg.vcsUrl
+                        connection bintray.pkg.vcsUrl
+                        developerConnection bintray.pkg.vcsUrl
+                    }
+                    licenses {
+                        license {
+                            name "Apache-2.0"
+                            url "http://www.apache.org/licenses/"
+                            distribution 'repo'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'apryamostanov'
+                            name 'Anton Pryamostanov'
+                            email 'anton.pryamostanov@gmail.com'
+                        }
+                    }
+                }
+            }
             artifact(sourceJar) {
                 classifier "sources"
+            }
+            artifact(javadocJar) {
+                classifier "javadoc"
             }
         }
     }
 }
-task jarSrc(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
-}
+
 artifacts {
-    archives(jarSrc)
+    archives(sourceJar)
 }
+
 bintray {
     user = System.getProperty("bintrayuser")
     key = System.getProperty("bintraypassword")
@@ -91,7 +113,7 @@ bintray {
     def projectDescription = project.description
     pkg {
         userOrg = "infinite-technology"
-        repo = "m2"
+        repo = "io.i-t"
         name = "blackbox"
         desc = "Groovy Annotation injecting logging code"
         issueTrackerUrl = "https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/issues"
@@ -100,6 +122,7 @@ bintray {
         licenses = ["Apache-2.0"]
     }
 }
+
 artifactory {
     contextUrl = 'http://oss.jfrog.org'
     publish {
@@ -119,6 +142,7 @@ artifactory {
     }
     clientConfig.info.setBuildNumber(System.getProperty('build.number'))
 }
+
 test {
     useTestNG()
     testLogging {
@@ -126,13 +150,17 @@ test {
         exceptionFormat "full"
     }
 }
+
 jacocoTestReport {
     reports {
         xml.enabled true
         html.enabled false
     }
 }
+
 check.dependsOn jacocoTestReport
+bintrayUpload.dependsOn javadocJar
+
 configurations {
     providedRuntime
     compile.exclude(group: 'junit')

@@ -6,7 +6,7 @@
 |Branch|[master](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX)|[BLACKBOX_1_0_X](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/tree/BLACKBOX_1_0_X)|
 |CI Build status|[![Build Status](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX.svg?branch=master)](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX)|[![Build Status](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX.svg?branch=BLACKBOX_1_0_X)](https://travis-ci.com/INFINITE-TECHNOLOGY/BLACKBOX)|
 |Test coverage|[![codecov](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs/badge.svg)](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/master/graphs)|[![codecov](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/BLACKBOX_1_0_X/graphs/badge.svg)](https://codecov.io/gh/INFINITE-TECHNOLOGY/BLACKBOX/branch/BLACKBOX_1_0_X/graphs)|
-|Library (Maven)|[oss.jfrog.org snapshot](https://oss.jfrog.org/artifactory/webapp/#/artifacts/browse/tree/General/oss-snapshot-local/io/infinite/blackbox/2.0.0-SNAPSHOT)|[ ![Download](https://api.bintray.com/packages/infinite-technology/m2/blackbox/images/download.svg) ](https://bintray.com/infinite-technology/m2/blackbox/_latestVersion)|
+|Library (Maven)|[oss.jfrog.org snapshot](https://oss.jfrog.org/artifactory/webapp/#/artifacts/browse/tree/General/oss-snapshot-local/io/infinite/blackbox/2.0.0-SNAPSHOT)|[ ![Download](https://api.bintray.com/packages/infinite-technology/io.i-t/blackbox/images/download.svg) ](https://bintray.com/infinite-technology/io.i-t/blackbox/_latestVersion)|
 
 ## Purpose
 BlackBox is a solution to automatically generate Groovy Semantic logging code and inject it into User code during the Compilation stage resulting in a possibility to produce and review exhaustive application runtime data in a form of XML files with XSD model based on simplified Groovy AST class model - by the means of developing and using a BlackBox Annotation,Groovy Annotation.
@@ -20,6 +20,8 @@ Granularity of injected code can be defined by the user (programmer) up to:
 * Statement transformation, Statement-level logging
 * Expression transformation, Expression-level logging
 
+> ❇ BlackBox is available both in `JCenter` and `Maven Central` repositories.
+
 ## Documentation
 
 * [BlackBox Documentation](https://github.com/INFINITE-TECHNOLOGY/BLACKBOX/wiki)
@@ -29,7 +31,7 @@ Granularity of injected code can be defined by the user (programmer) up to:
 > ❗ Via **JCenter** repository
 
 ```groovy
-compile "io.infinite:blackbox:1.0.18"
+compile "io.i-t:blackbox:1.0.19"
 ```
 
 ## Try it now!
@@ -39,8 +41,8 @@ compile "io.infinite:blackbox:1.0.18"
 Just simply run the below code in Groovy console:
 
 ```groovy
-@Grab('io.infinite:blackbox:1.0.18')
-@Grab('io.infinite:bobbin:2.0.4')
+@Grab('io.i-t:blackbox:1.0.19')
+@Grab('io.i-t:bobbin:2.0.10')
 
 import io.infinite.blackbox.BlackBox
 import io.infinite.carburetor.CarburetorLevel
