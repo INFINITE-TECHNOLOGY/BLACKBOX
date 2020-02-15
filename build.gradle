@@ -10,12 +10,12 @@ plugins {
     id "com.jfrog.artifactory" version "4.8.1"
     id "idea"
     id "jacoco"
-    id "enterprise.groovy.plugin" version "1.0.1"
+    id "enterprise.groovy.plugin" version "1.0.4"
 }
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 group = "io.i-t"
-version = "1.0.21-SNAPSHOT"
+version = "1.0.22-SNAPSHOT"
 description = "Groovy Annotation injecting logging code"
 
 wrapper {
@@ -36,10 +36,10 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.5.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'io.i-t', name: 'carburetor', version: '3.0.6'
+    compile group: 'io.i-t', name: 'carburetor', version: '3.0.8'
     testCompile 'org.codehaus.groovy:groovy-all:2.5.4'
     testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
-    testCompile "io.i-t:bobbin:2.0.11"
+    testCompile "io.i-t:bobbin:3.0.0"
 }
 
 task sourceJar(type: Jar) {
@@ -106,8 +106,8 @@ artifacts {
 }
 
 bintray {
-    user = System.getProperty("bintrayuser")
-    key = System.getProperty("bintraypassword")
+    user = System.getenv("bintrayuser")
+    key = System.getenv("bintraypassword")
     publications = ["groovyMaven"]
     def projectName = project.name
     def projectDescription = project.description
