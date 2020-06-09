@@ -11,6 +11,11 @@ import io.infinite.blackbox.BlackBoxLevel
 abstract class Foo extends Thread {
 
     @BlackBox(level = BlackBoxLevel.METHOD)
+    Foo() {
+       
+    }
+
+    @BlackBox(level = BlackBoxLevel.METHOD)
     String foo() {
         println "foo"
         return "foo"
@@ -25,14 +30,17 @@ class Bar extends Foo {
         super()
     }
 
-    @BlackBox(level = BlackBoxLevel.METHOD)
-    String bar() {
-        return foo() + "bar"
+    @BlackBox(level = BlackBoxLevel.ERROR)
+    String bar(String iBar) {
+        String result = foo() + "bar"
+        println result
+        throw new Exception("z")
+        return result
     }
 
 }
 
-new Bar().bar()
+new Bar().bar("q")
 """)
     }
 

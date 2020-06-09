@@ -22,8 +22,8 @@ class BlackBoxRuntime {
 
     @CompileDynamic
     static void staticInit() {
-        Exception.getMetaClass().isLoggedByBlackBox = null
-        Exception.getMetaClass().uuid = null
+        Exception.metaClass.isLoggedByBlackBox = null
+        Exception.metaClass.uuid = null
     }
 
     Logger internalLogger
@@ -64,7 +64,7 @@ class BlackBoxRuntime {
         if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
                 if (entry.value != null) {
-                    log("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                    log("""ARGUMENT: ${entry.key}:${entry.value.class.canonicalName}""")
                     log(entry.value.toString())
                 } else {
                     log("""ARGUMENT: ${entry.key}: null""")
@@ -82,7 +82,7 @@ class BlackBoxRuntime {
         if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
             for (entry in methodArgumentMap.entrySet()) {
                 if (entry.value != null) {
-                    logError("""ARGUMENT: ${entry.key}:${entry.value.getClass().getCanonicalName()}""")
+                    logError("""ARGUMENT: ${entry.key}:${entry.value.class.canonicalName}""")
                     logError(entry.value.toString())
                 } else {
                     logError("""ARGUMENT: ${entry.key}: null""")
@@ -92,18 +92,14 @@ class BlackBoxRuntime {
         logException(exception)
     }
 
-    void handleReturnStatement(String controlStatementClassName) {
-        log("CONTROL STATEMENT: " + controlStatementClassName)
-    }
-
-    void logMethodResult(MetaDataMethodNode metaDataMethodNode, Object methodResult) {
+    void methodResult(MetaDataMethodNode metaDataMethodNode, Object methodResult) {
         log("""METHOD RESULT: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
         },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
             metaDataMethodNode.lastColumnNumber
         })""")
         if (methodResult != null) {
-            log(methodResult.getClass().getCanonicalName())
+            log(methodResult.class.canonicalName)
         }
         if (methodResult instanceof List) {
             log(methodResult.toArray().toString())

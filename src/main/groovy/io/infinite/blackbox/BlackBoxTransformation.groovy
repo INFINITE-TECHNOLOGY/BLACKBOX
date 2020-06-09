@@ -3,7 +3,6 @@ package io.infinite.blackbox
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
-import io.infinite.supplies.ast.metadata.MetaDataStatement
 import io.infinite.supplies.ast.other.ASTUtils
 import jdk.internal.org.objectweb.asm.Opcodes
 import org.codehaus.groovy.ast.*
@@ -51,7 +50,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 throw new BlackBoxTransformationException(iAstNodeArray[1], "Unsupported Annotated Node; Only [Class, Method, Constructor] are supported.")
             }
         } catch (Exception exception) {
-            log.error(exception.getMessage(), exception)
+            log.error(exception.message, exception)
             throw new BlackBoxTransformationException(iAstNodeArray[1], exception)
         }
     }
@@ -74,15 +73,15 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         this.annotationNode = methodAnnotationNode
         this.methodNode = methodNode
         try {
-            if (methodNode.getDeclaringClass().getOuterClass() != null) {
+            if (methodNode.declaringClass.outerClass != null) {
                 throw new BlackBoxTransformationException(methodNode, "BlackBox currently does not support annotations in Inner Classes.")
             }
-            if (astUtils.codeString(methodNode.getCode()).contains(runtimeVarName)) {
+            if (astUtils.codeString(methodNode.code).contains(runtimeVarName)) {
                 throw new BlackBoxTransformationException(methodNode, "$runtimeVarName is already declared.")
             }
-            classDeclarations(methodNode.getDeclaringClass())
-            String methodName = methodNode.getName()
-            String className = methodNode.getDeclaringClass().getNameWithoutPackage()
+            classDeclarations(methodNode.declaringClass)
+            String methodName = methodNode.name
+            String className = methodNode.declaringClass.nameWithoutPackage
             MDC.put("unitName", "CARBURETOR_$className.${methodName.replace("<", "").replace(">", "")}")
             blackBoxLevel = getAnnotationParameter("level", BlackBoxLevel.ERROR, methodAnnotationNode) as BlackBoxLevel
             getAnnotationParameters()
@@ -90,15 +89,15 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             /*sourceUnit.AST.classes.each {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
             }*/
-            log.debug(astUtils.codeString(methodNode.getCode()))
+            log.debug(astUtils.codeString(methodNode.code))
         } catch (Exception exception) {
-            log.error(exception.getMessage(), exception)
+            log.error(exception.message, exception)
             throw new BlackBoxTransformationException(methodNode, exception)
         }
     }
 
     Boolean excludeMethodNode(MethodNode methodNode) {
-        return (methodNode.getName() == "toString")
+        return (methodNode.name == "toString")
     }
 
     Class getEngineFactoryClass() {
@@ -141,7 +140,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                     GeneralUtils.callX(
                             new ClassExpression(ClassHelper.make(LoggerFactory.class)),
                             loggerFactoryMethodName,
-                            GeneralUtils.constX(classNode.getName())
+                            GeneralUtils.constX(classNode.name)
                     ))
         }
         if (classNode.getDeclaredField(runtimeVarName) == null) {
@@ -157,34 +156,14 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    String getMethodEndName() {
-        "methodEnd"
-    }
-
-    String getEngineFactoryMethodName() {
-        "getInstance"
-    }
-
-    String getLoggerFactoryMethodName() {
-        "getLogger"
-    }
-
-    String getResultPlaceholderVarName() {
-        "resultPlaceHolder"
-    }
-
-    String getExceptionVarName() {
-        "automaticException"
-    }
-
     Object getAnnotationParameter(String annotationName, Object defaultValue, AnnotationNode annotationNode) {
         Object result
         Expression memberExpression = annotationNode.getMember(annotationName)
-        log.debug(annotationNode.getClassNode().getName() + ":" + annotationNode.getLineNumber())
+        log.debug(annotationNode.classNode.name + ":" + annotationNode.lineNumber)
         if (memberExpression instanceof PropertyExpression) {
             log.debug("PropertyExpression")
             ConstantExpression constantExpression = memberExpression.getProperty() as ConstantExpression
-            result = constantExpression.getValue()
+            result = constantExpression.value
         } else if (memberExpression instanceof ConstantExpression) {
             log.debug("ConstantExpression")
             result = memberExpression.getValue()
@@ -192,7 +171,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             log.debug("defaultValue")
             result = defaultValue
         } else {
-            throw new BlackBoxTransformationException(memberExpression, "Unsupported annotation \"$annotationName\" member expression class: " + memberExpression.getClass().getCanonicalName() + " for method " + MDC.get("unitName"))
+            throw new BlackBoxTransformationException(memberExpression, "Unsupported annotation \"$annotationName\" member expression class: " + memberExpression.class.canonicalName + " for method " + MDC.get("unitName"))
         }
         log.debug(annotationName + "=" + result)
         return result
@@ -201,12 +180,12 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     Statement checkSuperConstructorCall(MethodNode iMethodNode) {
         Statement firstStatement = new EmptyStatement()
         if (iMethodNode instanceof ConstructorNode) {
-            def initialFirstStatement = ((BlockStatement) iMethodNode.getCode()).getStatements().get(0)
+            def initialFirstStatement = ((BlockStatement) iMethodNode.code).statements[0]
             if (initialFirstStatement instanceof ExpressionStatement) {
                 if (initialFirstStatement.getExpression() instanceof ConstructorCallExpression) {
                     if (((ConstructorCallExpression) initialFirstStatement.getExpression()).isSuperCall()) {
                         firstStatement = initialFirstStatement
-                        ((BlockStatement) iMethodNode.getCode()).getStatements().remove(initialFirstStatement)
+                        ((BlockStatement) iMethodNode.code).statements.remove(initialFirstStatement)
                     }
                 }
             }
@@ -219,14 +198,14 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             return
         }
         List<MapEntryExpression> argumentMapEntryExpressionList = new ArrayList<>()
-        if (astUtils.methodArgumentsPresent(methodNode.getParameters())) {
-            for (parameter in methodNode.getParameters()) {
-                argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.getName()), GeneralUtils.varX(parameter.getName())))
+        if (astUtils.methodArgumentsPresent(methodNode.parameters)) {
+            for (parameter in methodNode.parameters) {
+                argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.name), GeneralUtils.varX(parameter.name)))
             }
         }
         Statement firstStatement = checkSuperConstructorCall(methodNode)
-        Statement methodExecutionOpen = createMethodLogStatement("methodBegin", methodNode, argumentMapEntryExpressionList)
-        Statement methodException = createMethodLogStatement("methodException", methodNode, argumentMapEntryExpressionList, GeneralUtils.varX("automaticException"))
+        Statement methodExecutionOpen = createMethodLogStatement(methodBeginName, methodNode, argumentMapEntryExpressionList)
+        Statement methodException = createMethodLogStatement(methodExceptionName, methodNode, argumentMapEntryExpressionList, GeneralUtils.varX("automaticException"))
         if (blackBoxLevel.value() == BlackBoxLevel.METHOD.value()) {
             methodLevelTransformation(methodNode, firstStatement, methodExecutionOpen, methodException)
         } else if (blackBoxLevel.value() == BlackBoxLevel.ERROR.value()) {
@@ -261,12 +240,12 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         return GeneralUtils.ctorX(
                 ClassHelper.make(MetaDataMethodNode.class),
                 GeneralUtils.args(
-                        GeneralUtils.constX(methodNode.getLineNumber()),
-                        GeneralUtils.constX(methodNode.getLastLineNumber()),
-                        GeneralUtils.constX(methodNode.getColumnNumber()),
-                        GeneralUtils.constX(methodNode.getLastColumnNumber()),
-                        GeneralUtils.constX(methodNode.getName()),
-                        GeneralUtils.constX(methodNode.getDeclaringClass().getName())
+                        GeneralUtils.constX(methodNode.lineNumber),
+                        GeneralUtils.constX(methodNode.lastLineNumber),
+                        GeneralUtils.constX(methodNode.columnNumber),
+                        GeneralUtils.constX(methodNode.lastColumnNumber),
+                        GeneralUtils.constX(methodNode.name),
+                        GeneralUtils.constX(methodNode.declaringClass.name)
                 )
         )
     }
@@ -282,16 +261,36 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 methodExecutionOpen,
                 {
                     TryCatchStatement tryCatchStatement = new TryCatchStatement(
+                            methodNode.code,
                             {
-                                return methodNode.getCode()
-                            }.call() as Statement,
-                            new ExpressionStatement(
-                                    GeneralUtils.callX(
-                                            GeneralUtils.varX(runtimeVarName),
-                                            getMethodEndName(),
-                                            GeneralUtils.args(metaDataMethodNode(methodNode))
+                                Statement finallyStatement = GeneralUtils.block()
+                                if (!methodNode.isVoidMethod()) {
+                                    finallyStatement.addStatement(
+                                            new ExpressionStatement(
+                                                    GeneralUtils.callX(
+                                                            GeneralUtils.varX(runtimeVarName),
+                                                            methodResultName,
+                                                            GeneralUtils.args(
+                                                                    metaDataMethodNode(methodNode),
+                                                                    GeneralUtils.varX(resultPlaceholderVarName)
+                                                            )
+                                                    )
+                                            )
                                     )
-                            )
+                                }
+                                finallyStatement.addStatement(
+                                        GeneralUtils.block(
+                                                new ExpressionStatement(
+                                                        GeneralUtils.callX(
+                                                                GeneralUtils.varX(runtimeVarName),
+                                                                methodEndName,
+                                                                GeneralUtils.args(metaDataMethodNode(methodNode))
+                                                        )
+                                                )
+                                        )
+                                )
+                                return finallyStatement
+                            }.call() as Statement
                     )
                     tryCatchStatement.addCatch(
                             GeneralUtils.catchS(
@@ -311,7 +310,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         iMethodNode.code = GeneralUtils.block(
                 firstStatement,
                 {
-                    TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
+                    TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.code, EmptyStatement.INSTANCE)
                     tryCatchStatement.addCatch(
                             GeneralUtils.catchS(
                                     GeneralUtils.param(ClassHelper.make(Exception.class), exceptionVarName),
@@ -326,31 +325,37 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         )
     }
 
-    BlockStatement transformControlStatement(Statement statement, String sourceNodeName) {
-        BlockStatement blockStatement = GeneralUtils.block(new VariableScope())
-        MethodCallExpression methodCallExpression = GeneralUtils.callX(
-                GeneralUtils.varX(runtimeVarName),
-                "preprocessControlStatement",
-                GeneralUtils.args(
-                        GeneralUtils.ctorX(
-                                ClassHelper.make(MetaDataStatement.class),
-                                GeneralUtils.args(
-                                        GeneralUtils.constX(statement.getClass().getSimpleName()),
-                                        GeneralUtils.constX(statement.getLineNumber()),
-                                        GeneralUtils.constX(statement.getLastLineNumber()),
-                                        GeneralUtils.constX(statement.getColumnNumber()),
-                                        GeneralUtils.constX(statement.getLastColumnNumber()),
-                                        GeneralUtils.constX(methodNode.getName()),
-                                        GeneralUtils.constX(methodNode.getDeclaringClass().getName())
-                                )
-                        )
-                )
-        )
-        blockStatement.addStatement(new ExpressionStatement(methodCallExpression))
-        blockStatement.addStatement(statement)
-        blockStatement.copyNodeMetaData(statement)
-        blockStatement.sourcePosition = statement
-        return blockStatement
+
+    String getMethodBeginName() {
+        "methodBegin"
+    }
+
+    String getMethodEndName() {
+        "methodEnd"
+    }
+
+    String getMethodExceptionName() {
+        "methodException"
+    }
+
+    String getMethodResultName() {
+        "methodResult"
+    }
+
+    String getEngineFactoryMethodName() {
+        "getInstance"
+    }
+
+    String getLoggerFactoryMethodName() {
+        "getLogger"
+    }
+
+    String getResultPlaceholderVarName() {
+        "resultPlaceHolder"
+    }
+
+    String getExceptionVarName() {
+        "automaticException"
     }
 
 }
