@@ -1,6 +1,5 @@
 package io.infinite.blackbox
 
-import org.testng.annotations.Test
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -18,8 +17,5 @@ class BlackBoxTestCase {
         GroovyShell shell = new GroovyShell()
         shell.evaluate(script, genericScriptName())
     }
-
-    @Test
-    void test() {}
 
 }

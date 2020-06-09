@@ -4,14 +4,14 @@ package io.infinite.blackbox
 class MethodLevelTest extends BlackBoxTestCase {
 
 
-    void test() {
+    public static void main(String[] args) {
         assertScript("""import io.infinite.blackbox.BlackBox
-import io.infinite.carburetor.CarburetorLevel
+import io.infinite.blackbox.BlackBoxLevel
 
 abstract class Foo extends Thread {
 
     @Override
-    @BlackBox(level = CarburetorLevel.METHOD)
+    @BlackBox(level = BlackBoxLevel.METHOD)
     void run() {
         println "OK"
     }
@@ -21,7 +21,7 @@ abstract class Foo extends Thread {
 class Bar extends Foo {
 
     @Override
-    @BlackBox
+    @BlackBox(level = BlackBoxLevel.METHOD)
     void run() {
         println "OK"
         super.run()

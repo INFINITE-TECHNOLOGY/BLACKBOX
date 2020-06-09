@@ -82,7 +82,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             if (astUtils.codeString(methodNode.getCode()).contains(runtimeVarName)) {
                 throw new BlackBoxTransformationException(methodNode, "$runtimeVarName is already declared.")
             }
-            mandatoryClassDeclarations(methodNode.getDeclaringClass())
+            classDeclarations(methodNode.getDeclaringClass())
             methodDeclarations(methodNode)
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
@@ -104,28 +104,13 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         return (methodNode.getName() == "toString")
     }
 
-
-    void optionalDeclarations(ClassNode classNode) {
-        if (classNode.getDeclaredField("automaticLog") == null) {
-            classNode.addField("automaticLog",
-                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                    ClassHelper.make(Logger.class),
-                    GeneralUtils.callX(
-                            new ClassExpression(ClassHelper.make(LoggerFactory.class)),
-                            "getLogger",
-                            GeneralUtils.constX(classNode.getName())
-                    ))
-        }
-    }
-
-
     Class getEngineFactoryClass() {
         return BlackBoxRuntime.class
     }
 
 
     Expression getEngineInitArgs() {
-        GeneralUtils.args(GeneralUtils.fieldX(methodNode.declaringClass, "automaticLog"))
+        GeneralUtils.args(GeneralUtils.fieldX(methodNode.declaringClass, loggerVarName))
     }
 
 
@@ -138,6 +123,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         suppressExceptions = getAnnotationParameter("suppressExceptions", false, annotationNode)
     }
 
+    String getLoggerVarName() {
+        return "automaticLog"
+    }
 
     String getRuntimeVarName() {
         return "blackBoxRuntime"
@@ -153,11 +141,21 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    void mandatoryClassDeclarations(ClassNode classNode) {
-        optionalDeclarations(classNode)
+    void classDeclarations(ClassNode classNode) {
+        //ACC_PUBLIC to workaround MissingPropertyException SpringBootApp$$EnhancerBySpringCGLIB$$<..>
+        if (classNode.getDeclaredField(loggerVarName) == null) {
+            classNode.addField(loggerVarName,
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                    ClassHelper.make(Logger.class),
+                    GeneralUtils.callX(
+                            new ClassExpression(ClassHelper.make(LoggerFactory.class)),
+                            loggerFactoryMethodName,
+                            GeneralUtils.constX(classNode.getName())
+                    ))
+        }
         if (classNode.getDeclaredField(runtimeVarName) == null) {
             classNode.addField(runtimeVarName,
-                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,//ACC_PUBLIC to workaround MissingPropertyException SpringBootApp$$EnhancerBySpringCGLIB$$<..>
+                    Opcodes.ACC_FINAL | Opcodes.ACC_TRANSIENT | Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                     ClassHelper.make(BlackBoxRuntime.class),
                     GeneralUtils.callX(
                             GeneralUtils.ctorX(ClassHelper.make(getEngineFactoryClass())),
@@ -174,6 +172,10 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     String getEngineFactoryMethodName() {
         "getInstance"
+    }
+
+    String getLoggerFactoryMethodName() {
+        "getLogger"
     }
 
     Object getAnnotationParameter(String annotationName, Object defaultValue, AnnotationNode annotationNode) {
