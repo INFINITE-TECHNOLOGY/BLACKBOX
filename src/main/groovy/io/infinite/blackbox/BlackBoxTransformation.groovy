@@ -58,10 +58,14 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     void visitClassNode(ClassNode classNode, AnnotationNode classAnnotationNode) {
         classNode.methods.each {
-            visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
+            if (!it.annotations.collect{it.classNode}.contains(classAnnotationNode.classNode)) {
+                visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
+            }
         }
         classNode.declaredConstructors.each {
-            visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
+            if (!it.annotations.collect{it.classNode}.contains(classAnnotationNode.classNode)) {
+                visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
+            }
         }
     }
 

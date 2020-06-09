@@ -8,14 +8,14 @@ class MethodLevelTest extends BlackBoxTestCase {
         assertScript("""import io.infinite.blackbox.BlackBox
 import io.infinite.blackbox.BlackBoxLevel
 
+@BlackBox(level = BlackBoxLevel.METHOD)
 abstract class Foo extends Thread {
 
-    @BlackBox(level = BlackBoxLevel.METHOD)
     Foo() {
        
     }
 
-    @BlackBox(level = BlackBoxLevel.METHOD)
+    @BlackBox(level = BlackBoxLevel.ERROR)
     String foo() {
         println "foo"
         return "foo"
