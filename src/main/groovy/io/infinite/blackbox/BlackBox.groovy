@@ -1,6 +1,6 @@
 package io.infinite.blackbox
 
-import io.infinite.carburetor.CarburetorLevel
+
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
 
 import java.lang.annotation.ElementType
@@ -19,13 +19,13 @@ import java.lang.annotation.Target
 @interface BlackBox {
 
     /**
-     * BlackBox level, default BlackBoxLevel.ERROR (can be overridden using Carburetor.json in working directory)
-     * @return BlackBox level for transforming method/constructor.
+     * BlackBox level
+     * @return BlackBox level for transforming class/method/constructor.
      */
-    CarburetorLevel level() default CarburetorLevel.METHOD
+    BlackBoxLevel level()
 
     /**
-     * When enabled, this will cause BlackBox with levels METHOD_ERROR and above to suppress exceptions
+     * When enabled, this will cause BlackBox to suppress exceptions
      * (not to rethrow them after logging)
      * @return
      */

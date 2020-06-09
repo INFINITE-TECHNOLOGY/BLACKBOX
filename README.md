@@ -45,7 +45,7 @@ Just simply run the below code in Groovy console:
 @Grab('io.i-t:bobbin:3.0.0')
 
 import io.infinite.blackbox.BlackBox
-import io.infinite.carburetor.CarburetorLevel
+import io.infinite.carburetor.BlackBoxLevel
 
 @BlackBox(level = CarburetorLevel.EXPRESSION)
 String foobar(String foo) {

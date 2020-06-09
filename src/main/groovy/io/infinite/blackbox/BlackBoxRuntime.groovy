@@ -1,16 +1,22 @@
 package io.infinite.blackbox
 
 import groovy.transform.CompileDynamic
-import io.infinite.carburetor.CarburetorEngine
+import groovy.util.logging.Slf4j
 import io.infinite.supplies.ast.exceptions.ExceptionUtils
-import io.infinite.supplies.ast.metadata.MetaDataASTNode
-import io.infinite.supplies.ast.metadata.MetaDataExpression
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
 import io.infinite.supplies.ast.metadata.MetaDataStatement
+import io.infinite.supplies.ast.other.ASTUtils
 import org.slf4j.Logger
 
-class BlackBoxEngine extends CarburetorEngine {
+@Slf4j
+/**
+ * - Supports usage in static context (BlackBoxRuntime var is declared as static)
+ * - Thread safe
+ */
+class BlackBoxRuntime {
 
+    ASTUtils astUtils = new ASTUtils()
+    
     static {
         staticInit()
     }
@@ -23,15 +29,15 @@ class BlackBoxEngine extends CarburetorEngine {
 
     Logger internalLogger
 
-    BlackBoxEngine() {
+    BlackBoxRuntime() {
     }
 
-    BlackBoxEngine(Logger internalLogger) {
+    BlackBoxRuntime(Logger internalLogger) {
         this.internalLogger = internalLogger
     }
 
-    BlackBoxEngine getInstance(Logger automaticLog) {
-        return new BlackBoxEngine(automaticLog)
+    BlackBoxRuntime getInstance(Logger automaticLog) {
+        return new BlackBoxRuntime(automaticLog)
     }
 
     private void log(String iText) {
@@ -42,43 +48,6 @@ class BlackBoxEngine extends CarburetorEngine {
         internalLogger.error(iText)
     }
 
-    @Override
-    void expressionBegin(MetaDataExpression metaDataExpression) {
-        log("""EXPRESSION BEGIN: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
-            metaDataExpression.expressionClassName
-        }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
-            metaDataExpression.lastColumnNumber
-        }) - ${metaDataExpression.restoredScriptCode}""")
-    }
-
-    @Override
-    void expressionEnd(MetaDataExpression metaDataExpression) {
-        log("""EXPRESSION END: ${metaDataExpression.className}.${metaDataExpression.methodName}(${
-            metaDataExpression.expressionClassName
-        }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
-            metaDataExpression.lastColumnNumber
-        }) - ${metaDataExpression.restoredScriptCode}""")
-    }
-
-    @Override
-    void statementBegin(MetaDataStatement metaDataStatement) {
-        log("""STATEMENT BEGIN: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
-            metaDataStatement.statementClassName
-        }:${metaDataStatement.lineNumber},${metaDataStatement.columnNumber},${metaDataStatement.lastLineNumber},${
-            metaDataStatement.lastColumnNumber
-        })""")
-    }
-
-    @Override
-    void statementEnd(MetaDataStatement metaDataStatement) {
-        log("""STATEMENT END: ${metaDataStatement.className}.${metaDataStatement.methodName}(${
-            metaDataStatement.statementClassName
-        }:${metaDataStatement.lineNumber},${metaDataStatement.columnNumber},${metaDataStatement.lastLineNumber},${
-            metaDataStatement.lastColumnNumber
-        })""")
-    }
-
-    @Override
     void methodEnd(MetaDataMethodNode metaDataMethodNode) {
         log("""METHOD END: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
@@ -87,7 +56,6 @@ class BlackBoxEngine extends CarburetorEngine {
         })""")
     }
 
-    @Override
     void methodBegin(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
         log("""METHOD: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
             metaDataMethodNode.lineNumber
@@ -125,36 +93,11 @@ class BlackBoxEngine extends CarburetorEngine {
         logException(exception)
     }
 
-    @Override
-    void handleControlStatement(String controlStatementClassName) {
+    void handleReturnStatement(String controlStatementClassName) {
         log("CONTROL STATEMENT: " + controlStatementClassName)
     }
-
-    @Override
-    Object handleExpressionResult(Object expressionEvaluationResult, MetaDataExpression metaDataExpression) {
-        //Avoid logging empty results such as for void method call expressions
-        if (expressionEvaluationResult != null) {
-            log("""EXPRESSION VALUE (value class=${expressionEvaluationResult.getClass().getCanonicalName()}; ${metaDataExpression.className}.${metaDataExpression.methodName}(${
-                metaDataExpression.expressionClassName
-            }:${metaDataExpression.lineNumber},${metaDataExpression.columnNumber},${metaDataExpression.lastLineNumber},${
-                metaDataExpression.lastColumnNumber
-            })):""")
-            if (expressionEvaluationResult instanceof List) {//workaround possible infinite loops with RoundRobin
-                log(metaDataExpression.restoredScriptCode + " = " + expressionEvaluationResult.toArray().toString())
-            } else {
-                log(metaDataExpression.restoredScriptCode + " = " + TraceSerializer.toString(expressionEvaluationResult))
-            }
-        }
-        return expressionEvaluationResult
-    }
-
-    @Override
-    Exception handleException(Exception exception, MetaDataASTNode metaDataASTNode) {
-        logError("""EXPRESSION EVALUATION EXCEPTION: ${metaDataASTNode.toString()}""")
-        return exception
-    }
-
-    void handleMethodResult(Object methodResult) {
+    
+    void logMethodResult(Object methodResult) {
         log("METHOD RESULT:")
         if (methodResult != null) {
             log(methodResult.getClass().getCanonicalName())
