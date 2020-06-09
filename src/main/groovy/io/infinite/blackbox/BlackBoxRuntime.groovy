@@ -4,7 +4,6 @@ import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 import io.infinite.supplies.ast.exceptions.ExceptionUtils
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
-import io.infinite.supplies.ast.metadata.MetaDataStatement
 import io.infinite.supplies.ast.other.ASTUtils
 import org.slf4j.Logger
 
@@ -16,7 +15,7 @@ import org.slf4j.Logger
 class BlackBoxRuntime {
 
     ASTUtils astUtils = new ASTUtils()
-    
+
     static {
         staticInit()
     }
@@ -96,16 +95,20 @@ class BlackBoxRuntime {
     void handleReturnStatement(String controlStatementClassName) {
         log("CONTROL STATEMENT: " + controlStatementClassName)
     }
-    
-    void logMethodResult(Object methodResult) {
-        log("METHOD RESULT:")
+
+    void logMethodResult(MetaDataMethodNode metaDataMethodNode, Object methodResult) {
+        log("""METHOD RESULT: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
+            metaDataMethodNode.lineNumber
+        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
+            metaDataMethodNode.lastColumnNumber
+        })""")
         if (methodResult != null) {
             log(methodResult.getClass().getCanonicalName())
-            if (methodResult instanceof List) {
-                log(methodResult.toArray().toString())
-            } else {
-                log(TraceSerializer.toString(methodResult))
-            }
+        }
+        if (methodResult instanceof List) {
+            log(methodResult.toArray().toString())
+        } else {
+            log(TraceSerializer.toString(methodResult))
         }
     }
 

@@ -1,6 +1,5 @@
 package io.infinite.blackbox
 
-
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
 import io.infinite.supplies.ast.metadata.MetaDataMethodNode
@@ -11,7 +10,6 @@ import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
 import org.codehaus.groovy.ast.stmt.*
 import org.codehaus.groovy.ast.tools.GeneralUtils
-import org.codehaus.groovy.classgen.VariableScopeVisitor
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
@@ -83,16 +81,15 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                 throw new BlackBoxTransformationException(methodNode, "$runtimeVarName is already declared.")
             }
             classDeclarations(methodNode.getDeclaringClass())
-            methodDeclarations(methodNode)
             String methodName = methodNode.getName()
             String className = methodNode.getDeclaringClass().getNameWithoutPackage()
             MDC.put("unitName", "CARBURETOR_$className.${methodName.replace("<", "").replace(">", "")}")
             blackBoxLevel = getAnnotationParameter("level", BlackBoxLevel.ERROR, methodAnnotationNode) as BlackBoxLevel
             getAnnotationParameters()
             transformMethod(methodNode)
-            sourceUnit.AST.classes.each {
+            /*sourceUnit.AST.classes.each {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
-            }
+            }*/
             log.debug(astUtils.codeString(methodNode.getCode()))
         } catch (Exception exception) {
             log.error(exception.getMessage(), exception)
@@ -113,12 +110,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         GeneralUtils.args(GeneralUtils.fieldX(methodNode.declaringClass, loggerVarName))
     }
 
-
-    void methodDeclarations(MethodNode methodNode) {
-
-    }
-
-
     void getAnnotationParameters() {
         suppressExceptions = getAnnotationParameter("suppressExceptions", false, annotationNode)
     }
@@ -134,7 +125,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
     Statement createThrowStatement() {
         if (!suppressExceptions) {
             ThrowStatement throwStatement = GeneralUtils.throwS(GeneralUtils.varX("automaticException"))
-            throwStatement.setSourcePosition(annotationNode)
+            throwStatement.sourcePosition = annotationNode
             return throwStatement
         } else {
             return new EmptyStatement()
@@ -178,6 +169,14 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         "getLogger"
     }
 
+    String getResultPlaceholderVarName() {
+        "resultPlaceHolder"
+    }
+
+    String getExceptionVarName() {
+        "automaticException"
+    }
+
     Object getAnnotationParameter(String annotationName, Object defaultValue, AnnotationNode annotationNode) {
         Object result
         Expression memberExpression = annotationNode.getMember(annotationName)
@@ -215,25 +214,25 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         return firstStatement
     }
 
-    void transformMethod(MethodNode iMethodNode) {
+    void transformMethod(MethodNode methodNode) {
         if (blackBoxLevel.value() == BlackBoxLevel.NONE.value()) {
             return
         }
         List<MapEntryExpression> argumentMapEntryExpressionList = new ArrayList<>()
-        if (astUtils.methodArgumentsPresent(iMethodNode.getParameters())) {
-            for (parameter in iMethodNode.getParameters()) {
+        if (astUtils.methodArgumentsPresent(methodNode.getParameters())) {
+            for (parameter in methodNode.getParameters()) {
                 argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.getName()), GeneralUtils.varX(parameter.getName())))
             }
         }
-        Statement firstStatement = checkSuperConstructorCall(iMethodNode)
-        Statement methodExecutionOpen = createMethodLogStatement("methodBegin", iMethodNode, argumentMapEntryExpressionList)
-        Statement methodException = createMethodLogStatement("methodException", iMethodNode, argumentMapEntryExpressionList, GeneralUtils.varX("automaticException"))
+        Statement firstStatement = checkSuperConstructorCall(methodNode)
+        Statement methodExecutionOpen = createMethodLogStatement("methodBegin", methodNode, argumentMapEntryExpressionList)
+        Statement methodException = createMethodLogStatement("methodException", methodNode, argumentMapEntryExpressionList, GeneralUtils.varX("automaticException"))
         if (blackBoxLevel.value() == BlackBoxLevel.METHOD.value()) {
-            methodStatementLevelTransformation(iMethodNode, firstStatement, methodExecutionOpen, methodException)
+            methodLevelTransformation(methodNode, firstStatement, methodExecutionOpen, methodException)
         } else if (blackBoxLevel.value() == BlackBoxLevel.ERROR.value()) {
-            methodErrorLevelTransformation(iMethodNode, firstStatement, methodException)
+            errorLevelTransformation(methodNode, firstStatement, methodException)
         } else {
-            throw new BlackBoxTransformationException(iMethodNode, "Unsupported BlackBox Level: " + blackBoxLevel.toString())
+            throw new BlackBoxTransformationException(methodNode, "Unsupported BlackBox Level: " + blackBoxLevel.toString())
         }
     }
 
@@ -272,55 +271,58 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         )
     }
 
-    void methodStatementLevelTransformation(MethodNode iMethodNode, Statement firstStatement, ExpressionStatement methodExecutionOpen, Statement methodExecutionOpenException) {
-        iMethodNode.setCode(
-                GeneralUtils.block(
-                        firstStatement,
-                        methodExecutionOpen,
-                        {
-                            TryCatchStatement tryCatchStatement = new TryCatchStatement(
-                                    iMethodNode.getCode(),
-                                    new ExpressionStatement(
-                                            GeneralUtils.callX(
-                                                    GeneralUtils.varX(runtimeVarName),
-                                                    getMethodEndName(),
-                                                    GeneralUtils.args(metaDataMethodNode(methodNode))
-                                            )
+    void methodLevelTransformation(MethodNode methodNode, Statement firstStatement, ExpressionStatement methodExecutionOpen, Statement methodExecutionOpenException) {
+        methodNode.code.visit(new BlackBoxVisitor(this))//<<<<<<<<<<<<<<VISIT<<<<<
+        methodNode.code = GeneralUtils.block(
+                firstStatement,
+                GeneralUtils.declS(
+                        GeneralUtils.localVarX(resultPlaceholderVarName),
+                        new EmptyExpression()
+                ),
+                methodExecutionOpen,
+                {
+                    TryCatchStatement tryCatchStatement = new TryCatchStatement(
+                            {
+                                return methodNode.getCode()
+                            }.call() as Statement,
+                            new ExpressionStatement(
+                                    GeneralUtils.callX(
+                                            GeneralUtils.varX(runtimeVarName),
+                                            getMethodEndName(),
+                                            GeneralUtils.args(metaDataMethodNode(methodNode))
                                     )
                             )
-                            tryCatchStatement.addCatch(
-                                    GeneralUtils.catchS(
-                                            GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"),
-                                            GeneralUtils.block(
-                                                    methodExecutionOpenException,
-                                                    createThrowStatement()
-                                            )
+                    )
+                    tryCatchStatement.addCatch(
+                            GeneralUtils.catchS(
+                                    GeneralUtils.param(ClassHelper.make(Exception.class), exceptionVarName),
+                                    GeneralUtils.block(
+                                            methodExecutionOpenException,
+                                            createThrowStatement()
                                     )
                             )
-                            return tryCatchStatement
-                        }.call() as TryCatchStatement
-                )
+                    )
+                    return tryCatchStatement
+                }.call() as TryCatchStatement
         )
     }
 
-    void methodErrorLevelTransformation(MethodNode iMethodNode, Statement firstStatement, Statement methodException) {
-        iMethodNode.setCode(
-                GeneralUtils.block(
-                        firstStatement,
-                        {
-                            TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
-                            tryCatchStatement.addCatch(
-                                    GeneralUtils.catchS(
-                                            GeneralUtils.param(ClassHelper.make(Exception.class), "automaticException"),
-                                            GeneralUtils.block(
-                                                    methodException,
-                                                    createThrowStatement()
-                                            )
+    void errorLevelTransformation(MethodNode iMethodNode, Statement firstStatement, Statement methodException) {
+        iMethodNode.code = GeneralUtils.block(
+                firstStatement,
+                {
+                    TryCatchStatement tryCatchStatement = new TryCatchStatement(iMethodNode.getCode(), EmptyStatement.INSTANCE)
+                    tryCatchStatement.addCatch(
+                            GeneralUtils.catchS(
+                                    GeneralUtils.param(ClassHelper.make(Exception.class), exceptionVarName),
+                                    GeneralUtils.block(
+                                            methodException,
+                                            createThrowStatement()
                                     )
                             )
-                            return tryCatchStatement
-                        }.call() as TryCatchStatement
-                )
+                    )
+                    return tryCatchStatement
+                }.call() as TryCatchStatement
         )
     }
 
@@ -347,7 +349,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         blockStatement.addStatement(new ExpressionStatement(methodCallExpression))
         blockStatement.addStatement(statement)
         blockStatement.copyNodeMetaData(statement)
-        blockStatement.setSourcePosition(statement)
+        blockStatement.sourcePosition = statement
         return blockStatement
     }
 

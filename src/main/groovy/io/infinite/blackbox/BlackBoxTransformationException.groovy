@@ -7,7 +7,7 @@ class BlackBoxTransformationException extends Exception {
 
     BlackBoxTransformationException(ASTNode astNode, Exception exception) {
         super(new ASTUtils().prepareExceptionMessage(astNode), exception)
-        this.setStackTrace([] as StackTraceElement[])
+        this.stackTrace = [] as StackTraceElement[]
     }
 
     BlackBoxTransformationException(ASTNode astNode, String message) {

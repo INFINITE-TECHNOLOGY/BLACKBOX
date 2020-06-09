@@ -1,27 +1,28 @@
 package io.infinite.blackbox
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.ToString
 import org.codehaus.groovy.ast.CodeVisitorSupport
-import org.codehaus.groovy.ast.stmt.*
+import org.codehaus.groovy.ast.stmt.ReturnStatement
+import org.codehaus.groovy.ast.tools.GeneralUtils
 
 @ToString(includeNames = true, includeFields = true)
-@CompileDynamic
 class BlackBoxVisitor extends CodeVisitorSupport {
 
-    BlackBoxTransformation carburetorTransformation
-    BlackBoxLevel carburetorLevel
+    BlackBoxTransformation blackBoxTransformation
 
-    BlackBoxVisitor(BlackBoxTransformation carburetorTransformation, BlackBoxLevel carburetorLevel) {
-        this.carburetorTransformation = carburetorTransformation
-        this.carburetorLevel = carburetorLevel
+    BlackBoxVisitor(BlackBoxTransformation blackBoxTransformation) {
+        this.blackBoxTransformation = blackBoxTransformation
     }
 
     @Override
     void visitReturnStatement(ReturnStatement returnStatement) {
         super.visitReturnStatement(returnStatement)
         if (!returnStatement.isReturningNullOrVoid()) {
-            returnStatement.setExpression(carburetorTransformation.transformExpression(returnStatement.getExpression(), returnStatement.getClass().getSimpleName() + ":expression"))
+            returnStatement.expression = GeneralUtils.assignX(
+                    GeneralUtils.varX(blackBoxTransformation.resultPlaceholderVarName),
+                    returnStatement.expression
+            )
         }
     }
 
