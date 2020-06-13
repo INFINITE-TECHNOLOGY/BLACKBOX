@@ -15,7 +15,7 @@ plugins {
 
 sourceCompatibility = 1.8
 group = "io.i-t"
-version = "2.0.1"
+version = "2.1.0"
 description = "Groovy Logging AST transformation"
 
 wrapper {
@@ -36,7 +36,6 @@ dependencies {
     compileOnly 'org.codehaus.groovy:groovy-all:2.5.4'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    compile group: 'io.i-t', name: 'supplies', version: '2.0.0'
     testCompile 'org.codehaus.groovy:groovy-all:2.5.4'
     testCompile "io.i-t:bobbin:4.0.0"
 }

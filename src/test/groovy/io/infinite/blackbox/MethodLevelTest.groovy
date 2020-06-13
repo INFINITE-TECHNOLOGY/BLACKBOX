@@ -15,10 +15,10 @@ abstract class Foo extends Thread {
        
     }
 
-    @BlackBox(level = BlackBoxLevel.ERROR)
+    @BlackBox(level = BlackBoxLevel.METHOD)
     String foo() {
         println "foo"
-        return "foo"
+        "foo"
     }
 
 }
@@ -30,7 +30,7 @@ class Bar extends Foo {
         super()
     }
 
-    @BlackBox(level = BlackBoxLevel.ERROR)
+    @BlackBox(level = BlackBoxLevel.METHOD)
     String bar(String iBar) {
         String result = foo() + "bar"
         println result

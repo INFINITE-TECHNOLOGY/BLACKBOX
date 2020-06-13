@@ -1,9 +1,8 @@
 package io.infinite.blackbox
 
+import groovy.inspect.swingui.AstNodeToScriptVisitor
 import groovy.transform.ToString
 import groovy.util.logging.Slf4j
-import io.infinite.supplies.ast.metadata.MetaDataMethodNode
-import io.infinite.supplies.ast.other.ASTUtils
 import jdk.internal.org.objectweb.asm.Opcodes
 import org.codehaus.groovy.ast.*
 import org.codehaus.groovy.ast.expr.*
@@ -34,8 +33,6 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     MethodNode methodNode
 
-    ASTUtils astUtils = new ASTUtils()
-
     // MAIN ENTRY POINT \/\/\/\/\/\/\/\/
     void visit(ASTNode[] iAstNodeArray, SourceUnit iSourceUnit) {
         try {
@@ -58,12 +55,12 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     void visitClassNode(ClassNode classNode, AnnotationNode classAnnotationNode) {
         classNode.methods.each {
-            if (!it.annotations.collect{it.classNode}.contains(classAnnotationNode.classNode)) {
+            if (!it.annotations.collect { it.classNode }.contains(classAnnotationNode.classNode)) {
                 visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
             }
         }
         classNode.declaredConstructors.each {
-            if (!it.annotations.collect{it.classNode}.contains(classAnnotationNode.classNode)) {
+            if (!it.annotations.collect { it.classNode }.contains(classAnnotationNode.classNode)) {
                 visitMethod(it, it.getAnnotations(classAnnotationNode.getClassNode())[0] ?: classAnnotationNode)
             }
         }
@@ -80,7 +77,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             if (methodNode.declaringClass.outerClass != null) {
                 throw new BlackBoxTransformationException(methodNode, "BlackBox currently does not support annotations in Inner Classes.")
             }
-            if (astUtils.codeString(methodNode.code).contains(runtimeVarName)) {
+            if (codeString(methodNode.code).contains(runtimeVarName)) {
                 throw new BlackBoxTransformationException(methodNode, "$runtimeVarName is already declared.")
             }
             classDeclarations(methodNode.declaringClass)
@@ -93,7 +90,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
             /*sourceUnit.AST.classes.each {
                 new VariableScopeVisitor(sourceUnit, true).visitClass(it)
             }*/
-            log.debug(astUtils.codeString(methodNode.code))
+            log.debug(codeString(methodNode.code))
         } catch (Exception exception) {
             log.error(exception.message, exception)
             throw new BlackBoxTransformationException(methodNode, exception)
@@ -201,15 +198,9 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         if (blackBoxLevel.value() == BlackBoxLevel.NONE.value()) {
             return
         }
-        List<MapEntryExpression> argumentMapEntryExpressionList = new ArrayList<>()
-        if (astUtils.methodArgumentsPresent(methodNode.parameters)) {
-            for (parameter in methodNode.parameters) {
-                argumentMapEntryExpressionList.add(new MapEntryExpression(GeneralUtils.constX(parameter.name), GeneralUtils.varX(parameter.name)))
-            }
-        }
         Statement firstStatement = checkSuperConstructorCall(methodNode)
-        Statement methodExecutionOpen = createMethodLogStatement(methodBeginName, methodNode, argumentMapEntryExpressionList)
-        Statement methodException = createMethodLogStatement(methodExceptionName, methodNode, argumentMapEntryExpressionList, GeneralUtils.varX("automaticException"))
+        Statement methodExecutionOpen = createMethodLogStatement(methodBeginName, methodNode, methodNode.parameters, Optional.empty())
+        Statement methodException = createMethodLogStatement(methodExceptionName, methodNode, methodNode.parameters, Optional.of(GeneralUtils.varX("automaticException")))
         if (blackBoxLevel.value() == BlackBoxLevel.METHOD.value()) {
             methodLevelTransformation(methodNode, firstStatement, methodExecutionOpen, methodException)
         } else if (blackBoxLevel.value() == BlackBoxLevel.ERROR.value()) {
@@ -219,37 +210,46 @@ class BlackBoxTransformation extends AbstractASTTransformation {
         }
     }
 
-    ExpressionStatement createMethodLogStatement(String methodLogName, MethodNode methodNode, ArrayList<MapEntryExpression> argumentMapEntryExpressionList, Expression... additionalArgs) {
-        def args = GeneralUtils.args(
-                metaDataMethodNode(methodNode),
-                new MapExpression(
-                        argumentMapEntryExpressionList
-                )
-        )
-        if (astUtils.methodArgumentsPresent(additionalArgs)) {
-            additionalArgs.each {
-                args.addExpression(it)
-            }
+    ExpressionStatement createMethodLogStatement(
+            String blackBoxMethodName,
+            MethodNode methodNode,
+            Parameter[] methodParameters,
+            Optional<VariableExpression> optionalVariableExpression
+    ) {
+        ArgumentListExpression args = GeneralUtils.args(methodMetaData(methodNode))
+        if (methodParameters.size() > 0) {
+            args.addExpression(
+                    new MapExpression(
+                            methodParameters.collect { parameter ->
+                                new MapEntryExpression(GeneralUtils.constX(parameter.name), GeneralUtils.varX(parameter.name))
+                            }
+                    )
+            )
+        } else {
+            args.addExpression(new ConstantExpression(null))
+        }
+        if (optionalVariableExpression.present) {
+            args.addExpression(optionalVariableExpression.get())
         }
         return new ExpressionStatement(
                 GeneralUtils.callX(
                         GeneralUtils.varX(runtimeVarName),
-                        methodLogName,
+                        blackBoxMethodName,
                         args
                 )
         )
     }
 
-    ConstructorCallExpression metaDataMethodNode(MethodNode methodNode) {
+    ConstructorCallExpression methodMetaData(MethodNode methodNode) {
         return GeneralUtils.ctorX(
-                ClassHelper.make(MetaDataMethodNode.class),
+                ClassHelper.make(MethodMetaData.class),
                 GeneralUtils.args(
+                        GeneralUtils.constX(methodNode.declaringClass.name),
+                        GeneralUtils.constX(methodNode.name),
                         GeneralUtils.constX(methodNode.lineNumber),
                         GeneralUtils.constX(methodNode.lastLineNumber),
                         GeneralUtils.constX(methodNode.columnNumber),
-                        GeneralUtils.constX(methodNode.lastColumnNumber),
-                        GeneralUtils.constX(methodNode.name),
-                        GeneralUtils.constX(methodNode.declaringClass.name)
+                        GeneralUtils.constX(methodNode.lastColumnNumber)
                 )
         )
     }
@@ -275,7 +275,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                                             GeneralUtils.varX(runtimeVarName),
                                                             methodResultName,
                                                             GeneralUtils.args(
-                                                                    metaDataMethodNode(methodNode),
+                                                                    methodMetaData(methodNode),
                                                                     GeneralUtils.varX(resultPlaceholderVarName)
                                                             )
                                                     )
@@ -288,7 +288,7 @@ class BlackBoxTransformation extends AbstractASTTransformation {
                                                         GeneralUtils.callX(
                                                                 GeneralUtils.varX(runtimeVarName),
                                                                 methodEndName,
-                                                                GeneralUtils.args(metaDataMethodNode(methodNode))
+                                                                GeneralUtils.args(methodMetaData(methodNode))
                                                         )
                                                 )
                                         )
@@ -360,6 +360,12 @@ class BlackBoxTransformation extends AbstractASTTransformation {
 
     String getExceptionVarName() {
         "automaticException"
+    }
+
+    String codeString(ASTNode iAstNode) {
+        StringWriter stringWriter = new StringWriter()
+        iAstNode.visit(new AstNodeToScriptVisitor(stringWriter))
+        return stringWriter.getBuffer().toString()
     }
 
 }

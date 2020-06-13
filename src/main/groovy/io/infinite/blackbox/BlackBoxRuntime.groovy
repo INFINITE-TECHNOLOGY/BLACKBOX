@@ -2,9 +2,6 @@ package io.infinite.blackbox
 
 import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
-import io.infinite.supplies.ast.exceptions.ExceptionUtils
-import io.infinite.supplies.ast.metadata.MetaDataMethodNode
-import io.infinite.supplies.ast.other.ASTUtils
 import org.slf4j.Logger
 
 @Slf4j
@@ -14,7 +11,6 @@ import org.slf4j.Logger
  */
 class BlackBoxRuntime {
 
-    ASTUtils astUtils = new ASTUtils()
 
     static {
         staticInit()
@@ -39,87 +35,36 @@ class BlackBoxRuntime {
         return new BlackBoxRuntime(automaticLog)
     }
 
-    private void log(String iText) {
-        internalLogger.debug(iText)
+    void methodEnd(MethodMetaData methodMetaData) {
+        internalLogger.debug("METHOD END", methodMetaData)
     }
 
-    private void logError(String iText) {
-        internalLogger.error(iText)
-    }
-
-    void methodEnd(MetaDataMethodNode metaDataMethodNode) {
-        log("""METHOD END: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
-            metaDataMethodNode.lineNumber
-        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
-            metaDataMethodNode.lastColumnNumber
-        })""")
-    }
-
-    void methodBegin(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap) {
-        log("""METHOD: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
-            metaDataMethodNode.lineNumber
-        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
-            metaDataMethodNode.lastColumnNumber
-        })""")
-        if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
-            for (entry in methodArgumentMap.entrySet()) {
-                if (entry.value != null) {
-                    log("""ARGUMENT: ${entry.key}:${entry.value.class.canonicalName}""")
-                    log(entry.value.toString())
-                } else {
-                    log("""ARGUMENT: ${entry.key}: null""")
-                }
-            }
-        }
-    }
-
-    void methodException(MetaDataMethodNode metaDataMethodNode, Map<String, Object> methodArgumentMap, Exception exception) {
-        logError("""METHOD EXCEPTION: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
-            metaDataMethodNode.lineNumber
-        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
-            metaDataMethodNode.lastColumnNumber
-        })""")
-        if (astUtils.methodArgumentsPresent(methodArgumentMap)) {
-            for (entry in methodArgumentMap.entrySet()) {
-                if (entry.value != null) {
-                    logError("""ARGUMENT: ${entry.key}:${entry.value.class.canonicalName}""")
-                    logError(entry.value.toString())
-                } else {
-                    logError("""ARGUMENT: ${entry.key}: null""")
-                }
-            }
-        }
-        logException(exception)
-    }
-
-    void methodResult(MetaDataMethodNode metaDataMethodNode, Object methodResult) {
-        log("""METHOD RESULT: ${metaDataMethodNode.className}.${metaDataMethodNode.methodName}(${
-            metaDataMethodNode.lineNumber
-        },${metaDataMethodNode.columnNumber},${metaDataMethodNode.lastLineNumber},${
-            metaDataMethodNode.lastColumnNumber
-        })""")
-        if (methodResult != null) {
-            log(methodResult.class.canonicalName)
-        }
-        if (methodResult instanceof List) {
-            log(methodResult.toArray().toString())
+    void methodBegin(MethodMetaData methodMetaData, Map<String, Object> methodArgumentMap) {
+        if (methodArgumentMap != null) {
+            internalLogger.debug("METHOD BEGIN", methodMetaData, methodArgumentMap)
         } else {
-            log(TraceSerializer.toString(methodResult))
+            internalLogger.debug("METHOD BEGIN", methodMetaData)
         }
     }
 
     @CompileDynamic
-    void logException(Exception exception) {
+    void methodException(MethodMetaData methodMetaData, Map<String, Object> methodArgumentMap, Exception exception) {
+        if (methodArgumentMap != null) {
+            internalLogger.debug("METHOD EXCEPTION", methodMetaData, methodArgumentMap)
+        } else {
+            internalLogger.debug("METHOD EXCEPTION", methodMetaData)
+        }
         if (exception.isLoggedByBlackBox != true) {
-            logError("""EXCEPTION (first occurrence):""")
             exception.uuid = UUID.randomUUID().toString()
-            logError(exception.uuid)
-            logError(new ExceptionUtils().stacktrace(exception))
+            internalLogger.error("EXCEPTION ($exception.uuid)", exception)
             exception.isLoggedByBlackBox = true
         } else {
-            logError("""EXCEPTION (additional occurrence):""")
-            logError(exception.uuid)
+            internalLogger.error("EXCEPTION ($exception.uuid)", "additional occurrence")
         }
+    }
+
+    void methodResult(MethodMetaData methodMetaData, Object methodResult) {
+        internalLogger.debug("METHOD RESULT", methodMetaData, methodResult)
     }
 
 }
