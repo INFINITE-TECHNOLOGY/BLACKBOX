@@ -19,10 +19,10 @@ import java.lang.annotation.Target
 @interface BlackBox {
 
     /**
-     * BlackBox level
-     * @return BlackBox level for transforming class/method/constructor.
+     * BlackBox level, default BlackBoxLevel.ERROR
+     * @return BlackBox level for transforming method/constructor.
      */
-    BlackBoxLevel level()
+    BlackBoxLevel level() default BlackBoxLevel.ERROR
 
     /**
      * When enabled, this will cause BlackBox to suppress exceptions

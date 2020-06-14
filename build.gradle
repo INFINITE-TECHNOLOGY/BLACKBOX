@@ -15,7 +15,7 @@ plugins {
 
 sourceCompatibility = 1.8
 group = "io.i-t"
-version = "2.1.0"
+version = "2.2.0"
 description = "Groovy Logging AST transformation"
 
 wrapper {

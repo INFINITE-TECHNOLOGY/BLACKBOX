@@ -30,7 +30,7 @@ class Bar extends Foo {
         super()
     }
 
-    @BlackBox(level = BlackBoxLevel.METHOD)
+    @BlackBox
     String bar(String iBar) {
         String result = foo() + "bar"
         println result
