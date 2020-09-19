@@ -34,7 +34,7 @@ String foobar(String foo) {
 
 Is transformed into:
 
-```
+```groovy
     @io.infinite.blackbox.BlackBox(level = io.infinite.blackbox.BlackBoxLevel.METHOD)
     public java.lang.String foobar(java.lang.String foo) {
         java.lang.Object resultPlaceHolder 
